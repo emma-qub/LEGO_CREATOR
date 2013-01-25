@@ -1,9 +1,11 @@
 SOURCES += \
     main.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    ViewerWidget.cpp
 
 HEADERS += \
-    MainWindow.h
+    MainWindow.h \
+    ViewerWidget.h
 
 LIBS += \
     -L$OSG/lib \

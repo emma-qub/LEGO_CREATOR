@@ -3,6 +3,7 @@
 
 #include <QtGui>
 
+#include "ViewerWidget.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -20,6 +21,8 @@ public slots:
 
 private:
     QTabWidget* _tabs;
+
+    ViewerWidget* _previewBrick;
 
     QWidget* _paramsWidget;
     QDockWidget* _paramsDock;

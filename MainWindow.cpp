@@ -72,8 +72,15 @@ void MainWindow::createParamsDock(void) {
     brickForms << "-- Choose your LEGO shape --" << "Brick" << "Plate";
     _brickComboBox->addItems(brickForms);
 
-    QTextEdit* preview = new QTextEdit("Image Render", this);
-    preview->setFixedHeight(200);
+//    QTextEdit* preview = new QTextEdit("Image Render", this);
+//    preview->setFixedHeight(200);
+
+    QFrame* previewFrame = new QFrame(this);
+    previewFrame->setFixedSize(250, 250);
+    _previewBrick = new ViewerWidget;
+    QVBoxLayout* previewLayout = new QVBoxLayout;
+    previewLayout->addWidget(_previewBrick);
+    previewFrame->setLayout(previewLayout);
 
     _widthSpinBox = new QSpinBox(this);
     _widthSpinBox->setMinimum(1);
@@ -92,7 +99,7 @@ void MainWindow::createParamsDock(void) {
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(new QLabel("Preview", this));
-    mainLayout->addWidget(preview);
+    mainLayout->addWidget(previewFrame);
     mainLayout->addWidget(_brickComboBox);
     mainLayout->addLayout(widthLayout);
     mainLayout->addLayout(lengthLayout);
