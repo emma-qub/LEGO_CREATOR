@@ -9,9 +9,12 @@ public:
     Lego(const QColor &color = QColor(Qt::red), QObject* parent = 0);
     virtual ~Lego();
 
-    virtual QString description(void) = 0;
+    QColor getColor(void) const { return _color; }
+    void setColor(const QColor& color) { _color = color; }
 
-private:
+    virtual QString description(void) const = 0;
+
+protected:
     QColor _color;
 };
 

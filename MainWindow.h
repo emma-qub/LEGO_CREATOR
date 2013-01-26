@@ -4,12 +4,15 @@
 #include <QtGui>
 
 #include "ViewerWidget.h"
+#include "BrickGeode.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     MainWindow();
+
+    void initPreview(void);
 
     void createFileMenu(void);
     void createGenerateMenu(void);
@@ -18,7 +21,7 @@ public:
 
 public slots:
     void browseColor(void);
-    void createLego(void);
+    void createBrick(int);
 
 private:
     QTabWidget* _tabs;
@@ -47,8 +50,13 @@ private:
 
     QColor _legoColor;
 
+    osg::ref_ptr<osg::Group> _scene;
+    osg::ref_ptr<BrickGeode> _brickGeode;
+    Brick* _brick;
+
 signals:
-    void legoShapeChanged(osg::Node*);
+    void legoShapeChanged(osg::Geode*);
+    void colorChanged(int);
 };
 
 #endif // MAINWINDOW_H

@@ -3,15 +3,19 @@ SOURCES += \
     MainWindow.cpp \
     ViewerWidget.cpp \
     Lego.cpp \
-    LegoNode.cpp \
-    LegoDialog.cpp
+    LegoDialog.cpp \
+    Brick.cpp \
+    LegoGeode.cpp \
+    BrickGeode.cpp
 
 HEADERS += \
     MainWindow.h \
     ViewerWidget.h \
     Lego.h \
-    LegoNode.h \
-    LegoDialog.h
+    LegoDialog.h \
+    Brick.h \
+    LegoGeode.h \
+    BrickGeode.h
 
 LIBS += \
     -L$OSG/lib \
@@ -20,7 +24,7 @@ LIBS += \
     -losgGA \
     -losgDB \
     -losgViewer \
-    -losgTerrain \
+    #-losgTerrain \
     -L
 
 QT += opengl

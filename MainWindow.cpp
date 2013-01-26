@@ -1,7 +1,12 @@
 #include "MainWindow.h"
+#include "BrickGeode.h"
+
 
 MainWindow::MainWindow() :
     _legoColor(Qt::red) {
+
+    // Init preview element
+    initPreview();
 
     // Create menus and right dock
     createFileMenu();
@@ -18,12 +23,111 @@ MainWindow::MainWindow() :
     setCentralWidget(_tabs);
 
     // Connections
-    connect(this, SIGNAL(legoShapeChanged(osg::Node*)), _previewBrick, SLOT(changeScene(osg::Node*)));
+    //connect(this, SIGNAL(legoShapeChanged(osg::Node*)), _previewBrick, SLOT(changeScene(osg::Node*)));
+    connect(_widthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(createBrick(int)));
+    connect(_lengthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(createBrick(int)));
+    connect(this, SIGNAL(colorChanged(int)), this, SLOT(createBrick(int)));
 
     // Change soft title and maximize window
     setWindowTitle("LEGO Creator");
     setWindowState(Qt::WindowMaximized);
 }
+
+void MainWindow::initPreview(void) {
+    _brick = new Brick(0, 0, QColor(Qt::red), this);
+    _brickGeode = new BrickGeode(_brick);
+    _scene = new osg::Group;
+    _scene->addChild(_brickGeode);
+}
+
+
+
+// ////////////////////////////////////
+// Create Right Dock
+// ////////////////////////////////////
+void MainWindow::createParamsDock(void) {
+    // ComboBox choose your brick
+    _brickComboBox = new QComboBox(this);
+    QStringList brickForms;
+    brickForms << "-- Choose your LEGO shape --" << "Brick" << "Plate";
+    _brickComboBox->addItems(brickForms);
+
+    // Brick Preview
+    QFrame* previewFrame = new QFrame(this);
+    previewFrame->setFixedSize(250, 250);
+    // Create osg viewer widget that displays bricks
+    _previewBrick = new ViewerWidget;
+    _previewBrick->initView();
+    _previewBrick->changeCamera(_previewBrick->createCamera(0, 0, 100, 100));
+    _previewBrick->changeScene(_scene.get());
+    _previewBrick->initWidget();
+    QVBoxLayout* previewLayout = new QVBoxLayout;
+    previewLayout->addWidget(_previewBrick);
+    previewFrame->setLayout(previewLayout);
+
+    // Brick size SpinBox
+    _widthSpinBox = new QSpinBox(this);
+    _widthSpinBox->setMinimum(1);
+    _widthSpinBox->setMaximum(2);
+    QFormLayout* widthLayout = new QFormLayout;
+    widthLayout->addRow("Width:", _widthSpinBox);
+    _lengthSpinBox = new QSpinBox(this);
+    _lengthSpinBox->setMinimum(1);
+    _lengthSpinBox->setMaximum(16);
+    QFormLayout* lengthLayout = new QFormLayout;
+    lengthLayout->addRow("Length", _lengthSpinBox);
+
+    // Color Button
+    _colorButton = new QPushButton("Color", this);
+    _colorButton->setFixedWidth(100);
+    connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
+
+    // Main Layout
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(new QLabel("Preview", this));
+    mainLayout->addWidget(previewFrame);
+    mainLayout->addWidget(_brickComboBox);
+    mainLayout->addLayout(widthLayout);
+    mainLayout->addLayout(lengthLayout);
+    mainLayout->addWidget(_colorButton);
+
+    // Right Dock's Widget
+    _paramsWidget = new QWidget(this);
+    _paramsWidget->setLayout(mainLayout);
+
+    // Right Dock
+    _paramsDock = new QDockWidget("Create your brick", this);
+    _paramsDock->setFixedSize(250, 500);
+    addDockWidget(Qt::RightDockWidgetArea, _paramsDock);
+    _paramsDock->setWidget(_paramsWidget);
+    _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
+}
+
+
+
+// Open the color dialog to change our LEGO color
+void MainWindow::browseColor() {
+    _legoColor = QColorDialog::getColor(Qt::red, this);
+    emit colorChanged(0);
+}
+
+// Create LEGO brick according to parameters within right dock
+void MainWindow::createBrick(int) {
+
+    _brick->setColor(_legoColor);
+    _brick->setWidth(_widthSpinBox->text().toInt());
+    _brick->setLength(_lengthSpinBox->text().toInt());
+
+    _brickGeode->createGeode();
+
+    //emit legoShapeChanged(_brickGeode.get());
+}
+
+
+
+// ////////////////////////////////////
+// Create menus
+// ////////////////////////////////////
 
 void MainWindow::createFileMenu(void) {
     // Create File menu
@@ -86,74 +190,4 @@ void MainWindow::createHelpMenu(void) {
     // Add About sub menu
     _aboutAction = helpMenu->addAction("&About");
     _aboutAction->setShortcut(QKeySequence("Alt+F1"));
-}
-
-void MainWindow::createParamsDock(void) {
-    // ComboBox choose your brick
-    _brickComboBox = new QComboBox(this);
-    QStringList brickForms;
-    brickForms << "-- Choose your LEGO shape --" << "Brick" << "Plate";
-    _brickComboBox->addItems(brickForms);
-
-    // Brick Preview
-    QFrame* previewFrame = new QFrame(this);
-    previewFrame->setFixedSize(250, 250);
-    // Create osg viewer widget that displays bricks
-    _previewBrick = new ViewerWidget;
-    _previewBrick->initView();
-    _previewBrick->changeCamera(_previewBrick->createCamera(0, 0, 100, 100));
-    _previewBrick->changeScene(osgDB::readNodeFile("../LEGO_Creator/OSG/cow.osg"));
-    _previewBrick->initWidget();
-    QVBoxLayout* previewLayout = new QVBoxLayout;
-    previewLayout->addWidget(_previewBrick);
-    previewFrame->setLayout(previewLayout);
-
-    // Brick size SpinBox
-    _widthSpinBox = new QSpinBox(this);
-    _widthSpinBox->setMinimum(1);
-    _widthSpinBox->setMaximum(2);
-    QFormLayout* widthLayout = new QFormLayout;
-    widthLayout->addRow("Width:", _widthSpinBox);
-    _lengthSpinBox = new QSpinBox(this);
-    _lengthSpinBox->setMinimum(1);
-    _lengthSpinBox->setMaximum(16);
-    QFormLayout* lengthLayout = new QFormLayout;
-    lengthLayout->addRow("Length", _lengthSpinBox);
-
-    // Color Button
-    _colorButton = new QPushButton("Color", this);
-    _colorButton->setFixedWidth(100);
-    connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
-
-    // Main Layout
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(new QLabel("Preview", this));
-    mainLayout->addWidget(previewFrame);
-    mainLayout->addWidget(_brickComboBox);
-    mainLayout->addLayout(widthLayout);
-    mainLayout->addLayout(lengthLayout);
-    mainLayout->addWidget(_colorButton);
-
-    // Right Dock's Widget
-    _paramsWidget = new QWidget(this);
-    _paramsWidget->setLayout(mainLayout);
-
-    // Right Dock
-    _paramsDock = new QDockWidget("Create your brick", this);
-    _paramsDock->setFixedSize(250, 500);
-    addDockWidget(Qt::RightDockWidgetArea, _paramsDock);
-    _paramsDock->setWidget(_paramsWidget);
-    _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
-}
-
-// Open the color dialog to change our LEGO color
-void MainWindow::browseColor() {
-    _legoColor = QColorDialog::getColor(Qt::red, this);
-}
-
-// Create LEGO brick according to parameters within right dock
-void MainWindow::createLego(void) {
-    osg::ref_ptr<osg::Node> node;
-
-    emit legoShapeChanged(node.get());
 }
