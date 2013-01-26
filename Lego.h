@@ -2,10 +2,11 @@
 #define LEGO_H
 
 #include <QColor>
+#include <QObject>
 
-class Lego {
+class Lego : public QObject {
 public:
-    Lego(const QColor &color);
+    Lego(const QColor &color = QColor(Qt::red), QObject* parent = 0);
     virtual ~Lego();
 
     virtual QString description(void) = 0;
