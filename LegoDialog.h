@@ -6,9 +6,9 @@
 class LegoDialog : public QWidget {
 
 public:
-    LegoDialog(QObject* parent = 0);
+    LegoDialog(QWidget *parent = 0);
 
-    virtual createDialog(void) = 0;
+    virtual void createDialog(void) = 0;
 
 };
 

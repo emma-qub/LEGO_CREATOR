@@ -1,5 +1,5 @@
 #include "LegoDialog.h"
 
-LegoDialog::LegoDialog(QObject *parent) :
+LegoDialog::LegoDialog(QWidget *parent) :
     QWidget(parent) {
 }
