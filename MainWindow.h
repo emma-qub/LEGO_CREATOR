@@ -44,6 +44,8 @@ private:
     QAction* _helpAction;
     QAction* _aboutAction;
 
+signals:
+    void legoShapeChanged(osg::Node*);
 };
 
 #endif // MAINWINDOW_H
