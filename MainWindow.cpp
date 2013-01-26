@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow() :
+    _legoColor(Qt::red) {
 
     // Create menus and right dock
     createFileMenu();
@@ -147,11 +148,11 @@ void MainWindow::createParamsDock(void) {
 
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
-    /*QColor colorSelected = */QColorDialog::getColor(Qt::red, this);
+    _legoColor = QColorDialog::getColor(Qt::red, this);
 }
 
 // Create LEGO brick according to parameters within right dock
-void MainWindow::createBrick() const {
+void MainWindow::createLego(void) {
     osg::ref_ptr<osg::Node> node;
 
     emit legoShapeChanged(node.get());

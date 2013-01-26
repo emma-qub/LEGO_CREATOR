@@ -17,7 +17,8 @@ public:
     void createParamsDock(void);
 
 public slots:
-    void browseColor();
+    void browseColor(void);
+    void createLego(void);
 
 private:
     QTabWidget* _tabs;
@@ -43,6 +44,8 @@ private:
 
     QAction* _helpAction;
     QAction* _aboutAction;
+
+    QColor _legoColor;
 
 signals:
     void legoShapeChanged(osg::Node*);

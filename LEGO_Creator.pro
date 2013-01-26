@@ -1,11 +1,13 @@
 SOURCES += \
     main.cpp \
     MainWindow.cpp \
-    ViewerWidget.cpp
+    ViewerWidget.cpp \
+    Lego.cpp
 
 HEADERS += \
     MainWindow.h \
-    ViewerWidget.h
+    ViewerWidget.h \
+    Lego.h
 
 LIBS += \
     -L$OSG/lib \
