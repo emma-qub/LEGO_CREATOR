@@ -2,6 +2,8 @@
 
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
+#include <osg/Material>
+#include <osg/BlendFunc>
 
 #include <QDebug>
 
@@ -127,6 +129,24 @@ osg::ref_ptr<osg::Drawable> PlateGeode::createPlate(void) const {
 
     // Create plate geometry
     osg::ref_ptr<osg::Geometry> plateGeometry = new osg::Geometry;
+
+    // Handle transparency
+    double alpha = 0.1;
+
+    osg::StateSet* state = plateGeometry->getOrCreateStateSet();
+    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+    osg::Material* mat = new osg::Material;
+    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
+    osg::StateAttribute::OVERRIDE);
+
+    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+    state->setAttributeAndModes(bf);
+
+    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
+    plateGeometry->setStateSet(state);
 
     // Match vertices
     plateGeometry->setVertexArray(vertices);

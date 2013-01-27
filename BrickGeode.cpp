@@ -2,6 +2,8 @@
 
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
+#include <osg/Material>
+#include <osg/BlendFunc>
 
 #include <QDebug>
 
@@ -53,7 +55,6 @@ void BrickGeode::createGeode(void) {
             addDrawable(createPlot(radiusX, radiusY));
         }
     }
-
 }
 
 osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
@@ -128,6 +129,24 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     // Create brick geometry
     osg::ref_ptr<osg::Geometry> brickGeometry = new osg::Geometry;
 
+    // Handle transparency
+    double alpha = 0.1;
+
+    osg::StateSet* state = brickGeometry->getOrCreateStateSet();
+    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+    osg::Material* mat = new osg::Material;
+    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
+    osg::StateAttribute::OVERRIDE);
+
+    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+    state->setAttributeAndModes(bf);
+
+    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
+    brickGeometry->setStateSet(state);
+
     // Match vertices
     brickGeometry->setVertexArray(vertices);
 
@@ -163,6 +182,7 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     // Define brick GL_QUADS with 24 vertices
     brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 24));
 
+    // Return the brick whithout plot
     return brickGeometry.get();
 }
 
