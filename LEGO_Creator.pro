@@ -6,7 +6,9 @@ SOURCES += \
     LegoDialog.cpp \
     Brick.cpp \
     LegoGeode.cpp \
-    BrickGeode.cpp
+    BrickGeode.cpp \
+    BrickDialog.cpp \
+    LegoFactory.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -15,7 +17,9 @@ HEADERS += \
     LegoDialog.h \
     Brick.h \
     LegoGeode.h \
-    BrickGeode.h
+    BrickGeode.h \
+    BrickDialog.h \
+    LegoFactory.h
 
 LIBS += \
     -L$OSG/lib \

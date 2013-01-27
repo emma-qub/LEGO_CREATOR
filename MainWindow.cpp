@@ -2,11 +2,16 @@
 #include "BrickGeode.h"
 
 
-MainWindow::MainWindow() :
+MainWindow::MainWindow(QWidget* parent) :
+    QMainWindow(parent),
     _legoColor(Qt::red) {
+
+    // Register in factories
+    initFactories();
 
     // Init preview element
     initPreview();
+    initDialogs();
 
     // Create menus and right dock
     createFileMenu();
@@ -23,21 +28,37 @@ MainWindow::MainWindow() :
     setCentralWidget(_tabs);
 
     // Connections
-    //connect(this, SIGNAL(legoShapeChanged(osg::Node*)), _previewBrick, SLOT(changeScene(osg::Node*)));
-    connect(_widthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(createBrick(int)));
-    connect(_lengthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(createBrick(int)));
-    connect(this, SIGNAL(colorChanged(int)), this, SLOT(createBrick(int)));
+    connect(_legoComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
 
     // Change soft title and maximize window
     setWindowTitle("LEGO Creator");
     setWindowState(Qt::WindowMaximized);
 }
 
+void MainWindow::initFactories(void) {
+    // Register Brick
+    LegoFactory<Brick, QString>::registerLego(QString("Brick"), new Brick);
+
+    // Register BrickGeode
+    LegoFactory<BrickGeode, QString>::registerLego(QString("BrickGeode"), new BrickGeode);
+
+    // Register BrickDialog
+    LegoFactory<BrickDialog, QString>::registerLego(QString("BrickDialog"), new BrickDialog);
+}
+
+void MainWindow::initDialogs(void) {
+    if (BrickDialog* brickDialog = dynamic_cast<BrickDialog*>(LegoFactory<BrickDialog, QString>::create("BrickDialog")))
+        _legoDialog << brickDialog;
+    else
+        qDebug() << "Cannot create brickDialog in MainWindow::initDialogs";
+
+    for (int k = 0; k < _legoDialog.size(); k++) {
+        _legoDialog.at(k)->setVisible(false);
+    }
+}
+
 void MainWindow::initPreview(void) {
-    _brick = new Brick(0, 0, QColor(Qt::red), this);
-    _brickGeode = new BrickGeode(_brick);
     _scene = new osg::Group;
-    _scene->addChild(_brickGeode);
 }
 
 
@@ -47,10 +68,10 @@ void MainWindow::initPreview(void) {
 // ////////////////////////////////////
 void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
-    _brickComboBox = new QComboBox(this);
+    _legoComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "-- Choose your LEGO shape --" << "Brick" << "Plate";
-    _brickComboBox->addItems(brickForms);
+    brickForms << "-- Choose your LEGO shape --" << "Brick";
+    _legoComboBox->addItems(brickForms);
 
     // Brick Preview
     QFrame* previewFrame = new QFrame(this);
@@ -65,18 +86,6 @@ void MainWindow::createParamsDock(void) {
     previewLayout->addWidget(_previewBrick);
     previewFrame->setLayout(previewLayout);
 
-    // Brick size SpinBox
-    _widthSpinBox = new QSpinBox(this);
-    _widthSpinBox->setMinimum(1);
-    _widthSpinBox->setMaximum(2);
-    QFormLayout* widthLayout = new QFormLayout;
-    widthLayout->addRow("Width:", _widthSpinBox);
-    _lengthSpinBox = new QSpinBox(this);
-    _lengthSpinBox->setMinimum(1);
-    _lengthSpinBox->setMaximum(16);
-    QFormLayout* lengthLayout = new QFormLayout;
-    lengthLayout->addRow("Length", _lengthSpinBox);
-
     // Color Button
     _colorButton = new QPushButton("Color", this);
     _colorButton->setFixedWidth(100);
@@ -86,10 +95,11 @@ void MainWindow::createParamsDock(void) {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(new QLabel("Preview", this));
     mainLayout->addWidget(previewFrame);
-    mainLayout->addWidget(_brickComboBox);
-    mainLayout->addLayout(widthLayout);
-    mainLayout->addLayout(lengthLayout);
+    mainLayout->addWidget(_legoComboBox);
+    for (int k = 0; k < _legoDialog.size(); k++)
+        mainLayout->addWidget(_legoDialog.at(k));
     mainLayout->addWidget(_colorButton);
+    mainLayout->setAlignment(Qt::AlignTop);
 
     // Right Dock's Widget
     _paramsWidget = new QWidget(this);
@@ -111,16 +121,18 @@ void MainWindow::browseColor() {
     emit colorChanged(0);
 }
 
-// Create LEGO brick according to parameters within right dock
-void MainWindow::createBrick(int) {
+void MainWindow::chooseDialog(int dialogIndex) {
+    for (int k = 0; k < _legoDialog.size(); k++) {
+        if (k == dialogIndex-1)
+            _legoDialog.at(k)->setVisible(true);
+        else
+            _legoDialog.at(k)->setVisible(false);
+    }
+}
 
-    _brick->setColor(_legoColor);
-    _brick->setWidth(_widthSpinBox->text().toInt());
-    _brick->setLength(_lengthSpinBox->text().toInt());
-
-    _brickGeode->createGeode();
-
-    //emit legoShapeChanged(_brickGeode.get());
+void MainWindow::legoUpdated(LegoGeode* legoGeode) {
+    _currLegoGeode = legoGeode;
+    _currLego = _currLegoGeode->getLego();
 }
 
 

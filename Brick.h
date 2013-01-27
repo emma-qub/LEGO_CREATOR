@@ -6,14 +6,18 @@
 class Brick : public Lego {
 
 public:
-    Brick(int width, int length, const QColor &color = QColor(Qt::red), QObject* parent = 0);
+    enum BrickType { brick, plate };
+
+    Brick(int width = 1, int length = 1, const QColor &color = QColor(Qt::red), QObject* parent = 0);
+    Brick(const Brick& brick);
 
     int getWidth(void) const { return _width; }
     int getLength(void) const { return _length; }
+
     void setWidth(int width) { _width = width; }
     void setLength(int length) { _length = length; }
 
-    virtual QString description() const;
+    virtual Brick* cloning(void) const;
 
 private:
     int _width;

@@ -5,6 +5,6 @@ LegoGeode::LegoGeode(Lego* lego) :
     _lego = lego;
 }
 
-LegoGeode::~LegoGeode() {
-    delete _lego;
+LegoGeode::LegoGeode(const LegoGeode& legoGeode) :
+    osg::Geode(legoGeode) {
 }

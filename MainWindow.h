@@ -5,14 +5,18 @@
 
 #include "ViewerWidget.h"
 #include "BrickGeode.h"
+#include "BrickDialog.h"
+#include "LegoFactory.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow();
+    MainWindow(QWidget* parent = 0);
 
+    void initFactories(void);
     void initPreview(void);
+    void initDialogs(void);
 
     void createFileMenu(void);
     void createGenerateMenu(void);
@@ -21,7 +25,9 @@ public:
 
 public slots:
     void browseColor(void);
-    void createBrick(int);
+    //void createBrick(int);
+    void chooseDialog(int dialogIndex);
+    void legoUpdated(LegoGeode* legoGeode);
 
 private:
     QTabWidget* _tabs;
@@ -31,9 +37,7 @@ private:
     QWidget* _paramsWidget;
     QDockWidget* _paramsDock;
 
-    QComboBox* _brickComboBox;
-    QSpinBox* _widthSpinBox;
-    QSpinBox* _lengthSpinBox;
+    QComboBox* _legoComboBox;
     QPushButton* _colorButton;
 
     QAction* _newAction;
@@ -51,11 +55,16 @@ private:
     QColor _legoColor;
 
     osg::ref_ptr<osg::Group> _scene;
-    osg::ref_ptr<BrickGeode> _brickGeode;
-    Brick* _brick;
+    osg::ref_ptr<LegoGeode> _currLegoGeode;
+    Lego* _currLego;
+
+    QVector<LegoDialog*> _legoDialog;
+
+//    LegoFactory<Lego, QString> _legoFactory;
+//    LegoFactory<LegoGeode> _legoGeodeFactory;
+//    LegoFactory<BrickDialog, QString> _legoDialogFactory;
 
 signals:
-    void legoShapeChanged(osg::Geode*);
     void colorChanged(int);
 };
 

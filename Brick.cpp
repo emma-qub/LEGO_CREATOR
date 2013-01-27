@@ -6,6 +6,13 @@ Brick::Brick(int width, int length, const QColor &color, QObject* parent) :
     _length(length) {
 }
 
-QString Brick::description(void) const {
-    return QString("Shape:\tBrick\nWidth:\t%1\nLength:\t%2").arg(_width).arg(_length);
+Brick::Brick(const Brick& brick) :
+    Lego(brick) {
+
+    _width = brick._width;
+    _length = brick._length;
+}
+
+Brick* Brick::cloning() const {
+    return new Brick(*this);
 }

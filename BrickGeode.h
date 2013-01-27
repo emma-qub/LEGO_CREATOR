@@ -7,11 +7,15 @@
 class BrickGeode : public LegoGeode {
 
 public:
+    BrickGeode();
     BrickGeode(Brick* brick);
+    BrickGeode(const BrickGeode& brickGeode);
 
     virtual void createGeode(void);
     osg::ref_ptr<osg::Drawable> createBrick(void) const;
     osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY) const;
+
+    virtual BrickGeode* cloning(void) const;
 };
 
 #endif // BRICKNODE_H

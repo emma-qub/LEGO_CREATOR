@@ -5,5 +5,8 @@ Lego::Lego(const QColor &color, QObject* parent) :
     _color(color) {
 }
 
-Lego::~Lego() {
+Lego::Lego(const Lego& lego) :
+    QObject() {
+
+    _color = lego._color;
 }

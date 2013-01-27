@@ -10,10 +10,18 @@
 #define PLOT_RADIUS 2.5
 #define PLOT_TOP    1.7
 
+BrickGeode::BrickGeode() :
+    LegoGeode() {
+}
+
 BrickGeode::BrickGeode(Brick* brick) :
     LegoGeode(brick) {
 
     createGeode();
+}
+
+BrickGeode::BrickGeode(const BrickGeode& brickGeode) :
+    LegoGeode(brickGeode._lego) {
 }
 
 void BrickGeode::createGeode(void) {
@@ -175,4 +183,8 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createPlot(double radiusX, double radius
     plot->setColor(osg::Vec4(color.red()/255, color.green()/255, color.blue()/255, 1.0));
 
     return plot.get();
+}
+
+BrickGeode* BrickGeode::cloning(void) const {
+    return new BrickGeode(*this);
 }
