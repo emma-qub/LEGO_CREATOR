@@ -1,22 +1,22 @@
-#ifndef BRICKDIALOG_H
-#define BRICKDIALOG_H
+#ifndef PLATEDIALOG_H
+#define PLATEDIALOG_H
 
 #include "LegoDialog.h"
 #include <QtGui>
-#include "Brick.h"
-#include "BrickGeode.h"
+#include "Plate.h"
+#include "PlateGeode.h"
 
-class BrickDialog : public LegoDialog {
+class PlateDialog : public LegoDialog {
     Q_OBJECT
 
 public:
-    BrickDialog(QWidget *parent = 0);
-    BrickDialog(const BrickDialog& brickDialog);
+    PlateDialog(QWidget *parent = 0);
+    PlateDialog(const PlateDialog& plateDialog);
 
     int getWidth(void) const { return _widthSpinBox->text().toInt(); }
     int getLength(void) const { return _lengthSpinBox->text().toInt(); }
 
-    virtual BrickDialog* cloning(void) const;
+    virtual PlateDialog* cloning(void) const;
 
 public slots:
     virtual void setLego(int);
@@ -27,4 +27,4 @@ private:
 
 };
 
-#endif // BRICKDIALOG_H
+#endif // PLATEDIALOG_H

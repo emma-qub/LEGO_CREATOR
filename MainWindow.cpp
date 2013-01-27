@@ -1,6 +1,8 @@
 #include "MainWindow.h"
-#include "BrickGeode.h"
 
+#include "LegoFactory.h"
+#include "BrickDialog.h"
+#include "PlateDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -49,6 +51,13 @@ void MainWindow::initFactories(void) {
     // Register BrickDialog
     LegoFactory<BrickDialog, QString>::registerLego(QString("BrickDialog"), new BrickDialog);
 
+    // Register Plate
+    LegoFactory<Plate, QString>::registerLego(QString("Plate"), new Plate);
+    // Register PlateGeode
+    LegoFactory<PlateGeode, QString>::registerLego(QString("PlateGeode"), new PlateGeode);
+    //Register PlateDialog
+    LegoFactory<PlateDialog, QString>::registerLego(QString("PlateDialog"), new PlateDialog);
+
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
@@ -72,6 +81,11 @@ void MainWindow::initDialogs(void) {
     } else
         qDebug() << "Cannot create brickDialog in MainWindow::initDialogs";
 
+    if (PlateDialog* plateDialog = dynamic_cast<PlateDialog*>(LegoFactory<PlateDialog, QString>::create("PlateDialog")))
+        _legoDialog << plateDialog;
+    else
+        qDebug() << "Cannot create plateDialog in MainWindow::initDialogs";
+
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
     }
@@ -86,10 +100,10 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick";
+    brickForms << "Brick" << "Plate";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
-    shapeLayout->addRow("LEGO shape", _shapeComboBox);
+    shapeLayout->addRow("LEGO shape:", _shapeComboBox);
 
     // Brick Preview
     QFrame* previewFrame = new QFrame(this);
@@ -138,7 +152,8 @@ MainWindow::~MainWindow() {
 
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
-    _currLego->setColor(QColorDialog::getColor(Qt::red, this));
+    _legoColor = QColorDialog::getColor(Qt::red, this);
+    _currLego->setColor(_legoColor);
     _currLegoGeode->createGeode();
 }
 
@@ -149,6 +164,41 @@ void MainWindow::chooseDialog(int dialogIndex) {
         else
             _legoDialog.at(k)->setVisible(false);
     }
+
+    delete _currLego;
+    switch (dialogIndex) {
+    case 0:
+        if ((_currLego = dynamic_cast<Brick*>(LegoFactory<Brick, QString>::create("Brick")))) {
+            BrickDialog* dialog = static_cast<BrickDialog*>(_legoDialog.at(dialogIndex));
+            Brick* lego = static_cast<Brick*>(_currLego);
+            lego->setWidth(dialog->getWidth());
+            lego->setLength(dialog->getLength());
+        } else {
+            qDebug() << "Cannot cast in Brick* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<BrickGeode*>(LegoFactory<BrickGeode, QString>::create("BrickGeode"))))
+            qDebug() << "Cannot cast in BrickGeode* within MainWindow::chooseDialog";
+        break;
+    case 1:
+        if ((_currLego = dynamic_cast<Plate*>(LegoFactory<Plate, QString>::create("Plate")))) {
+            PlateDialog* dialog = static_cast<PlateDialog*>(_legoDialog.at(dialogIndex));
+            Plate* lego = static_cast<Plate*>(_currLego);
+            lego->setWidth(dialog->getWidth());
+            lego->setLength(dialog->getLength());
+        } else {
+            qDebug() << "Cannot cast in Plate* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<PlateGeode*>(LegoFactory<PlateGeode, QString>::create("PlateGeode"))))
+            qDebug() << "Cannot cast in PlateGeode* within MainWindow::chooseDialog";
+        break;
+    }
+
+    _currLegoGeode->setLego(_currLego);
+    _currLegoGeode->createGeode();
+    _scene->setChild(0, _currLegoGeode.get());
+
+    _legoDialog.at(dialogIndex)->initLego(_currLego);
+    _legoDialog.at(dialogIndex)->initLegoGeode(_currLegoGeode.get());
 }
 
 void MainWindow::legoUpdated(LegoGeode* legoGeode) {

@@ -10,3 +10,7 @@ Lego::Lego(const Lego& lego) :
 
     _color = lego._color;
 }
+
+QString Lego::whoiam(void) const {
+    return "I am a Lego";
+}

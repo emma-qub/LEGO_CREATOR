@@ -15,6 +15,8 @@ public:
 
     virtual Lego* cloning(void) const = 0;
 
+    virtual QString whoiam(void) const;
+
 protected:
     QColor _color;
 };

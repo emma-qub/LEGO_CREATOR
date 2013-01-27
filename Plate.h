@@ -1,14 +1,12 @@
-#ifndef BRICK_H
-#define BRICK_H
+#ifndef PLATE_H
+#define PLATE_H
 
 #include "Lego.h"
 
-class Brick : public Lego {
-
+class Plate : public Lego {
 public:
-
-    Brick(int width = 1, int length = 1, const QColor &color = QColor(Qt::red), QObject* parent = 0);
-    Brick(const Brick& brick);
+    Plate(int width = 1, int length = 1, const QColor &color = QColor(Qt::red), QObject* parent = 0);
+    Plate(const Plate& plate);
 
     int getWidth(void) const { return _width; }
     int getLength(void) const { return _length; }
@@ -16,7 +14,7 @@ public:
     void setWidth(int width) { _width = width; }
     void setLength(int length) { _length = length; }
 
-    virtual Brick* cloning(void) const;
+    virtual Plate* cloning(void) const;
 
     virtual QString whoiam(void) const;
 
@@ -26,4 +24,4 @@ private:
 
 };
 
-#endif // BRICK_H
+#endif // PLATE_H

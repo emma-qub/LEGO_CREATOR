@@ -8,7 +8,10 @@ SOURCES += \
     LegoGeode.cpp \
     BrickGeode.cpp \
     BrickDialog.cpp \
-    LegoFactory.cpp
+    LegoFactory.cpp \
+    Plate.cpp \
+    PlateGeode.cpp \
+    PlateDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -19,7 +22,10 @@ HEADERS += \
     LegoGeode.h \
     BrickGeode.h \
     BrickDialog.h \
-    LegoFactory.h
+    LegoFactory.h \
+    Plate.h \
+    PlateGeode.h \
+    PlateDialog.h
 
 LIBS += \
     -L$OSG/lib \

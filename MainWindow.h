@@ -4,9 +4,8 @@
 #include <QtGui>
 
 #include "ViewerWidget.h"
-#include "BrickGeode.h"
-#include "BrickDialog.h"
-#include "LegoFactory.h"
+#include "LegoDialog.h"
+
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

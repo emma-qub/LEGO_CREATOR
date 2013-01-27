@@ -13,6 +13,10 @@ Brick::Brick(const Brick& brick) :
     _length = brick._length;
 }
 
-Brick* Brick::cloning() const {
+Brick* Brick::cloning(void) const {
     return new Brick(*this);
+}
+
+QString Brick::whoiam(void) const {
+    return "I am a Brick";
 }
