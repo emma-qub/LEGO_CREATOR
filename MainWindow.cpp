@@ -13,10 +13,12 @@ MainWindow::MainWindow(QWidget* parent) :
     initPreview();
     initDialogs();
 
-    // Create menus and right dock
+    // Create menus
     createFileMenu();
     createGenerateMenu();
     createHelpMenu();
+
+    // Create right dock
     createParamsDock();
 
     // Create tabs
@@ -28,37 +30,51 @@ MainWindow::MainWindow(QWidget* parent) :
     setCentralWidget(_tabs);
 
     // Connections
-    connect(_legoComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
+    connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
+    for (int k = 0; k < _shapeComboBox->count(); k++)
+        connect(_legoDialog.at(k), SIGNAL(changedLego(LegoGeode*)), this, SLOT(legoUpdated(LegoGeode*)));
 
-    // Change soft title and maximize window
+    // Change soft title
     setWindowTitle("LEGO Creator");
+
+    // Maximize window
     setWindowState(Qt::WindowMaximized);
 }
 
 void MainWindow::initFactories(void) {
     // Register Brick
     LegoFactory<Brick, QString>::registerLego(QString("Brick"), new Brick);
-
     // Register BrickGeode
     LegoFactory<BrickGeode, QString>::registerLego(QString("BrickGeode"), new BrickGeode);
-
     // Register BrickDialog
     LegoFactory<BrickDialog, QString>::registerLego(QString("BrickDialog"), new BrickDialog);
-}
 
-void MainWindow::initDialogs(void) {
-    if (BrickDialog* brickDialog = dynamic_cast<BrickDialog*>(LegoFactory<BrickDialog, QString>::create("BrickDialog")))
-        _legoDialog << brickDialog;
-    else
-        qDebug() << "Cannot create brickDialog in MainWindow::initDialogs";
-
-    for (int k = 0; k < _legoDialog.size(); k++) {
-        _legoDialog.at(k)->setVisible(false);
-    }
+    // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
 void MainWindow::initPreview(void) {
+    _currLego = LegoFactory<Brick, QString>::create("Brick");
+    static_cast<Brick*>(_currLego)->setColor(QColor(Qt::red));
+    static_cast<Brick*>(_currLego)->setWidth(2);
+    static_cast<Brick*>(_currLego)->setLength(4);
+    _currLegoGeode = LegoFactory<BrickGeode, QString>::create("BrickGeode");
+    _currLegoGeode->setLego(_currLego);
+    _currLegoGeode->createGeode();
     _scene = new osg::Group;
+    _scene->addChild(_currLegoGeode);
+}
+
+void MainWindow::initDialogs(void) {
+    if (BrickDialog* brickDialog = dynamic_cast<BrickDialog*>(LegoFactory<BrickDialog, QString>::create("BrickDialog"))) {
+        brickDialog->initLego(_currLego);
+        brickDialog->initLegoGeode(_currLegoGeode);
+        _legoDialog << brickDialog;
+    } else
+        qDebug() << "Cannot create brickDialog in MainWindow::initDialogs";
+
+    for (int k = 1; k < _legoDialog.size(); k++) {
+        _legoDialog.at(k)->setVisible(false);
+    }
 }
 
 
@@ -68,10 +84,12 @@ void MainWindow::initPreview(void) {
 // ////////////////////////////////////
 void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
-    _legoComboBox = new QComboBox(this);
+    _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "-- Choose your LEGO shape --" << "Brick";
-    _legoComboBox->addItems(brickForms);
+    brickForms << "Brick";
+    _shapeComboBox->addItems(brickForms);
+    QFormLayout* shapeLayout = new QFormLayout;
+    shapeLayout->addRow("LEGO shape", _shapeComboBox);
 
     // Brick Preview
     QFrame* previewFrame = new QFrame(this);
@@ -95,7 +113,7 @@ void MainWindow::createParamsDock(void) {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(new QLabel("Preview", this));
     mainLayout->addWidget(previewFrame);
-    mainLayout->addWidget(_legoComboBox);
+    mainLayout->addLayout(shapeLayout);
     for (int k = 0; k < _legoDialog.size(); k++)
         mainLayout->addWidget(_legoDialog.at(k));
     mainLayout->addWidget(_colorButton);
@@ -113,17 +131,20 @@ void MainWindow::createParamsDock(void) {
     _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
 }
 
+MainWindow::~MainWindow() {
+    delete _currLego;
+}
 
 
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
-    _legoColor = QColorDialog::getColor(Qt::red, this);
-    emit colorChanged(0);
+    _currLego->setColor(QColorDialog::getColor(Qt::red, this));
+    _currLegoGeode->createGeode();
 }
 
 void MainWindow::chooseDialog(int dialogIndex) {
     for (int k = 0; k < _legoDialog.size(); k++) {
-        if (k == dialogIndex-1)
+        if (k == dialogIndex)
             _legoDialog.at(k)->setVisible(true);
         else
             _legoDialog.at(k)->setVisible(false);

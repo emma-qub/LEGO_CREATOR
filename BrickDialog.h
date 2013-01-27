@@ -7,18 +7,16 @@
 #include "BrickGeode.h"
 
 class BrickDialog : public LegoDialog {
-    //Q_OBJECT
+    Q_OBJECT
 
 public:
     BrickDialog(QWidget *parent = 0);
     BrickDialog(const BrickDialog& brickDialog);
 
-//    int getWidthSpinBox(void) const;
-//    int getLengthSpinBox(void) const;
-
-//    virtual void setLego(Lego* lego, LegoGeode* legoGeode);
-
     virtual BrickDialog* cloning(void) const;
+
+public slots:
+    virtual void setLego(int);
 
 private:
     QSpinBox* _widthSpinBox;

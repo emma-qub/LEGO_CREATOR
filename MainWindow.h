@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow {
 
 public:
     MainWindow(QWidget* parent = 0);
+    virtual ~MainWindow();
 
     void initFactories(void);
     void initPreview(void);
@@ -25,7 +26,6 @@ public:
 
 public slots:
     void browseColor(void);
-    //void createBrick(int);
     void chooseDialog(int dialogIndex);
     void legoUpdated(LegoGeode* legoGeode);
 
@@ -37,7 +37,7 @@ private:
     QWidget* _paramsWidget;
     QDockWidget* _paramsDock;
 
-    QComboBox* _legoComboBox;
+    QComboBox* _shapeComboBox;
     QPushButton* _colorButton;
 
     QAction* _newAction;
@@ -60,12 +60,6 @@ private:
 
     QVector<LegoDialog*> _legoDialog;
 
-//    LegoFactory<Lego, QString> _legoFactory;
-//    LegoFactory<LegoGeode> _legoGeodeFactory;
-//    LegoFactory<BrickDialog, QString> _legoDialogFactory;
-
-signals:
-    void colorChanged(int);
 };
 
 #endif // MAINWINDOW_H

@@ -6,18 +6,26 @@
 #include "LegoGeode.h"
 
 class LegoDialog : public QWidget {
-    //Q_OBJECT
+    Q_OBJECT
 
 public:
     LegoDialog(QWidget* parent = 0);
     LegoDialog(const LegoDialog&);
 
-    //virtual void setLego(Lego* lego, LegoGeode* legoGeode) = 0;
+    virtual void initLego(Lego* lego) { _lego = lego; }
+    virtual void initLegoGeode(LegoGeode* legoGeode) { _legoGeode = legoGeode; }
 
     virtual LegoDialog* cloning(void) const = 0;
 
-//signals:
-//    void legoChanged(LegoGeode*);
+public slots:
+    virtual void setLego(int) = 0;
+
+protected:
+    Lego* _lego;
+    LegoGeode* _legoGeode;
+
+signals:
+    void changedLego(LegoGeode*);
 };
 
 #endif // LEGODIALOG_H
