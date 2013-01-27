@@ -171,6 +171,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if ((_currLego = dynamic_cast<Brick*>(LegoFactory<Brick, QString>::create("Brick")))) {
             BrickDialog* dialog = static_cast<BrickDialog*>(_legoDialog.at(dialogIndex));
             Brick* lego = static_cast<Brick*>(_currLego);
+            lego->setColor(_legoColor);
             lego->setWidth(dialog->getWidth());
             lego->setLength(dialog->getLength());
         } else {
@@ -183,6 +184,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if ((_currLego = dynamic_cast<Plate*>(LegoFactory<Plate, QString>::create("Plate")))) {
             PlateDialog* dialog = static_cast<PlateDialog*>(_legoDialog.at(dialogIndex));
             Plate* lego = static_cast<Plate*>(_currLego);
+            lego->setColor(_legoColor);
             lego->setWidth(dialog->getWidth());
             lego->setLength(dialog->getLength());
         } else {
