@@ -23,9 +23,12 @@ MainWindow::MainWindow(QWidget* parent) :
     // Create right dock
     createParamsDock();
 
+    // Create scene
+    createScene();
+
     // Create tabs
     _tabs = new QTabWidget(this);
-    _tabs->addTab(new QWidget(this), "Construction");
+    _tabs->addTab(_sceneFrame, "Construction");
     _tabs->addTab(new QWidget(this), "Interaction");
 
     // Set tabs mode
@@ -41,6 +44,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Maximize window
     setWindowState(Qt::WindowMaximized);
+}
+
+MainWindow::~MainWindow() {
+    delete _currLego;
 }
 
 void MainWindow::initFactories(void) {
@@ -109,13 +116,13 @@ void MainWindow::createParamsDock(void) {
     QFrame* previewFrame = new QFrame(this);
     previewFrame->setFixedSize(250, 250);
     // Create osg viewer widget that displays bricks
-    _previewBrick = new ViewerWidget;
-    _previewBrick->initView();
-    _previewBrick->changeCamera(_previewBrick->createCamera(0, 0, 100, 100));
-    _previewBrick->changeScene(_scene.get());
-    _previewBrick->initWidget();
+    _brickViewer = new ViewerWidget;
+    _brickViewer->initView();
+    _brickViewer->changeCamera(_brickViewer->createCamera(0, 0, 100, 100));
+    _brickViewer->changeScene(_scene.get());
+    _brickViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
-    previewLayout->addWidget(_previewBrick);
+    previewLayout->addWidget(_brickViewer);
     previewFrame->setLayout(previewLayout);
 
     // Color Button
@@ -145,9 +152,19 @@ void MainWindow::createParamsDock(void) {
     _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
 }
 
-MainWindow::~MainWindow() {
-    delete _currLego;
+void MainWindow::createScene(void) {
+    _sceneFrame = new QFrame(this);
+    _sceneFrame->setFixedSize(1150, 750);
+    _sceneViewer = new ViewerWidget;
+    _sceneViewer->initView();
+    _sceneViewer->changeCamera(_brickViewer->createCamera(0, 0, 100, 100));
+    _sceneViewer->changeScene(_scene.get());
+    _sceneViewer->initWidget();
+    QVBoxLayout* previewLayout = new QVBoxLayout;
+    previewLayout->addWidget(_sceneViewer);
+    _sceneFrame->setLayout(previewLayout);
 }
+
 
 
 // Open the color dialog to change our LEGO color

@@ -22,6 +22,7 @@ public:
     void createGenerateMenu(void);
     void createHelpMenu(void);
     void createParamsDock(void);
+    void createScene(void);
 
 public slots:
     void browseColor(void);
@@ -31,7 +32,9 @@ public slots:
 private:
     QTabWidget* _tabs;
 
-    ViewerWidget* _previewBrick;
+    ViewerWidget* _brickViewer;
+    ViewerWidget* _sceneViewer;
+    QFrame* _sceneFrame;
 
     QWidget* _paramsWidget;
     QDockWidget* _paramsDock;
