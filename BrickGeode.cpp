@@ -29,7 +29,7 @@ void BrickGeode::createGeode(void) {
     // Add plots according to the brick dimensions
 
     // Distance between two plot center
-    double distPlot = Lego::length_unit;//Lego::length_unit;
+    double distPlot = Lego::length_unit;
 
     // Get the brick
     Brick* brick = static_cast<Brick*>(_lego);
@@ -38,9 +38,20 @@ void BrickGeode::createGeode(void) {
     int width = brick->getWidth();
     int length = brick->getLength();
 
-    // Calculate x max et y max
+    // Calculate x max and y max for plots
     double xmin = -(length-1)*Lego::length_unit/2;
     double ymin = -(width-1)*Lego::length_unit/2;
+
+    // Calculate x max and y max for bottom cylinder
+    bool thinw = (brick->getWidth() == 1);
+    bool thinl = (brick->getLength() == 1);
+    bool thin = (thinw || thinl);
+    double xminb = xmin;
+    if (!thinl)
+        xminb = xmin+Lego::length_unit/2;
+    double yminb = ymin;
+    if (!thinw)
+        yminb = ymin+Lego::length_unit/2;
 
     // Add plots iteratively
     for (int i = 0; i < length; i++) {
@@ -48,6 +59,20 @@ void BrickGeode::createGeode(void) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
             addDrawable(createPlot(radiusX, radiusY, 3));
+        }
+    }
+
+    if (thinw && !thinl)
+        width = 2;
+    if (thinl && !thinw)
+        length = 2;
+
+    // Add bottom cylinder iteratively
+    for (int i = 0; i < length-1; i++) {
+        for (int j = 0; j < width-1; j++) {
+            double radiusX = xminb + i*distPlot;
+            double radiusY = yminb + j*distPlot;
+            addDrawable(createCylinder(radiusX, radiusY, 3, thin));
         }
     }
 }

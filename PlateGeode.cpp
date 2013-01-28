@@ -42,6 +42,17 @@ void PlateGeode::createGeode(void) {
     double xmin = -(length-1)*Lego::length_unit/2;
     double ymin = -(width-1)*Lego::length_unit/2;
 
+    // Calculate x max and y max for bottom cylinder
+    bool thinw = (plate->getWidth() == 1);
+    bool thinl = (plate->getLength() == 1);
+    bool thin = (thinw || thinl);
+    double xminb = xmin;
+    if (!thinl)
+        xminb = xmin+Lego::length_unit/2;
+    double yminb = ymin;
+    if (!thinw)
+        yminb = ymin+Lego::length_unit/2;
+
     // Add plots iteratively
     for (int i = 0; i < length; i++) {
         for (int j = 0; j < width; j++) {
@@ -51,6 +62,19 @@ void PlateGeode::createGeode(void) {
         }
     }
 
+    if (thinw && !thinl)
+        width = 2;
+    if (thinl && !thinw)
+        length = 2;
+
+    // Add bottom cylinder iteratively
+    for (int i = 0; i < length-1; i++) {
+        for (int j = 0; j < width-1; j++) {
+            double radiusX = xminb + i*distPlot;
+            double radiusY = yminb + j*distPlot;
+            addDrawable(createCylinder(radiusX, radiusY, 1, thin));
+        }
+    }
 }
 
 osg::ref_ptr<osg::Drawable> PlateGeode::createPlate(void) const {

@@ -19,8 +19,10 @@ public:
 
     static double height_unit;
     static double length_unit;
-    static double plot_radius;
-    static double plot_top;
+    static double plot_top_radius;
+    static double plot_bottom_radius;
+    static double plot_bottom_thin_radius;
+    static double plot_top_height;
 
 protected:
     QColor _color;
