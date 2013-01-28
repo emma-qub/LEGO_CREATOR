@@ -143,7 +143,7 @@ osg::ref_ptr<osg::Drawable> PlateGeode::createPlate(void) const {
     plateGeometry->setVertexArray(vertices);
 
     // Add color (each rectangle has the same color except for the down one which is transparent)
-    osg::Vec4 colorVec(static_cast<float>(color.red()/255.0), static_cast<float>(color.green()/255.0), static_cast<float>(color.blue()/255.0), 1.0);
+    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::Vec4 transparent(.0f, .0f, .0f, .0f);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Add transparent color
@@ -192,7 +192,7 @@ osg::ref_ptr<osg::Drawable> PlateGeode::createPlot(double radiusX, double radius
     osg::ref_ptr<osg::ShapeDrawable> plot = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(radiusX, radiusY, Lego::plot_top/2), Lego::plot_radius, height*Lego::height_unit+Lego::plot_top));
 
     // Set color
-    plot->setColor(osg::Vec4(color.red()/255, color.green()/255, color.blue()/255, 1.0));
+    plot->setColor(osg::Vec4(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0));
 
     return plot.get();
 }
