@@ -7,11 +7,6 @@
 
 #include <QDebug>
 
-#define RECT_HEIGHT 3.2
-#define RECT_SIZE   8
-#define PLOT_RADIUS 2.5
-#define PLOT_TOP    1.7
-
 BrickGeode::BrickGeode() :
     LegoGeode() {
 }
@@ -34,7 +29,7 @@ void BrickGeode::createGeode(void) {
     // Add plots according to the brick dimensions
 
     // Distance between two plot center
-    double distPlot = RECT_SIZE;
+    double distPlot = Lego::length_unit;//Lego::length_unit;
 
     // Get the brick
     Brick* brick = static_cast<Brick*>(_lego);
@@ -44,8 +39,8 @@ void BrickGeode::createGeode(void) {
     int length = brick->getLength();
 
     // Calculate x max et y max
-    double xmin = -(length-1)*RECT_SIZE/2;
-    double ymin = -(width-1)*RECT_SIZE/2;
+    double xmin = -(length-1)*Lego::length_unit/2;
+    double ymin = -(width-1)*Lego::length_unit/2;
 
     // Add plots iteratively
     for (int i = 0; i < length; i++) {
@@ -71,12 +66,12 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
 
     // Get real position, according to brick size
     // d : down, u : up, l : left, r : right, f : front, b : back
-    double d = -height*RECT_HEIGHT/2;
-    double u = height*RECT_HEIGHT/2;
-    double l = -length*RECT_SIZE/2;
-    double r = length*RECT_SIZE/2;
-    double f = -width*RECT_SIZE/2;
-    double b = width*RECT_SIZE/2;
+    double d = -height*Lego::height_unit/2;
+    double u = height*Lego::height_unit/2;
+    double l = -length*Lego::length_unit/2;
+    double r = length*Lego::length_unit/2;
+    double f = -width*Lego::length_unit/2;
+    double b = width*Lego::length_unit/2;
 
     // Create 8 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -198,7 +193,7 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createPlot(double radiusX, double radius
 
     // The plots are cylinders that start at the brick bottom and above the brick top
     // Since the brick z-middle is 0, the middle of the cylinder equals to the half of the part above the brick
-    osg::ref_ptr<osg::ShapeDrawable> plot = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(radiusX, radiusY, PLOT_TOP/2), PLOT_RADIUS, height*RECT_HEIGHT+PLOT_TOP));
+    osg::ref_ptr<osg::ShapeDrawable> plot = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(radiusX, radiusY, Lego::plot_top/2), Lego::plot_radius, height*Lego::height_unit+Lego::plot_top));
 
     plot->setColor(osg::Vec4(color.red()/255, color.green()/255, color.blue()/255, 1.0));
 

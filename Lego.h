@@ -17,6 +17,11 @@ public:
 
     virtual QString whoiam(void) const;
 
+    static double height_unit;
+    static double length_unit;
+    static double plot_radius;
+    static double plot_top;
+
 protected:
     QColor _color;
 };
