@@ -47,7 +47,7 @@ void PlateGeode::createGeode(void) {
         for (int j = 0; j < width; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            addDrawable(createPlot(radiusX, radiusY));
+            addDrawable(createPlot(radiusX, radiusY, 1));
         }
     }
 
@@ -131,8 +131,7 @@ osg::ref_ptr<osg::Drawable> PlateGeode::createPlate(void) const {
     state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
     osg::Material* mat = new osg::Material;
     mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
+    state->setAttributeAndModes(mat,osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
     osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
     state->setAttributeAndModes(bf);
     state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -175,26 +174,6 @@ osg::ref_ptr<osg::Drawable> PlateGeode::createPlate(void) const {
     plateGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 24));
 
     return plateGeometry.get();
-}
-
-osg::ref_ptr<osg::Drawable> PlateGeode::createPlot(double radiusX, double radiusY) const {
-    // Get the plate
-    Plate* plate = static_cast<Plate*>(_lego);
-
-    // Get plate color
-    QColor color = plate->getColor();
-
-    // Get integer sizes
-    int height = 1;
-
-    // The plots are cylinders that start at the plate bottom and above the plate top
-    // Since the plate z-middle is 0, the middle of the cylinder equals to the half of the part above the plate
-    osg::ref_ptr<osg::ShapeDrawable> plot = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(radiusX, radiusY, Lego::plot_top/2), Lego::plot_radius, height*Lego::height_unit+Lego::plot_top));
-
-    // Set color
-    plot->setColor(osg::Vec4(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0));
-
-    return plot.get();
 }
 
 PlateGeode* PlateGeode::cloning(void) const {

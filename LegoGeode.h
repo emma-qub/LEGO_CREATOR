@@ -2,6 +2,7 @@
 #define LEGOGEODE_H
 
 #include <osg/Geode>
+#include <osg/ShapeDrawable>
 
 #include "Lego.h"
 
@@ -14,6 +15,8 @@ public:
     virtual void createGeode(void) = 0;
     virtual Lego* getLego(void) { return _lego; }
     virtual void setLego(Lego* lego) { _lego = lego; }
+
+    osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY, int height) const;
 
     virtual LegoGeode* cloning(void) const = 0;
 

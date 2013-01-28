@@ -13,7 +13,7 @@ public:
 
     virtual void createGeode(void);
     osg::ref_ptr<osg::Drawable> createPlate(void) const;
-    osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY) const;
+    //osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY) const;
 
     virtual PlateGeode* cloning(void) const;
 };
