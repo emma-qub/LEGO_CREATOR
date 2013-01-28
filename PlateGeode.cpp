@@ -143,7 +143,7 @@ osg::ref_ptr<osg::Drawable> PlateGeode::createPlate(void) const {
     plateGeometry->setVertexArray(vertices);
 
     // Add color (each rectangle has the same color except for the down one which is transparent)
-    osg::Vec4 colorVec(static_cast<float>color.red()/255.0, static_cast<float>color.green()/255.0, static_cast<float>color.blue()/255.0, 1.0);
+    osg::Vec4 colorVec(static_cast<float>(color.red()/255.0), static_cast<float>(color.green()/255.0), static_cast<float>(color.blue()/255.0), 1.0);
     osg::Vec4 transparent(.0f, .0f, .0f, .0f);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Add transparent color
