@@ -9,9 +9,6 @@ SOURCES += \
     BrickGeode.cpp \
     BrickDialog.cpp \
     LegoFactory.cpp \
-    Plate.cpp \
-    PlateGeode.cpp \
-    PlateDialog.cpp \
     Corner.cpp \
     CornerGeode.cpp \
     CornerDialog.cpp
@@ -26,9 +23,6 @@ HEADERS += \
     BrickGeode.h \
     BrickDialog.h \
     LegoFactory.h \
-    Plate.h \
-    PlateGeode.h \
-    PlateDialog.h \
     Corner.h \
     CornerGeode.h \
     CornerDialog.h
