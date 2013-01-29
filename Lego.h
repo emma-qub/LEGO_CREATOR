@@ -4,6 +4,10 @@
 #include <QColor>
 #include <QObject>
 
+// Avoid graphical default
+#define EPS 0.01
+
+
 class Lego : public QObject {
 
 public:
@@ -23,6 +27,7 @@ public:
     static double plot_bottom_radius;
     static double plot_bottom_thin_radius;
     static double plot_top_height;
+    static double plot_bottom_height;
 
 protected:
     QColor _color;

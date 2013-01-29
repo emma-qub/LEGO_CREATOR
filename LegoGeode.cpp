@@ -2,6 +2,7 @@
 
 #include <QDebug>
 
+
 LegoGeode::LegoGeode(Lego* lego) :
     osg::Geode() {
     _lego = lego;
@@ -21,7 +22,7 @@ osg::ref_ptr<osg::Drawable> LegoGeode::createPlot(double radiusX, double radiusY
                                                 new osg::Cylinder(
                                                     osg::Vec3(radiusX, radiusY, height*Lego::height_unit/2+Lego::plot_top_height/2),
                                                     Lego::plot_top_radius,
-                                                    Lego::plot_top_height
+                                                    Lego::plot_top_height-EPS
                                                 )
                                             );
 
@@ -48,7 +49,7 @@ osg::ref_ptr<osg::Drawable> LegoGeode::createCylinder(double radiusX, double rad
                                                 new osg::Cylinder(
                                                     osg::Vec3(radiusX, radiusY, 0),
                                                     radius,
-                                                    height*Lego::height_unit
+                                                    height*Lego::plot_bottom_height
                                                 )
                                             );
 
