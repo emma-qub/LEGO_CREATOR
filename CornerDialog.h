@@ -11,13 +11,15 @@ class CornerDialog :public LegoDialog {
 
 public:
     CornerDialog(QWidget* parent = 0);
-    CornerDialog(const CornerDialog& brickDialog);
+    CornerDialog(const CornerDialog& cornerDialog);
 
     virtual CornerDialog* cloning(void) const;
 
 public slots:
     virtual void setLego(int);
 
+private:
+    QComboBox* _cornerTypeComboBox;
 };
 
 #endif // CORNERDIALOG_H

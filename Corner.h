@@ -6,17 +6,21 @@
 class Corner : public Lego {
 
 public:
-    enum LegoType { brick, plate };
+    enum CornerType { brick, plate };
 
-    Corner(LegoType legoType = brick, const QColor& color = QColor(Qt::red), QObject* parent = 0);
+    Corner(CornerType cornerType = brick, const QColor& color = QColor(Qt::red), QObject* parent = 0);
 
-    LegoType getLegoType(void) const { return _legoType; }
-    int calculateHeight(void) const { if (_legoType == plate) return 1; else return 3; }
+    CornerType getCornerType(void) const { return _cornerType; }
+
+    void setCornerType(CornerType cornerType) { _cornerType = cornerType; }
+    void setCornerType(int index) { index == 0 ? _cornerType = brick : _cornerType = plate; }
+
+    int calculateHeight(void) const { return _cornerType == brick ? 3 : 1; }
 
     virtual Corner* cloning(void) const;
 
 private:
-    LegoType _legoType;
+    CornerType _cornerType;
 };
 
 #endif // CORNER_H

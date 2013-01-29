@@ -1,8 +1,8 @@
 #include "Corner.h"
 
-Corner::Corner(LegoType legoType, const QColor &color, QObject *parent) :
+Corner::Corner(CornerType cornerType, const QColor &color, QObject *parent) :
     Lego(color, parent),
-    _legoType(legoType) {
+    _cornerType(cornerType) {
 }
 
 Corner* Corner::cloning(void) const {
