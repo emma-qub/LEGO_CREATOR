@@ -1,9 +1,10 @@
 #include "Brick.h"
 
-Brick::Brick(int width, int length, const QColor &color, QObject* parent) :
+Brick::Brick(int width, int length, const QColor &color, BrickType brickType, QObject* parent) :
     Lego(color, parent),
     _width(width),
-    _length(length) {
+    _length(length),
+    _brickType(brickType) {
 }
 
 Brick::Brick(const Brick& brick) :
@@ -11,6 +12,21 @@ Brick::Brick(const Brick& brick) :
 
     _width = brick._width;
     _length = brick._length;
+    _brickType = brick._brickType;
+}
+
+void Brick::setBrickType(int index) {
+    switch (index) {
+    case 0 :
+        _brickType = classic;
+        break;
+    case 1 :
+        _brickType = plate;
+        break;
+    case 2 :
+        _brickType = flat;
+        break;
+    }
 }
 
 Brick* Brick::cloning(void) const {

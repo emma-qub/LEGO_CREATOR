@@ -35,8 +35,8 @@ public slots:
 
 protected:
     QTimer _timer;
-    osgViewer::View* _view;
-    osg::Camera* _camera;
+    osg::ref_ptr<osgViewer::View> _view;
+    osg::ref_ptr<osg::Camera> _camera;
     QWidget* _widget;
 };
 

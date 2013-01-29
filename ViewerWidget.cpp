@@ -1,6 +1,8 @@
 #include "ViewerWidget.h"
 #include "QDebug"
 
+#include <osgViewer/ViewerEventHandlers>
+
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) :
     QWidget() {
     setThreadingModel(threadingModel);
@@ -8,30 +10,10 @@ ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel)
     _view = NULL;
     _camera = NULL;
     _widget = NULL;
-//    QWidget* widget1 = addViewWidget( createCamera(0,0,100,100), osgDB::readNodeFile("../LEGO_Creator/OSG/cow.osg") );
-
-//    widget1->show();
-
-//    QVBoxLayout* mainLayout = new QVBoxLayout;
-//    mainLayout->addWidget(widget1);
-//    setLayout(mainLayout);
 
     connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
     _timer.start(10);
 }
-
-//QWidget* ViewerWidget::addViewWidget( osg::Camera* camera, osg::Node* scene ) {
-//    osgViewer::View* view = new osgViewer::View;
-//    view->setCamera( camera );
-//    addView( view );
-
-//    view->setSceneData( scene );
-//    view->addEventHandler( new osgViewer::StatsHandler );
-//    view->setCameraManipulator( new osgGA::TrackballManipulator );
-
-//    osgQt::GraphicsWindowQt* gw = dynamic_cast<osgQt::GraphicsWindowQt*>( camera->getGraphicsContext() );
-//    return gw ? gw->getGLWidget() : NULL;
-//}
 
 ViewerWidget::~ViewerWidget() {
 }
@@ -55,9 +37,8 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
     camera->setGraphicsContext( new osgQt::GraphicsWindowQt(traits.get()) );
 
     camera->setClearColor(color);
-    camera->setViewport( new osg::Viewport(0, 0, traits->width, traits->height) );
-    camera->setProjectionMatrixAsPerspective(
-                30.0f, static_cast<double>(traits->width)/static_cast<double>(traits->height), 1.0f, 10000.0f );
+    camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
+    camera->setProjectionMatrixAsPerspective( 30.0f, static_cast<double>(traits->width)/static_cast<double>(traits->height), 1.0f, 10000.0f);
     return camera.release();
 }
 

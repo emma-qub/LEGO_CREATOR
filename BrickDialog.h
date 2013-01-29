@@ -20,10 +20,12 @@ public:
 
 public slots:
     virtual void setLego(int);
+    virtual void updateMaxWidth(int brickType);
 
 private:
     QSpinBox* _widthSpinBox;
     QSpinBox* _lengthSpinBox;
+    QComboBox* _brickTypeComboBox;
 
 };
 

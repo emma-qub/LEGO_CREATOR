@@ -31,9 +31,15 @@ void BrickGeode::createGeode(void) {
     // Get the brick
     Brick* brick = static_cast<Brick*>(_lego);
 
+    // Get brick type
+    Brick::BrickType brickType = brick->getBrickType();
+
     // Get integer sizes
     int width = brick->getWidth();
     int length = brick->getLength();
+    int height = 1;
+    if (brickType == Brick::classic)
+        height = 3;
 
     // Calculate x max and y max for plots
     double xmin = -(length-1)*Lego::length_unit/2;
@@ -50,12 +56,14 @@ void BrickGeode::createGeode(void) {
     if (!thinw)
         yminb = ymin+Lego::length_unit/2;
 
-    // Add plots iteratively
-    for (int i = 0; i < length; i++) {
-        for (int j = 0; j < width; j++) {
-            double radiusX = xmin + i*distPlot;
-            double radiusY = ymin + j*distPlot;
-            addDrawable(createPlot(radiusX, radiusY, 3));
+    // Add plots iteratively if the brick type is not flat
+    if (brickType != Brick::flat) {
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < width; j++) {
+                double radiusX = xmin + i*distPlot;
+                double radiusY = ymin + j*distPlot;
+                addDrawable(createPlot(radiusX, radiusY, height));
+            }
         }
     }
 
@@ -69,7 +77,7 @@ void BrickGeode::createGeode(void) {
         for (int j = 0; j < width-1; j++) {
             double radiusX = xminb + i*distPlot;
             double radiusY = yminb + j*distPlot;
-            addDrawable(createCylinder(radiusX, radiusY, 3, thin));
+            addDrawable(createCylinder(radiusX, radiusY, height, thin));
         }
     }
 }
@@ -81,10 +89,15 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     // Get brick color
     QColor color = brick->getColor();
 
+    // Get brick type
+    Brick::BrickType brickType = brick->getBrickType();
+
     // Get integer sizes
     int width = brick->getWidth();
     int length = brick->getLength();
-    int height = 3;
+    int height = 1;
+    if (brickType == Brick::classic)
+        height = 3;
 
     // Get real position, according to brick size
     // d : down, u : up, l : left, r : right, f : front, b : back
