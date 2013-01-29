@@ -18,6 +18,8 @@ public:
     void initPreview(void);
     void initDialogs(void);
 
+    void setStyle(void) ;
+
     void createFileMenu(void);
     void createGenerateMenu(void);
     void createHelpMenu(void);

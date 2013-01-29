@@ -1,7 +1,6 @@
 #include "BrickGeode.h"
 
 #include <osg/Geometry>
-#include <osg/ShapeDrawable>
 #include <osg/Material>
 #include <osg/BlendFunc>
 
@@ -205,25 +204,6 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     // Return the brick whithout plot
     return brickGeometry.get();
 }
-
-//osg::ref_ptr<osg::Drawable> BrickGeode::createPlot(double radiusX, double radiusY) const {
-//    // Get the brick
-//    Brick* brick = static_cast<Brick*>(_lego);
-
-//    // Get brick color
-//    QColor color = brick->getColor();
-
-//    // Get integer sizes
-//    int height = 3;
-
-//    // The plots are cylinders that start at the brick bottom and above the brick top
-//    // Since the brick z-middle is 0, the middle of the cylinder equals to the half of the part above the brick
-//    osg::ref_ptr<osg::ShapeDrawable> plot = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(radiusX, radiusY, Lego::plot_top/2), Lego::plot_radius, height*Lego::height_unit+Lego::plot_top));
-
-//    plot->setColor(osg::Vec4(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0));
-
-//    return plot.get();
-//}
 
 BrickGeode* BrickGeode::cloning(void) const {
     return new BrickGeode(*this);

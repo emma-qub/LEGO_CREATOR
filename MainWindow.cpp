@@ -44,6 +44,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Maximize window
     setWindowState(Qt::WindowMaximized);
+
+    // Apply style sheet
+    setStyle();
 }
 
 MainWindow::~MainWindow() {
@@ -118,7 +121,7 @@ void MainWindow::createParamsDock(void) {
     // Create osg viewer widget that displays bricks
     _brickViewer = new ViewerWidget;
     _brickViewer->initView();
-    _brickViewer->changeCamera(_brickViewer->createCamera(0, 0, 100, 100));
+    _brickViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(.0, .0, .0, 1.), 0, 0, 100, 100));
     _brickViewer->changeScene(_scene.get());
     _brickViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -157,7 +160,7 @@ void MainWindow::createScene(void) {
     _sceneFrame->setFixedSize(1150, 750);
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
-    _sceneViewer->changeCamera(_brickViewer->createCamera(0, 0, 100, 100));
+    _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(18.0/255.0, 157.0/255.0, 240.0/255.0, 1.), 0, 0, 100, 100));
     _sceneViewer->changeScene(_scene.get());
     _sceneViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -292,4 +295,49 @@ void MainWindow::createHelpMenu(void) {
     // Add About sub menu
     _aboutAction = helpMenu->addAction("&About");
     _aboutAction->setShortcut(QKeySequence("Alt+F1"));
+}
+
+
+
+/****************
+ * STYLE SHEETS *
+ ****************/
+void MainWindow::setStyle(void) {
+    //_paramsWidget->setStyleSheet("background-image: url(../LEGO_GIT/IMG/tileBrick.png);");
+    //_paramsWidget->setStyleSheet("background: yellow;");
+
+    QString dockWidgetStyle = "";
+    dockWidgetStyle += "QDockWidget { ";
+    dockWidgetStyle += "    font-size: 10pt;";
+    dockWidgetStyle += "    font-weight: bold;";
+    dockWidgetStyle += "    font-style: italic;";
+    dockWidgetStyle += "    font-family: 'KG Lego House';";
+    dockWidgetStyle += "    border: solid 3px black;";
+    dockWidgetStyle += "    color: #ffffff;";
+    dockWidgetStyle += "}";
+
+    QString dockWidgetTitleStyle;
+    dockWidgetTitleStyle += "QDockWidget::title {";
+    dockWidgetTitleStyle += "    text-align: center;";
+    dockWidgetTitleStyle += "    padding: 3px;";
+    dockWidgetTitleStyle += "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
+    dockWidgetTitleStyle += "                stop: 0 #6a6a6a, stop: 0.4 #444444,";
+    dockWidgetTitleStyle += "                stop: 0.5 #272727, stop: 1.0 #4a4a4a);";
+    //dockWidgetTitleStyle += "    background: red;";
+    dockWidgetTitleStyle += "}";
+
+    QString dockWidgetButtonsStyle;
+    dockWidgetButtonsStyle += "QDockWidget {";
+    dockWidgetButtonsStyle += "    titlebar-close-icon: url(\"./icones/closeIcon.png\");";
+    dockWidgetButtonsStyle += "    titlebar-normal-icon: url(\"./icones/reduceIcon.png\");";
+    dockWidgetButtonsStyle += "}";
+    dockWidgetButtonsStyle += "QDockWidget::close-button, QDockWidget::float-button {";
+    dockWidgetButtonsStyle += "    padding: 0px;";
+    dockWidgetButtonsStyle += "}";
+    dockWidgetButtonsStyle += "QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {";
+    dockWidgetButtonsStyle += "    padding: 1px -1px -1px 1px;";
+    dockWidgetButtonsStyle += "}";
+
+    QString style = dockWidgetStyle + dockWidgetTitleStyle + dockWidgetButtonsStyle;
+    this->_paramsDock->setStyleSheet(style);
 }

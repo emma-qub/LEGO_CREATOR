@@ -23,7 +23,7 @@ public:
     virtual ~ViewerWidget();
 
 //    QWidget* addViewWidget(osg::Camera* camera, osg::Node* scene);
-    osg::Camera* createCamera(int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
+    osg::Camera* createCamera(const osg::Vec4 &color, int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
 
     virtual void paintEvent(QPaintEvent*) { frame(); }
 
