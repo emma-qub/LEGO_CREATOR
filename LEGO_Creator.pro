@@ -11,7 +11,10 @@ SOURCES += \
     LegoFactory.cpp \
     Plate.cpp \
     PlateGeode.cpp \
-    PlateDialog.cpp
+    PlateDialog.cpp \
+    Corner.cpp \
+    CornerGeode.cpp \
+    CornerDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -25,7 +28,10 @@ HEADERS += \
     LegoFactory.h \
     Plate.h \
     PlateGeode.h \
-    PlateDialog.h
+    PlateDialog.h \
+    Corner.h \
+    CornerGeode.h \
+    CornerDialog.h
 
 LIBS += \
     -L$OSG/lib \

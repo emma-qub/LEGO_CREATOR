@@ -25,8 +25,6 @@ void BrickGeode::createGeode(void) {
     removeDrawables(0, getDrawableList().size());
     addDrawable(createBrick());
 
-    // Add plots according to the brick dimensions
-
     // Distance between two plot center
     double distPlot = Lego::length_unit;
 

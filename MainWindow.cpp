@@ -3,6 +3,7 @@
 #include "LegoFactory.h"
 #include "BrickDialog.h"
 #include "PlateDialog.h"
+#include "CornerDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -68,6 +69,13 @@ void MainWindow::initFactories(void) {
     //Register PlateDialog
     LegoFactory<PlateDialog, QString>::registerLego(QString("PlateDialog"), new PlateDialog);
 
+    // Register Corner
+    LegoFactory<Corner, QString>::registerLego(QString("Corner"), new Corner);
+    // Register CornerGeode
+    LegoFactory<CornerGeode, QString>::registerLego(QString("CornerGeode"), new CornerGeode);
+    // Register CornerDialog
+    LegoFactory<CornerDialog, QString>::registerLego(QString("CornerDialog"), new CornerDialog);
+
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
@@ -84,6 +92,7 @@ void MainWindow::initPreview(void) {
 }
 
 void MainWindow::initDialogs(void) {
+    // BrickDialog
     if (BrickDialog* brickDialog = dynamic_cast<BrickDialog*>(LegoFactory<BrickDialog, QString>::create("BrickDialog"))) {
         brickDialog->initLego(_currLego);
         brickDialog->initLegoGeode(_currLegoGeode);
@@ -91,10 +100,17 @@ void MainWindow::initDialogs(void) {
     } else
         qDebug() << "Cannot create brickDialog in MainWindow::initDialogs";
 
+    // PlateDialog
     if (PlateDialog* plateDialog = dynamic_cast<PlateDialog*>(LegoFactory<PlateDialog, QString>::create("PlateDialog")))
         _legoDialog << plateDialog;
     else
         qDebug() << "Cannot create plateDialog in MainWindow::initDialogs";
+
+    // CornerDialog
+    if (CornerDialog* cornerDialog = dynamic_cast<CornerDialog*>(LegoFactory<CornerDialog, QString>::create("CornerDialog")))
+        _legoDialog << cornerDialog;
+    else
+        qDebug() << "Cannot create cornerDialog in MainWindow::initDialogs";
 
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
@@ -110,7 +126,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Plate";
+    brickForms << "Brick" << "Plate" << "Corner";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -121,7 +137,7 @@ void MainWindow::createParamsDock(void) {
     // Create osg viewer widget that displays bricks
     _brickViewer = new ViewerWidget;
     _brickViewer->initView();
-    _brickViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(.0, .0, .0, 1.), 0, 0, 100, 100));
+    _brickViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
     _brickViewer->changeScene(_scene.get());
     _brickViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -160,7 +176,7 @@ void MainWindow::createScene(void) {
     _sceneFrame->setFixedSize(1150, 750);
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
-    _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(18.0/255.0, 157.0/255.0, 240.0/255.0, 1.), 0, 0, 100, 100));
+    _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0, 0, 100, 100));
     _sceneViewer->changeScene(_scene.get());
     _sceneViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -212,6 +228,17 @@ void MainWindow::chooseDialog(int dialogIndex) {
         }
         if (!(_currLegoGeode = dynamic_cast<PlateGeode*>(LegoFactory<PlateGeode, QString>::create("PlateGeode"))))
             qDebug() << "Cannot cast in PlateGeode* within MainWindow::chooseDialog";
+        break;
+    case 2:
+        if ((_currLego = dynamic_cast<Corner*>(LegoFactory<Corner, QString>::create("Corner")))) {
+            //CornerDialog* dialog = static_cast<CornerDialog*>(_legoDialog.at(dialogIndex));
+            Corner* lego = static_cast<Corner*>(_currLego);
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Corner* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<CornerGeode*>(LegoFactory<CornerGeode, QString>::create("CornerGeode"))))
+            qDebug() << "Cannot cast in CornerGeode* within MainWindow::chooseDialog";
         break;
     }
 
