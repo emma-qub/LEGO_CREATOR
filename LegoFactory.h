@@ -5,8 +5,6 @@
 #include <QMap>
 #include <QDebug>
 
-
-
 #include "BrickDialog.h"
 
 

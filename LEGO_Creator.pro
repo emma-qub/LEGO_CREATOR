@@ -11,7 +11,10 @@ SOURCES += \
     LegoFactory.cpp \
     Corner.cpp \
     CornerGeode.cpp \
-    CornerDialog.cpp
+    CornerDialog.cpp \
+    Road.cpp \
+    RoadGeode.cpp \
+    RoadDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -25,7 +28,10 @@ HEADERS += \
     LegoFactory.h \
     Corner.h \
     CornerGeode.h \
-    CornerDialog.h
+    CornerDialog.h \
+    Road.h \
+    RoadGeode.h \
+    RoadDialog.h
 
 LIBS += \
     -L$OSG/lib \

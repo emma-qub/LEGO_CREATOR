@@ -46,6 +46,10 @@ BrickDialog::BrickDialog(const BrickDialog& brickDialog) :
     setLayout(mainLayout);
 }
 
+void BrickDialog::reInitComboBox(void) {
+    _brickTypeComboBox->setCurrentIndex(0);
+}
+
 void BrickDialog::setLego(int) {
     if (Brick* brick = dynamic_cast<Brick*>(_lego)) {
         if (BrickGeode* brickGeode = dynamic_cast<BrickGeode*>(_legoGeode)) {

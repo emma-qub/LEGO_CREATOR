@@ -16,6 +16,8 @@ public:
     int getWidth(void) const { return _widthSpinBox->text().toInt(); }
     int getLength(void) const { return _lengthSpinBox->text().toInt(); }
 
+    void reInitComboBox(void);
+
     virtual BrickDialog* cloning(void) const;
 
 public slots:

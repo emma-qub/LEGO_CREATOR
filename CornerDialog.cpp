@@ -25,6 +25,10 @@ CornerDialog::CornerDialog(const CornerDialog& cornerDialog) :
     setLayout(mainLayout);
 }
 
+void CornerDialog::reInitComboBox() {
+    _cornerTypeComboBox->setCurrentIndex(0);
+}
+
 void CornerDialog::setLego(int) {
     if (Corner* corner = dynamic_cast<Corner*>(_lego)) {
         if (CornerGeode* cornerGeode = dynamic_cast<CornerGeode*>(_legoGeode)) {

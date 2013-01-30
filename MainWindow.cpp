@@ -3,6 +3,7 @@
 #include "LegoFactory.h"
 #include "BrickDialog.h"
 #include "CornerDialog.h"
+#include "RoadDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -68,6 +69,13 @@ void MainWindow::initFactories(void) {
     // Register CornerDialog
     LegoFactory<CornerDialog, QString>::registerLego(QString("CornerDialog"), new CornerDialog);
 
+    // Register Road
+    LegoFactory<Road, QString>::registerLego(QString("Road"), new Road);
+    // Register RoadGeode
+    LegoFactory<RoadGeode, QString>::registerLego(QString("RoadGeode"), new RoadGeode);
+    // Register RoadDialog
+    LegoFactory<RoadDialog, QString>::registerLego(QString("RoadDialog"), new RoadDialog);
+
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
@@ -90,13 +98,19 @@ void MainWindow::initDialogs(void) {
         brickDialog->initLegoGeode(_currLegoGeode);
         _legoDialog << brickDialog;
     } else
-        qDebug() << "Cannot create brickDialog in MainWindow::initDialogs";
+        qDebug() << "Cannot create BrickDialog in MainWindow::initDialogs";
 
     // CornerDialog
     if (CornerDialog* cornerDialog = dynamic_cast<CornerDialog*>(LegoFactory<CornerDialog, QString>::create("CornerDialog")))
         _legoDialog << cornerDialog;
     else
-        qDebug() << "Cannot create cornerDialog in MainWindow::initDialogs";
+        qDebug() << "Cannot create CornerDialog in MainWindow::initDialogs";
+
+    // RoadDialog
+    if (RoadDialog* roadDialog = dynamic_cast<RoadDialog*>(LegoFactory<RoadDialog, QString>::create("RoadDialog")))
+        _legoDialog << roadDialog;
+    else
+        qDebug() << "Cannot create RoadDialog in MainWindow::initDialogs";
 
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
@@ -112,7 +126,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner";
+    brickForms << "Brick" << "Corner" << "Road";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -192,6 +206,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
     case 0:
         if ((_currLego = dynamic_cast<Brick*>(LegoFactory<Brick, QString>::create("Brick")))) {
             BrickDialog* dialog = static_cast<BrickDialog*>(_legoDialog.at(dialogIndex));
+            dialog->reInitComboBox();
             Brick* lego = static_cast<Brick*>(_currLego);
             lego->setColor(_legoColor);
             lego->setWidth(dialog->getWidth());
@@ -204,7 +219,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     case 1:
         if ((_currLego = dynamic_cast<Corner*>(LegoFactory<Corner, QString>::create("Corner")))) {
-            //CornerDialog* dialog = static_cast<CornerDialog*>(_legoDialog.at(dialogIndex));
+            CornerDialog* dialog = static_cast<CornerDialog*>(_legoDialog.at(dialogIndex));
+            dialog->reInitComboBox();
             Corner* lego = static_cast<Corner*>(_currLego);
             lego->setColor(_legoColor);
         } else {
@@ -212,6 +228,18 @@ void MainWindow::chooseDialog(int dialogIndex) {
         }
         if (!(_currLegoGeode = dynamic_cast<CornerGeode*>(LegoFactory<CornerGeode, QString>::create("CornerGeode"))))
             qDebug() << "Cannot cast in CornerGeode* within MainWindow::chooseDialog";
+        break;
+    case 2:
+        if ((_currLego = dynamic_cast<Road*>(LegoFactory<Road, QString>::create("Road")))) {
+            RoadDialog* dialog = static_cast<RoadDialog*>(_legoDialog.at(dialogIndex));
+            dialog->reInitComboBox();
+            Road* lego = static_cast<Road*>(_currLego);
+            lego->setColor(QColor(0, 112, 44));
+        } else {
+            qDebug() << "Cannot cast in Road* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<RoadGeode*>(LegoFactory<RoadGeode, QString>::create("RoadGeode"))))
+            qDebug() << "Cannot cast in RoadGeode* within MainWindow::chooseDialog";
         break;
     }
 
