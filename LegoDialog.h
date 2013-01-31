@@ -14,6 +14,7 @@ public:
 
     virtual void initLego(Lego* lego) { _lego = lego; }
     virtual void initLegoGeode(LegoGeode* legoGeode) { _legoGeode = legoGeode; }
+    virtual void reInitComboBox() {}
 
     virtual LegoDialog* cloning(void) const = 0;
 

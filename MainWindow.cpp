@@ -206,7 +206,6 @@ void MainWindow::chooseDialog(int dialogIndex) {
     case 0:
         if ((_currLego = dynamic_cast<Brick*>(LegoFactory<Brick, QString>::create("Brick")))) {
             BrickDialog* dialog = static_cast<BrickDialog*>(_legoDialog.at(dialogIndex));
-            dialog->reInitComboBox();
             Brick* lego = static_cast<Brick*>(_currLego);
             lego->setColor(_legoColor);
             lego->setWidth(dialog->getWidth());
@@ -219,8 +218,6 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     case 1:
         if ((_currLego = dynamic_cast<Corner*>(LegoFactory<Corner, QString>::create("Corner")))) {
-            CornerDialog* dialog = static_cast<CornerDialog*>(_legoDialog.at(dialogIndex));
-            dialog->reInitComboBox();
             Corner* lego = static_cast<Corner*>(_currLego);
             lego->setColor(_legoColor);
         } else {
@@ -231,8 +228,6 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     case 2:
         if ((_currLego = dynamic_cast<Road*>(LegoFactory<Road, QString>::create("Road")))) {
-            RoadDialog* dialog = static_cast<RoadDialog*>(_legoDialog.at(dialogIndex));
-            dialog->reInitComboBox();
             Road* lego = static_cast<Road*>(_currLego);
             lego->setColor(QColor(0, 112, 44));
         } else {
@@ -249,6 +244,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
 
     _legoDialog.at(dialogIndex)->initLego(_currLego);
     _legoDialog.at(dialogIndex)->initLegoGeode(_currLegoGeode.get());
+    _legoDialog.at(dialogIndex)->reInitComboBox();
+
 }
 
 void MainWindow::legoUpdated(LegoGeode* legoGeode) {
