@@ -102,16 +102,16 @@ void RoadGeode::createGeode(void) {
     osg::ref_ptr<osg::Image> img = NULL;
     switch (roadType) {
     case 0:
-        img = osgDB::readImageFile("../LEGO_GIT/IMG/Straightb.png");
+        img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Straightb.png");
         break;
     case 1:
-        img = osgDB::readImageFile("../LEGO_GIT/IMG/Curveb.png");
+        img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Curveb.png");
         break;
     case 2:
-        img = osgDB::readImageFile("../LEGO_GIT/IMG/Intersectionb.png");
+        img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Intersectionb.png");
         break;
     case 3:
-        img = osgDB::readImageFile("../LEGO_GIT/IMG/Crossb.png");
+        img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Crossb.png");
         break;
     }
 

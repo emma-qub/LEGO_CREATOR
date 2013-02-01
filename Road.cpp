@@ -3,6 +3,8 @@
 Road::Road(RoadType roadType, const QColor& color, QObject* parent) :
     Lego(color, parent),
     _roadType(roadType) {
+
+    calculateBoundingBox();
 }
 
 Road::Road(const Road& road) :
@@ -26,6 +28,10 @@ void Road::setRoadType(int index) {
         _roadType = cross;
         break;
     }
+}
+
+void Road::calculateBoundingBox(void) {
+    _boundingBox = BoundingBox(0, 0, 0, 32, 32, 0);
 }
 
 Road* Road::cloning(void) const {

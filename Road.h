@@ -16,6 +16,8 @@ public:
     void setRoadType(RoadType roadType) { _roadType = roadType; }
     void setRoadType(int index);
 
+    virtual void calculateBoundingBox(void);
+
     virtual Road* cloning(void) const;
 
 private:

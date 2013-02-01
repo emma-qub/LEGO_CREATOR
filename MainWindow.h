@@ -31,6 +31,8 @@ public slots:
     void chooseDialog(int dialogIndex);
     void legoUpdated(LegoGeode* legoGeode);
 
+    void createLego(void);
+
 private:
     QTabWidget* _tabs;
 
@@ -43,6 +45,7 @@ private:
 
     QComboBox* _shapeComboBox;
     QPushButton* _colorButton;
+    QPushButton* _createButton;
 
     QAction* _newAction;
     QAction* _openAction;

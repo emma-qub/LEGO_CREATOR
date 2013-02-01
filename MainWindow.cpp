@@ -39,12 +39,14 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
     for (int k = 0; k < _shapeComboBox->count(); k++)
         connect(_legoDialog.at(k), SIGNAL(changedLego(LegoGeode*)), this, SLOT(legoUpdated(LegoGeode*)));
+    connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
+    connect(_createButton, SIGNAL(clicked()), this, SLOT(createLego()));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
 
     // Maximize window
-    setWindowState(Qt::WindowMaximized);
+    //setWindowState(Qt::WindowMaximized);
 
     // Apply style sheet
     setStyle();
@@ -147,7 +149,16 @@ void MainWindow::createParamsDock(void) {
     // Color Button
     _colorButton = new QPushButton("Color", this);
     _colorButton->setFixedWidth(100);
-    connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
+
+    // CreateButton
+    _createButton = new QPushButton("Create", this);
+    _createButton->setFixedWidth(100);
+
+
+    // Buttons Layout
+    QHBoxLayout* buttonsLayout = new QHBoxLayout;
+    buttonsLayout->addWidget(_colorButton);
+    buttonsLayout->addWidget(_createButton);
 
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -156,7 +167,7 @@ void MainWindow::createParamsDock(void) {
     mainLayout->addLayout(shapeLayout);
     for (int k = 0; k < _legoDialog.size(); k++)
         mainLayout->addWidget(_legoDialog.at(k));
-    mainLayout->addWidget(_colorButton);
+    mainLayout->addLayout(buttonsLayout);
     mainLayout->setAlignment(Qt::AlignTop);
 
     // Right Dock's Widget
@@ -253,6 +264,9 @@ void MainWindow::legoUpdated(LegoGeode* legoGeode) {
     _currLego = _currLegoGeode->getLego();
 }
 
+void MainWindow::createLego(void) {
+    _paramsDock->setEnabled(false);
+}
 
 
 // ////////////////////////////////////

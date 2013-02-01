@@ -20,6 +20,8 @@ public:
     void setBrickType(BrickType brickType) { _brickType = brickType; }
     void setBrickType(int index);
 
+    virtual void calculateBoundingBox(void);
+
     virtual Brick* cloning(void) const;
 
     virtual QString whoiam(void) const;

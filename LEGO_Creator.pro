@@ -14,7 +14,9 @@ SOURCES += \
     CornerDialog.cpp \
     Road.cpp \
     RoadGeode.cpp \
-    RoadDialog.cpp
+    RoadDialog.cpp \
+    World.cpp \
+    BoundingBox.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -31,7 +33,9 @@ HEADERS += \
     CornerDialog.h \
     Road.h \
     RoadGeode.h \
-    RoadDialog.h
+    RoadDialog.h \
+    World.h \
+    BoundingBox.h
 
 LIBS += \
     -L$OSG/lib \

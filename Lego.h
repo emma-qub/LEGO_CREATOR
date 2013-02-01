@@ -4,6 +4,8 @@
 #include <QColor>
 #include <QObject>
 
+#include "BoundingBox.h"
+
 // Avoid graphical default
 #define EPS 0.01
 
@@ -16,6 +18,7 @@ public:
 
     virtual QColor getColor(void) const { return _color; }
     virtual void setColor(const QColor& color) { _color = color; }
+    virtual void calculateBoundingBox(void) = 0;
 
     virtual Lego* cloning(void) const = 0;
 
@@ -31,6 +34,8 @@ public:
 
 protected:
     QColor _color;
+    BoundingBox _boundingBox;
+
 };
 
 #endif // LEGO_H
