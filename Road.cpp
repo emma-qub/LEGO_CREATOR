@@ -29,6 +29,9 @@ void Road::setRoadType(int index) {
     case 3:
         _roadType = cross;
         break;
+    case 4:
+        _roadType = none;
+        break;
     }
 }
 

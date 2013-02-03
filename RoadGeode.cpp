@@ -84,11 +84,14 @@ void RoadGeode::createGeode(void) {
     // Create color for up face...
     osg::ref_ptr<osg::Vec4Array> colorsUp = new osg::Vec4Array;
     colorsUp->push_back(osg::Vec4(1.0, 1.0, 1.0, 1.0));
-    roadGeometry->setColorArray(colorsUp);
-    roadGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-    // ... and for down face
     osg::ref_ptr<osg::Vec4Array> colorsDown = new osg::Vec4Array;
     colorsDown->push_back(osg::Vec4(0.0, 112.0/255.0, 44.0/255.0, 1.0));
+    if (roadType != Road::none)
+        roadGeometry->setColorArray(colorsUp);
+    else
+        roadGeometry->setColorArray(colorsDown);
+    roadGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+    // ... and for down face
     downGeometry->setColorArray(colorsDown);
     downGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
@@ -115,18 +118,26 @@ void RoadGeode::createGeode(void) {
     case 3:
         img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Crossb.png");
         break;
+    case 4:
+        img = NULL;
+        break;
     }
 
-    // Set texture
-    osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle(img);
-
-    osg::ref_ptr<osg::TexMat> texMat = new osg::TexMat;
-    texMat->setScaleByTextureRectangleSize(true);
-
-    // Set state
+    // Get state
     osg::ref_ptr<osg::StateSet> state = roadGeometry->getOrCreateStateSet();
-    state->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
-    state->setTextureAttributeAndModes(0, texMat, osg::StateAttribute::ON);
+
+    // If the road exists
+    if (roadType != Road::none) {
+        // Set texture
+        osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle(img);
+
+        osg::ref_ptr<osg::TexMat> texMat = new osg::TexMat;
+        texMat->setScaleByTextureRectangleSize(true);
+
+        // Set state
+        state->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
+        state->setTextureAttributeAndModes(0, texMat, osg::StateAttribute::ON);
+    }
 
     // Turn off light for up face...
     state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
@@ -206,6 +217,13 @@ void RoadGeode::calculatePlots(void) {
             }
         }
         break;
+    case 4:
+        // No road
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 32; j++) {
+                addDrawable(createPlot(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+            }
+        }
     }
 }
 

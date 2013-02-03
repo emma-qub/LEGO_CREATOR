@@ -6,7 +6,7 @@
 class Road : public Lego {
 
 public:
-    enum RoadType { straight, curve, intersection, cross };
+    enum RoadType { straight, curve, intersection, cross, none };
 
     Road(RoadType roadType = straight, const QColor &color = QColor(Qt::red), QObject* parent = 0);
     Road(const Road& road);

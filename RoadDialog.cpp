@@ -10,7 +10,7 @@ RoadDialog::RoadDialog(const RoadDialog& roadDialog) :
     // Road type
     _roadTypeComboBox = new QComboBox(this);
     QStringList roadTypeList;
-    roadTypeList << "Straight" << "Curve" << "Intersection" << "Cross";
+    roadTypeList << "Straight" << "Curve" << "Intersection" << "Cross" << "None";
     _roadTypeComboBox->addItems(roadTypeList);
     QFormLayout* roadTypeLayout = new QFormLayout;
     roadTypeLayout->addRow("Road type:", _roadTypeComboBox);
