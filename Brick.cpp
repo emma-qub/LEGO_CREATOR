@@ -1,5 +1,7 @@
 #include "Brick.h"
 
+#include "QDebug"
+
 Brick::Brick(int width, int length, const QColor &color, BrickType brickType, QObject* parent) :
     Lego(color, parent),
     _width(width),
@@ -15,6 +17,8 @@ Brick::Brick(const Brick& brick) :
     _width = brick._width;
     _length = brick._length;
     _brickType = brick._brickType;
+
+    calculateBoundingBox();
 }
 
 void Brick::setBrickType(int index) {
@@ -43,6 +47,11 @@ void Brick::calculateBoundingBox(void) {
         _boundingBox = BoundingBox(0, 0, 0, _length, _width, 1);
         break;
     }
+
+    qDebug() << "Dans la calculateBoundingBox de Brick";
+    for (int k = 0; k < _boundingBox.getLeftBottomFrontCorner().size(); k++)
+        qDebug() << QString("%1 %2").arg(k).arg(_boundingBox.getLeftBottomFrontCorner().at(k));
+    qDebug() << "Dans la calculateBoundingBox de Brick";
 }
 
 Brick* Brick::cloning(void) const {

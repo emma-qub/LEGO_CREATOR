@@ -19,6 +19,7 @@ public:
     virtual QColor getColor(void) const { return _color; }
     virtual void setColor(const QColor& color) { _color = color; }
     virtual void calculateBoundingBox(void) = 0;
+    BoundingBox getBoundingBox(void) const { return _boundingBox; }
 
     virtual Lego* cloning(void) const = 0;
 
@@ -35,7 +36,6 @@ public:
 protected:
     QColor _color;
     BoundingBox _boundingBox;
-
 };
 
 #endif // LEGO_H

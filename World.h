@@ -9,23 +9,30 @@
 
 #include "LegoGeode.h"
 
-#define MAX_HEIGHT  3//100
-#define MAX_WIDTH  4//1000
-#define MAX_LENGTH 4//1000
-
 class World {
 
 public:
     World();
     virtual ~World(void);
 
+    osg::ref_ptr<osg::Group> getScene(void) const { return _scene.get(); }
+
     bool isBuilding(void) const { return _building; }
 
+    void initBrick(void);
     void fitBrick(void);
     bool canBeFit(void) const;
     void addBrick(LegoGeode* legoGeode);
     void rotation(bool counterClockWise = false);
-    void translation(int x, int y, int z);
+    void translation(double x, double y, double z);
+    void translationXYZ(int x, int y, int z);
+
+    static int minHeight;
+    static int maxHeight;
+    static int minWidth;
+    static int maxWidth;
+    static int minLength;
+    static int maxLength;
 
 private:
     QVector<QVector<QVector<bool> > > _brickPositions;

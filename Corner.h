@@ -22,6 +22,8 @@ public:
 
     virtual Corner* cloning(void) const;
 
+    virtual QString whoiam(void) const;
+
 private:
     CornerType _cornerType;
 };

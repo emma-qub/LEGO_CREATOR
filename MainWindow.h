@@ -5,6 +5,7 @@
 
 #include "ViewerWidget.h"
 #include "LegoDialog.h"
+#include "World.h"
 
 
 class MainWindow : public QMainWindow {
@@ -24,6 +25,7 @@ public:
     void createGenerateMenu(void);
     void createHelpMenu(void);
     void createParamsDock(void);
+    void createMoveDock(void);
     void createScene(void);
 
 public slots:
@@ -32,6 +34,11 @@ public slots:
     void legoUpdated(LegoGeode* legoGeode);
 
     void createLego(void);
+    void fitLego(void);
+
+    void translate(int);
+    void rotateLeft(void);
+    void rotateRight(void);
 
 private:
     QTabWidget* _tabs;
@@ -46,6 +53,17 @@ private:
     QComboBox* _shapeComboBox;
     QPushButton* _colorButton;
     QPushButton* _createButton;
+
+    QWidget* _moveWidget;
+    QDockWidget* _moveDock;
+
+    QSpinBox* _xTransSpinBox;
+    QSpinBox* _yTransSpinBox;
+    QSpinBox* _zTransSpinBox;
+    QPushButton* _leftRotateButton;
+    QPushButton* _rightRotateButton;
+    QPushButton* _fitButton;
+    QPushButton* _deleteButton;
 
     QAction* _newAction;
     QAction* _openAction;
@@ -66,6 +84,8 @@ private:
     Lego* _currLego;
 
     QVector<LegoDialog*> _legoDialog;
+
+    World _world;
 
 };
 

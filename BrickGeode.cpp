@@ -17,7 +17,9 @@ BrickGeode::BrickGeode(Brick* brick) :
 }
 
 BrickGeode::BrickGeode(const BrickGeode& brickGeode) :
-    LegoGeode(brickGeode._lego) {
+    LegoGeode(brickGeode) {
+
+    _lego = brickGeode._lego;
 }
 
 void BrickGeode::createGeode(void) {
@@ -186,7 +188,7 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     for (int k = 1; k < 6; k++)
         colors->push_back(colorVec);
 
-    // Macth color
+    // Match color
     brickGeometry->setColorArray(colors);
     brickGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 

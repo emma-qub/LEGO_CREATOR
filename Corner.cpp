@@ -11,6 +11,8 @@ Corner::Corner(const Corner& corner) :
     Lego(corner) {
 
     _cornerType = corner._cornerType;
+
+    calculateBoundingBox();
 }
 
 void Corner::calculateBoundingBox(void) {
@@ -26,4 +28,8 @@ void Corner::calculateBoundingBox(void) {
 
 Corner* Corner::cloning(void) const {
     return new Corner(*this);
+}
+
+QString Corner::whoiam(void) const {
+    return "I am a Corner";
 }

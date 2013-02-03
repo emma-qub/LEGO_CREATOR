@@ -11,6 +11,8 @@ Road::Road(const Road& road) :
     Lego(road) {
 
     _roadType = road._roadType;
+
+    calculateBoundingBox();
 }
 
 void Road::setRoadType(int index) {
@@ -36,4 +38,8 @@ void Road::calculateBoundingBox(void) {
 
 Road* Road::cloning(void) const {
     return new Road(*this);
+}
+
+QString Road::whoiam(void) const {
+    return "I am a Road";
 }

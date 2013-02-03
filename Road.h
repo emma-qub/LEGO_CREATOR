@@ -20,6 +20,8 @@ public:
 
     virtual Road* cloning(void) const;
 
+    virtual QString whoiam(void) const;
+
 private:
     RoadType _roadType;
 };

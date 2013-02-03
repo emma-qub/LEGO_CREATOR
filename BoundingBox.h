@@ -10,6 +10,7 @@ public:
 
     QVector<int> getLeftBottomFrontCorner(void) const { return _leftBottomFrontCorner; }
     QVector<int> getRightTopBackCorner(void) const { return _rightTopBackCorner; }
+    void setValues(int lBFC_x, int lBFC_y, int lBFC_z, int rTBC_x, int rTBC_y, int rTBC_z);
 
 private:
     QVector<int> _leftBottomFrontCorner;

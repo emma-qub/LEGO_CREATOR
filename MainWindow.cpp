@@ -7,7 +7,8 @@
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
-    _legoColor(Qt::red) {
+    _legoColor(Qt::red),
+    _world() {
 
     // Register in factories
     initFactories();
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Create right dock
     createParamsDock();
+    createMoveDock();
 
     // Create scene
     createScene();
@@ -41,6 +43,12 @@ MainWindow::MainWindow(QWidget* parent) :
         connect(_legoDialog.at(k), SIGNAL(changedLego(LegoGeode*)), this, SLOT(legoUpdated(LegoGeode*)));
     connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
     connect(_createButton, SIGNAL(clicked()), this, SLOT(createLego()));
+    connect(_fitButton, SIGNAL(clicked()), this, SLOT(fitLego()));
+    connect(_xTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
+    connect(_yTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
+    connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
+    connect(_leftRotateButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+    connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
@@ -182,13 +190,87 @@ void MainWindow::createParamsDock(void) {
     _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
 }
 
+void MainWindow::createMoveDock(void) {
+    // Translation according to x
+    _xTransSpinBox = new QSpinBox;
+    _xTransSpinBox->setMinimum(World::minLength);
+    _xTransSpinBox->setMaximum(World::maxLength);
+    _xTransSpinBox->setValue(0);
+
+    // Translation according to y
+    _yTransSpinBox = new QSpinBox;
+    _yTransSpinBox->setMinimum(World::minWidth);
+    _yTransSpinBox->setMaximum(World::maxWidth);
+    _yTransSpinBox->setValue(0);
+
+    // Translation according to z
+    _zTransSpinBox = new QSpinBox;
+    _zTransSpinBox->setMinimum(World::minHeight);
+    _zTransSpinBox->setMaximum(World::maxHeight);
+    _zTransSpinBox->setValue(0);
+
+    QFormLayout* transLayout = new QFormLayout;
+    transLayout->addRow("According to x:", _xTransSpinBox);
+    transLayout->addRow("According to y:", _yTransSpinBox);
+    transLayout->addRow("According to z:", _zTransSpinBox);
+
+    QGroupBox* transGroupBox = new QGroupBox("Translation", this);
+    transGroupBox->setLayout(transLayout);
+
+    // Left Rotation Button
+    _leftRotateButton = new QPushButton("Left", this);
+    _leftRotateButton->setFixedWidth(100);
+
+    // Right Rotation Button
+    _rightRotateButton = new QPushButton("Roght", this);
+    _rightRotateButton->setFixedWidth(100);
+
+    QHBoxLayout* rotationLayout = new QHBoxLayout;
+    rotationLayout->addWidget(_leftRotateButton);
+    rotationLayout->addWidget(_rightRotateButton);
+
+    QGroupBox* rotationGroupBox = new QGroupBox("Rotation", this);
+    rotationGroupBox->setLayout(rotationLayout);
+
+    // Fit Button
+    _fitButton = new QPushButton("Fit", this);
+    _fitButton->setFixedWidth(100);
+
+    // Delete Button
+    _deleteButton = new QPushButton("Delete", this);
+    _deleteButton->setFixedWidth(100);
+
+    QHBoxLayout* buttonsLayout = new QHBoxLayout;
+    buttonsLayout->addWidget(_fitButton);
+    buttonsLayout->addWidget(_deleteButton);
+
+    // Main Layout
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(transGroupBox);
+    mainLayout->addWidget(rotationGroupBox);
+    mainLayout->addLayout(buttonsLayout);
+    mainLayout->setAlignment(Qt::AlignTop);
+
+    // Right Dock's Widget
+    _moveWidget = new QWidget(this);
+    _moveWidget->setLayout(mainLayout);
+
+    // Right Dock
+    _moveDock = new QDockWidget("Move your brick", this);
+    //_moveDock->setFixedSize(250, 500);
+    addDockWidget(Qt::RightDockWidgetArea, _moveDock);
+    _moveDock->setWidget(_moveWidget);
+    _moveDock->setAllowedAreas(Qt::RightDockWidgetArea);
+    _moveDock->setEnabled(false);
+}
+
 void MainWindow::createScene(void) {
     _sceneFrame = new QFrame(this);
     _sceneFrame->setFixedSize(1150, 750);
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
     _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0, 0, 100, 100));
-    _sceneViewer->changeScene(_scene.get());
+    _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
     previewLayout->addWidget(_sceneViewer);
@@ -266,6 +348,33 @@ void MainWindow::legoUpdated(LegoGeode* legoGeode) {
 
 void MainWindow::createLego(void) {
     _paramsDock->setEnabled(false);
+    _moveDock->setEnabled(true);
+
+    _world.addBrick(_currLegoGeode.get());
+
+    // Reinit dialog
+    _xTransSpinBox->setValue(0);
+    _yTransSpinBox->setValue(0);
+    _zTransSpinBox->setValue(0);
+
+    qDebug() << "On sort de createLego";
+}
+
+void MainWindow::fitLego(void) {
+    _moveDock->setEnabled(false);
+    _paramsDock->setEnabled(true);
+}
+
+void MainWindow::translate(int) {
+    _world.translationXYZ(_xTransSpinBox->text().toInt(), _yTransSpinBox->text().toInt(), _zTransSpinBox->text().toInt());
+}
+
+void MainWindow::rotateLeft(void) {
+    _world.rotation(true);
+}
+
+void MainWindow::rotateRight(void) {
+    _world.rotation(false);
 }
 
 
@@ -338,9 +447,9 @@ void MainWindow::createHelpMenu(void) {
 
 
 
-/****************
- * STYLE SHEETS *
- ****************/
+// ////////////////////////////////////
+// STYLE SHEETS
+// ////////////////////////////////////
 void MainWindow::setStyle(void) {
     //_paramsWidget->setStyleSheet("background-image: url(../LEGO_GIT/IMG/tileBrick.png);");
     //_paramsWidget->setStyleSheet("background: yellow;");
@@ -378,5 +487,5 @@ void MainWindow::setStyle(void) {
     dockWidgetButtonsStyle += "}";
 
     QString style = dockWidgetStyle + dockWidgetTitleStyle + dockWidgetButtonsStyle;
-    this->_paramsDock->setStyleSheet(style);
+    setStyleSheet(style);
 }
