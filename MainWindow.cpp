@@ -347,6 +347,8 @@ void MainWindow::legoUpdated(LegoGeode* legoGeode) {
 }
 
 void MainWindow::createLego(void) {
+    _zTransSpinBox->setEnabled(true);
+
     _paramsDock->setEnabled(false);
     _moveDock->setEnabled(true);
 
@@ -357,7 +359,10 @@ void MainWindow::createLego(void) {
     _yTransSpinBox->setValue(0);
     _zTransSpinBox->setValue(0);
 
-    qDebug() << "On sort de createLego";
+    if (dynamic_cast<Road*>(_currLego)) {
+        _zTransSpinBox->setValue(World::minHeight);
+        _zTransSpinBox->setEnabled(false);
+    }
 }
 
 void MainWindow::fitLego(void) {

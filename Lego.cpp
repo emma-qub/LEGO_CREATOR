@@ -21,6 +21,11 @@ Lego::Lego(const Lego& lego) :
     _color = lego._color;
 }
 
+void Lego::translateBoundingBox(double x, double y, double z) {
+    _boundingBox.translateLeftBottomFrontCorner(x, y, z);
+    _boundingBox.translateRightTopBackCorner(x, y, z);
+}
+
 QString Lego::whoiam(void) const {
     return "I am a Lego";
 }

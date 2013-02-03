@@ -47,11 +47,6 @@ void Brick::calculateBoundingBox(void) {
         _boundingBox = BoundingBox(0, 0, 0, _length, _width, 1);
         break;
     }
-
-    qDebug() << "Dans la calculateBoundingBox de Brick";
-    for (int k = 0; k < _boundingBox.getLeftBottomFrontCorner().size(); k++)
-        qDebug() << QString("%1 %2").arg(k).arg(_boundingBox.getLeftBottomFrontCorner().at(k));
-    qDebug() << "Dans la calculateBoundingBox de Brick";
 }
 
 Brick* Brick::cloning(void) const {

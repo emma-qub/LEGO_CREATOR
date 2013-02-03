@@ -12,6 +12,9 @@ public:
     QVector<int> getRightTopBackCorner(void) const { return _rightTopBackCorner; }
     void setValues(int lBFC_x, int lBFC_y, int lBFC_z, int rTBC_x, int rTBC_y, int rTBC_z);
 
+    void translateLeftBottomFrontCorner(int x, int y, int z);
+    void translateRightTopBackCorner(int x, int y, int z);
+
 private:
     QVector<int> _leftBottomFrontCorner;
     QVector<int> _rightTopBackCorner;

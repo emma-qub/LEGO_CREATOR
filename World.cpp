@@ -72,6 +72,8 @@ void World::rotation(bool counterClockWise) {
 }
 
 void World::translationXYZ(int x, int y, int z) {
+    _currLegoGeode->getLego()->translateBoundingBox(x, y, z);
+
     x *= Lego::length_unit;
     y *= Lego::length_unit;
     z *= Lego::height_unit;
