@@ -18,6 +18,9 @@ public:
 private:
     QVector<int> _leftBottomFrontCorner;
     QVector<int> _rightTopBackCorner;
+    int _width;
+    int _length;
+    int _height;
 };
 
 #endif // BOUNDINGBOX_H

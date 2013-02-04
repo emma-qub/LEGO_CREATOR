@@ -60,15 +60,19 @@ void World::addBrick(LegoGeode* legoGeode) {
 }
 
 void World::rotation(bool counterClockWise) {
-    osg::Matrix mat;
+    // Calculate rotation direction
     double direction = 1.0;
     if (counterClockWise)
         direction = -1.0;
 
-    mat.makeTranslate(0, 0, 0);
-    mat.makeRotate(osg::Quat(direction*M_PI/2, osg::Vec3(0, 0, 1)));
+    // Rotate according to direction with z axis
+    osg::Matrix rotate;
+    rotate.makeRotate(osg::Quat(direction*M_PI/2, osg::Vec3(0, 0, 1)));
 
-    _currMatrixTransform->setMatrix(_currMatrixTransform->getMatrix()*mat);
+    // Apply rotation.
+    // NB: rotate * mat -> local rotation
+    //     mat * rotate -> global rotation
+    _currMatrixTransform->setMatrix(rotate*_currMatrixTransform->getMatrix());
 }
 
 void World::translationXYZ(int x, int y, int z) {

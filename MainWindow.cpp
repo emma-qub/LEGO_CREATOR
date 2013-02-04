@@ -222,7 +222,7 @@ void MainWindow::createMoveDock(void) {
     _leftRotateButton->setFixedWidth(100);
 
     // Right Rotation Button
-    _rightRotateButton = new QPushButton("Roght", this);
+    _rightRotateButton = new QPushButton("Right", this);
     _rightRotateButton->setFixedWidth(100);
 
     QHBoxLayout* rotationLayout = new QHBoxLayout;
