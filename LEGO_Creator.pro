@@ -17,7 +17,10 @@ SOURCES += \
     RoadDialog.cpp \
     World.cpp \
     BoundingBox.cpp \
-    GenerateRoadWindow.cpp
+    GenerateRoadWindow.cpp \
+    Slop.cpp \
+    SlopDialog.cpp \
+    SlopGeode.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -37,7 +40,10 @@ HEADERS += \
     RoadDialog.h \
     World.h \
     BoundingBox.h \
-    GenerateRoadWindow.h
+    GenerateRoadWindow.h \
+    Slop.h \
+    SlopDialog.h \
+    SlopGeode.h
 
 LIBS += \
     -L$OSG/lib \

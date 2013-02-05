@@ -41,12 +41,16 @@ void World::initBrick(void) {
     double y = (rTBC.at(1) - lBFC.at(1))/2.0;
     double z = (rTBC.at(2) - lBFC.at(2))/2.0;
 
+    qDebug() << QString("%1 %2 %3").arg(x).arg(y).arg(z);
+
     // Translation
     translation(x, y, z);
 }
 
 void World::addBrick(LegoGeode* legoGeode) {
+    qDebug() << "who i am" << legoGeode->getLego()->whoiam();
     Lego* newLego = legoGeode->getLego()->cloning();
+    qDebug() << "who i am" << newLego->whoiam();
     _currLegoGeode = legoGeode->cloning();
     _currLegoGeode->setLego(newLego);
 
