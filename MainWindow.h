@@ -40,6 +40,8 @@ public slots:
     void rotateLeft(void);
     void rotateRight(void);
 
+    void generateRoad(void);
+
 private:
     QTabWidget* _tabs;
 
@@ -71,6 +73,7 @@ private:
     QAction* _saveAsAction;
     QAction* _quitAction;
 
+    QAction* _generateRoadAction;
     QAction* _generateBuildingAction;
     QAction* _generateHouseAction;
 

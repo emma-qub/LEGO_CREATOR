@@ -1,4 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #include "MainWindow.h"
+#include "GenerateRoadWindow.h"
 
 #include "LegoFactory.h"
 #include "BrickDialog.h"
@@ -49,6 +54,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_leftRotateButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
     connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
+    connect(_generateRoadAction, SIGNAL(triggered()), this, SLOT(generateRoad()));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
@@ -382,6 +388,26 @@ void MainWindow::rotateRight(void) {
     _world.rotation(false);
 }
 
+void MainWindow::generateRoad(void) {
+    GenerateRoadWindow* roadWindow = new GenerateRoadWindow(this);
+
+    if (roadWindow->exec() == QDialog::Accepted) {
+        int width = roadWindow->getWidth();
+        int length = roadWindow->getLength();
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+
+
+//                Road* road = new Road();
+//                RoadGeode* roadGeode = new RoadGeode(road);
+
+//                World.addBrick();
+            }
+        }
+    }
+}
+
 
 // ////////////////////////////////////
 // Create menus
@@ -425,13 +451,17 @@ void MainWindow::createGenerateMenu(void) {
     // Create Generate menu
     QMenu* generateMenu = menuBar()->addMenu("&Generate");
 
+    // Add Generate road sub menu
+    _generateRoadAction = generateMenu->addAction("Generate &road...");
+    _generateRoadAction->setShortcut(QKeySequence("CTRL+SHIFT+R"));
+
     // Add Generate building sub menu
     _generateBuildingAction = generateMenu->addAction("Generate &building...");
-    _generateBuildingAction->setShortcut(QKeySequence("CTRL+B"));
+    _generateBuildingAction->setShortcut(QKeySequence("CTRL+SHIFT+B"));
 
     // Add Generate house sub menu
     _generateHouseAction = generateMenu->addAction("Generate &house...");
-    _generateHouseAction->setShortcut(QKeySequence("CTRL+H"));
+    _generateHouseAction->setShortcut(QKeySequence("CTRL+SHIFT+H"));
 }
 
 void MainWindow::createHelpMenu(void) {

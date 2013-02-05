@@ -33,3 +33,7 @@ void BoundingBox::translateRightTopBackCorner(int x, int y, int z) {
     _rightTopBackCorner[1] = _width + y;
     _rightTopBackCorner[2] = _height + z;
 }
+
+void BoundingBox::rotate(void) {
+
+}

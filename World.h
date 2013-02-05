@@ -35,8 +35,8 @@ public:
     static int maxLength;
 
 private:
-    QVector<QVector<QVector<bool> > > _brickPositions;
-    QVector<QVector<bool> > _roadPositions;
+//    QVector<QVector<QVector<bool> > > _brickPositions;
+//    QVector<QVector<bool> > _roadPositions;
     bool _building;
     osg::ref_ptr<osg::Group> _scene;
     osg::ref_ptr<osg::MatrixTransform> _currMatrixTransform;

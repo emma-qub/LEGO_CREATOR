@@ -15,6 +15,8 @@ public:
     void translateLeftBottomFrontCorner(int x, int y, int z);
     void translateRightTopBackCorner(int x, int y, int z);
 
+    void rotate(void);
+
 private:
     QVector<int> _leftBottomFrontCorner;
     QVector<int> _rightTopBackCorner;

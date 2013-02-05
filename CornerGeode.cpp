@@ -170,6 +170,7 @@ osg::ref_ptr<osg::Drawable> CornerGeode::createCorner(bool isLeftPart) const {
     // Return the corner whithout plot
     return cornerGeometry.get();
 }
+
 CornerGeode* CornerGeode::cloning(void) const {
     return new CornerGeode(*this);
 }

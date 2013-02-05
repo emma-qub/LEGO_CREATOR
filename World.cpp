@@ -12,8 +12,8 @@ int World::minLength = -500;
 int World::maxLength = 500;
 
 World::World() :
-    _brickPositions(QVector<QVector<QVector<bool> > >(maxHeight-minHeight, QVector<QVector<bool> >(maxLength-minLength, QVector<bool>(maxWidth-minWidth, false)))),
-    _roadPositions(QVector<QVector<bool> >(maxLength-minLength, QVector<bool>(maxWidth-minWidth, false))),
+//    _brickPositions(QVector<QVector<QVector<bool> > >(maxHeight-minHeight, QVector<QVector<bool> >(maxLength-minLength, QVector<bool>(maxWidth-minWidth, false)))),
+//    _roadPositions(QVector<QVector<bool> >(maxLength-minLength, QVector<bool>(maxWidth-minWidth, false))),
     _building(false),
     _assemblies(QVector<osg::ref_ptr<osg::Node> >()) {
 
@@ -73,6 +73,9 @@ void World::rotation(bool counterClockWise) {
     // NB: rotate * mat -> local rotation
     //     mat * rotate -> global rotation
     _currMatrixTransform->setMatrix(rotate*_currMatrixTransform->getMatrix());
+
+    // Update bounding box
+    _currLegoGeode->getLego()->getBoundingBox().rotate();
 }
 
 void World::translationXYZ(int x, int y, int z) {
@@ -87,7 +90,7 @@ void World::translationXYZ(int x, int y, int z) {
     osg::Matrix mat = _currMatrixTransform->getMatrix();
     mat.makeTranslate(x, y, z);
 
-    _currMatrixTransform->setMatrix(_currMatrixTransform->getMatrix()*mat);
+    _currMatrixTransform->setMatrix(mat*_currMatrixTransform->getMatrix());
 }
 
 void World::translation(double x, double y, double z) {
