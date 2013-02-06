@@ -9,6 +9,8 @@
 #include "BrickDialog.h"
 #include "CornerDialog.h"
 #include "RoadDialog.h"
+#include "SlopDialog.h"
+#include "CharacterDialog.h"
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -92,6 +94,20 @@ void MainWindow::initFactories(void) {
     // Register RoadDialog
     LegoFactory<RoadDialog, QString>::registerLego(QString("RoadDialog"), new RoadDialog);
 
+    // Register Slop
+    LegoFactory<Slop, QString>::registerLego(QString("Slop"), new Slop);
+    // Register SlopGeode
+    LegoFactory<SlopGeode, QString>::registerLego(QString("SlopGeode"), new SlopGeode);
+    // Register SlopDialog
+    LegoFactory<SlopDialog, QString>::registerLego(QString("SlopDialog"), new SlopDialog);
+
+    // Register Character
+    LegoFactory<Character, QString>::registerLego(QString("Character"), new Character);
+    // Register CharacterGeode
+    LegoFactory<CharacterGeode, QString>::registerLego(QString("CharacterGeode"), new CharacterGeode);
+    // Register CharacterDialog
+    LegoFactory<CharacterDialog, QString>::registerLego(QString("CharacterDialog"), new CharacterDialog);
+
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
@@ -122,11 +138,23 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create CornerDialog in MainWindow::initDialogs";
 
+    // SlopDialog
+    if (SlopDialog* slopDialog = dynamic_cast<SlopDialog*>(LegoFactory<SlopDialog, QString>::create("SlopDialog")))
+        _legoDialog << slopDialog;
+    else
+        qDebug() << "Cannot create SlopDialog in MainWindow::initDialogs";
+
     // RoadDialog
     if (RoadDialog* roadDialog = dynamic_cast<RoadDialog*>(LegoFactory<RoadDialog, QString>::create("RoadDialog")))
         _legoDialog << roadDialog;
     else
         qDebug() << "Cannot create RoadDialog in MainWindow::initDialogs";
+
+    // CharacterDialog
+    if (CharacterDialog* characterDialog = dynamic_cast<CharacterDialog*>(LegoFactory<CharacterDialog, QString>::create("CharacterDialog")))
+        _legoDialog << characterDialog;
+    else
+        qDebug() << "Cannot create CharacterDialog in MainWindow::initDialogs";
 
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
@@ -142,7 +170,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Road";
+    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Character";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -326,6 +354,16 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in CornerGeode* within MainWindow::chooseDialog";
         break;
     case 2:
+        if ((_currLego = dynamic_cast<Slop*>(LegoFactory<Slop, QString>::create("Slop")))) {
+            Slop* lego = static_cast<Slop*>(_currLego);
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Slop* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<SlopGeode*>(LegoFactory<SlopGeode, QString>::create("SlopGeode"))))
+            qDebug() << "Cannot cast in SlopGeode* within MainWindow::chooseDialog";
+        break;
+    case 3:
         if ((_currLego = dynamic_cast<Road*>(LegoFactory<Road, QString>::create("Road")))) {
             Road* lego = static_cast<Road*>(_currLego);
             lego->setColor(QColor(0, 112, 44));
@@ -335,16 +373,39 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<RoadGeode*>(LegoFactory<RoadGeode, QString>::create("RoadGeode"))))
             qDebug() << "Cannot cast in RoadGeode* within MainWindow::chooseDialog";
         break;
+    case 4:
+        if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::create("Character")))) {
+            Character* lego = static_cast<Character*>(_currLego);
+            lego->setColor(QColor(0, 112, 44));
+        } else {
+            qDebug() << "Cannot cast in Character* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<CharacterGeode*>(LegoFactory<CharacterGeode, QString>::create("CharacterGeode"))))
+            qDebug() << "Cannot cast in CharacterGeode* within MainWindow::chooseDialog";
+        break;
     }
 
+    qDebug() << "4.1";
+
     _currLegoGeode->setLego(_currLego);
+    qDebug() << "4.2";
+
     _currLegoGeode->createGeode();
+    qDebug() << "4.3";
+
     _scene->setChild(0, _currLegoGeode.get());
 
+    qDebug() << "4.4";
+
     _legoDialog.at(dialogIndex)->initLego(_currLego);
+    qDebug() << "4.5";
+
     _legoDialog.at(dialogIndex)->initLegoGeode(_currLegoGeode.get());
+    qDebug() << "4.6";
+
     _legoDialog.at(dialogIndex)->reInitComboBox();
 
+    qDebug() << "4.7";
 }
 
 void MainWindow::legoUpdated(LegoGeode* legoGeode) {
@@ -358,7 +419,9 @@ void MainWindow::createLego(void) {
     _paramsDock->setEnabled(false);
     _moveDock->setEnabled(true);
 
+    qDebug() << "1";
     _world.addBrick(_currLegoGeode.get());
+    qDebug() << "2";
 
     // Reinit dialog
     _xTransSpinBox->setValue(0);
@@ -388,24 +451,77 @@ void MainWindow::rotateRight(void) {
     _world.rotation(false);
 }
 
+//void MainWindow::chooseRoad(bool[width][length][4] roadPath) {
+
+//}
+
 void MainWindow::generateRoad(void) {
     GenerateRoadWindow* roadWindow = new GenerateRoadWindow(this);
 
-    if (roadWindow->exec() == QDialog::Accepted) {
-        int width = roadWindow->getWidth();
-        int length = roadWindow->getLength();
+//    if (roadWindow->exec() == QDialog::Accepted) {
+//        int width = roadWindow->getWidth();
+//        int length = roadWindow->getLength();
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < length; j++) {
+//        // 4 sides: left top right bottom; true = road, false = no road.
+//        bool roadPath[width][length][4];
+
+//        for (int i = 0; i < width; i++) {
+//            for (int j = 0; j < length; j++) {
+//                Road* road = new Road;
+
+//                int roadType = round((rand()/(double)RAND_MAX) * 4);
+//                road->setRoadType(roadType);
+
+//                switch (roadType) {
+//                case 0:
+//                    roadPath[i][j][0] = false;
+//                    roadPath[i][j][1] = true;
+//                    roadPath[i][j][2] = false;
+//                    roadPath[i][j][3] = true;
+//                    break;
+//                case 1:
+//                    roadPath[i][j][0] = true;
+//                    roadPath[i][j][1] = false;
+//                    roadPath[i][j][2] = false;
+//                    roadPath[i][j][3] = true;
+//                    break;
+//                case 2:
+//                    roadPath[i][j][0] = false;
+//                    roadPath[i][j][1] = true;
+//                    roadPath[i][j][2] = true;
+//                    roadPath[i][j][3] = true;
+//                    break;
+//                case 3:
+//                    roadPath[i][j][0] = true;
+//                    roadPath[i][j][1] = true;
+//                    roadPath[i][j][2] = true;
+//                    roadPath[i][j][3] = true;
+//                    break;
+//                case 4:
+//                    roadPath[i][j][0] = false;
+//                    roadPath[i][j][1] = false;
+//                    roadPath[i][j][2] = false;
+//                    roadPath[i][j][3] = false;
+//                    break;
+//                }
 
 
-//                Road* road = new Road();
+
 //                RoadGeode* roadGeode = new RoadGeode(road);
 
-//                World.addBrick();
-            }
-        }
-    }
+//                _world.addBrick(roadGeode);
+//                _world.translation(-32*floor(length/2)+16 + 32*i, -32*floor(width/2)+16 + 32*j, -10);
+//            }
+//        }
+
+//        for (int i = 0; i < width; i++) {
+//            for (int j = 0; j < length; j++) {
+//                for (int k = 0; k < 4; k++) {
+//                    qDebug() << QString("%1").arg(roadPath[i][j][k]);
+//                }
+//            }
+//        }
+//    }
 }
 
 

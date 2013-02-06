@@ -1,11 +1,13 @@
 #include "CharacterDialog.h"
 
+#include <QDebug>
+
 CharacterDialog::CharacterDialog(QWidget* parent) :
     LegoDialog(parent) {
 }
 
-CharacterDialog::CharacterDialog(const CharacterDialog& CharacterDialog) :
-    LegoDialog(CharacterDialog) {
+CharacterDialog::CharacterDialog(const CharacterDialog& characterDialog) :
+    LegoDialog(characterDialog) {
 
     // Character type
     _characterTypeComboBox = new QComboBox(this);

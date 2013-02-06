@@ -48,9 +48,7 @@ void World::initBrick(void) {
 }
 
 void World::addBrick(LegoGeode* legoGeode) {
-    qDebug() << "who i am" << legoGeode->getLego()->whoiam();
     Lego* newLego = legoGeode->getLego()->cloning();
-    qDebug() << "who i am" << newLego->whoiam();
     _currLegoGeode = legoGeode->cloning();
     _currLegoGeode->setLego(newLego);
 

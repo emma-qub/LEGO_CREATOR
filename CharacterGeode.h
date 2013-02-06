@@ -9,8 +9,8 @@ class CharacterGeode : public LegoGeode
 {
 public:
     CharacterGeode();
-    CharacterGeode(Character* Character);
-    CharacterGeode(const CharacterGeode& CharacterGeode);
+    CharacterGeode(Character* character);
+    CharacterGeode(const CharacterGeode& characterGeode);
 
     virtual void createGeode(void);
 

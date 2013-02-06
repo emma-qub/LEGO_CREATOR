@@ -12,7 +12,7 @@ class CharacterDialog : public LegoDialog
 
 public:
     CharacterDialog(QWidget* parent = 0);
-    CharacterDialog(const CharacterDialog& CharacterDialog);
+    CharacterDialog(const CharacterDialog& characterDialog);
 
     void reInitComboBox(void);
 
