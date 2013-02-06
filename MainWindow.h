@@ -44,6 +44,8 @@ public slots:
 
     void generateRoad(void);
 
+    void save(void);
+
 private:
     QTabWidget* _tabs;
 
@@ -93,6 +95,8 @@ private:
     World _world;
 
     QVector<QVector<QVector<bool> > > _roadPath;
+
+    QSettings _settings;
 };
 
 #endif // MAINWINDOW_H

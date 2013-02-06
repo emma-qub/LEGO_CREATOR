@@ -12,11 +12,17 @@
 #include "SlopDialog.h"
 #include "CharacterDialog.h"
 
+#include <QSettings>
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _legoColor(Qt::red),
     _world(),
-    _roadPath() {
+    _roadPath(),
+    _settings(QSettings::UserScope, "Perso", "Lego Creator") {
+
+    // Settings to record save path and other
+    _settings.setValue("SavePath", "~/Documents");
 
     // Register in factories
     initFactories();
@@ -51,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent) :
         connect(_legoDialog.at(k), SIGNAL(changedLego(LegoGeode*)), this, SLOT(legoUpdated(LegoGeode*)));
     connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
     connect(_createButton, SIGNAL(clicked()), this, SLOT(createLego()));
+
     connect(_fitButton, SIGNAL(clicked()), this, SLOT(fitLego()));
     connect(_xTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_yTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
@@ -59,10 +66,12 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
     connect(_generateRoadAction, SIGNAL(triggered()), this, SLOT(generateRoad()));
 
+    connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
+
     // Change soft title
     setWindowTitle("LEGO Creator");
 
-    // Maximize window
+    // Maximize window Commented because bugs occured
     //setWindowState(Qt::WindowMaximized);
 
     // Apply style sheet
@@ -300,19 +309,22 @@ void MainWindow::createMoveDock(void) {
 }
 
 void MainWindow::createScene(void) {
+    // Scene frame, contains LEGO bricks
     _sceneFrame = new QFrame(this);
     _sceneFrame->setFixedSize(1150, 750);
+
+    // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
     _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0, 0, 100, 100));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
+
+    // Layout
     QVBoxLayout* previewLayout = new QVBoxLayout;
     previewLayout->addWidget(_sceneViewer);
     _sceneFrame->setLayout(previewLayout);
 }
-
-
 
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
@@ -322,6 +334,7 @@ void MainWindow::browseColor() {
 }
 
 void MainWindow::chooseDialog(int dialogIndex) {
+    // Dialogs are created, but only the current LEGO dialog is  visible
     for (int k = 0; k < _legoDialog.size(); k++) {
         if (k == dialogIndex)
             _legoDialog.at(k)->setVisible(true);
@@ -330,7 +343,10 @@ void MainWindow::chooseDialog(int dialogIndex) {
     }
 
     delete _currLego;
+
+    // Create dialog, according to
     switch (dialogIndex) {
+    // Brick dialog
     case 0:
         if ((_currLego = dynamic_cast<Brick*>(LegoFactory<Brick, QString>::create("Brick")))) {
             BrickDialog* dialog = static_cast<BrickDialog*>(_legoDialog.at(dialogIndex));
@@ -344,6 +360,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<BrickGeode*>(LegoFactory<BrickGeode, QString>::create("BrickGeode"))))
             qDebug() << "Cannot cast in BrickGeode* within MainWindow::chooseDialog";
         break;
+    // Corner dialog
     case 1:
         if ((_currLego = dynamic_cast<Corner*>(LegoFactory<Corner, QString>::create("Corner")))) {
             Corner* lego = static_cast<Corner*>(_currLego);
@@ -354,6 +371,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<CornerGeode*>(LegoFactory<CornerGeode, QString>::create("CornerGeode"))))
             qDebug() << "Cannot cast in CornerGeode* within MainWindow::chooseDialog";
         break;
+    // Slop dialog
     case 2:
         if ((_currLego = dynamic_cast<Slop*>(LegoFactory<Slop, QString>::create("Slop")))) {
             Slop* lego = static_cast<Slop*>(_currLego);
@@ -364,6 +382,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<SlopGeode*>(LegoFactory<SlopGeode, QString>::create("SlopGeode"))))
             qDebug() << "Cannot cast in SlopGeode* within MainWindow::chooseDialog";
         break;
+    // Road dialog
     case 3:
         if ((_currLego = dynamic_cast<Road*>(LegoFactory<Road, QString>::create("Road")))) {
             Road* lego = static_cast<Road*>(_currLego);
@@ -374,6 +393,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<RoadGeode*>(LegoFactory<RoadGeode, QString>::create("RoadGeode"))))
             qDebug() << "Cannot cast in RoadGeode* within MainWindow::chooseDialog";
         break;
+    // Character dialog
     case 4:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::create("Character")))) {
             Character* lego = static_cast<Character*>(_currLego);
@@ -386,33 +406,40 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     }
 
+    // Set current objects
     _currLegoGeode->setLego(_currLego);
     _currLegoGeode->createGeode();
     _scene->setChild(0, _currLegoGeode.get());
 
+    // Initialize current objects
     _legoDialog.at(dialogIndex)->initLego(_currLego);
     _legoDialog.at(dialogIndex)->initLegoGeode(_currLegoGeode.get());
     _legoDialog.at(dialogIndex)->reInitComboBox();
 }
 
 void MainWindow::legoUpdated(LegoGeode* legoGeode) {
+    // Setting new current objects
     _currLegoGeode = legoGeode;
     _currLego = _currLegoGeode->getLego();
 }
 
 void MainWindow::createLego(void) {
+    // z spin box is disabled when roads are created, so first, it has to be enabled again
     _zTransSpinBox->setEnabled(true);
 
+    // When a new brick has been created, users have to fit it before being able to create another one
     _paramsDock->setEnabled(false);
     _moveDock->setEnabled(true);
 
+    // Add brick geode in world
     _world.addBrick(_currLegoGeode.get());
 
-    // Reinit dialog
+    // Reinit dialog, because a new brick is always put at the origin of the scene
     _xTransSpinBox->setValue(0);
     _yTransSpinBox->setValue(0);
     _zTransSpinBox->setValue(0);
 
+    // Check whether the LEGO is a road, and disable z spin box after having set it at minHeight world specification
     if (dynamic_cast<Road*>(_currLego)) {
         _zTransSpinBox->setValue(World::minHeight);
         _zTransSpinBox->setEnabled(false);
@@ -420,31 +447,42 @@ void MainWindow::createLego(void) {
 }
 
 void MainWindow::fitLego(void) {
+    // For the moment, users can fit LEGO wherever they want. So it only disables the move GUI and enables the construction GUI again.
     _moveDock->setEnabled(false);
     _paramsDock->setEnabled(true);
 }
 
 void MainWindow::translate(int) {
+    // As soon as users have change one of the x, y, or z brick coordinate, we translate it
     _world.translationXYZ(_xTransSpinBox->text().toInt(), _yTransSpinBox->text().toInt(), _zTransSpinBox->text().toInt());
 }
 
 void MainWindow::rotateLeft(void) {
+    // Rotate counter clock wise
     _world.rotation(true);
 }
 
 void MainWindow::rotateRight(void) {
+    // Rotate clock wise
     _world.rotation(false);
 }
 
 void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight) {
+    // Create a road part, according to its top and left neighbour.
+    // The algorithm could (might?) be improved
+
+    // The new road
     Road* road = new Road;
 
+    // Road might have to be rotated several times
     int nbRotations = 0;
+    // Road type will be get randomly
     int roadType = -1;
 
+    // There are a road coming from the top and the left
     if (roadTop && roadRight) {
+        // There are four roads possible in this particular configuration
         roadType = round((rand()/(double)RAND_MAX) * 3);
-        qDebug() << QString("Random1 = %1").arg(roadType);
         switch (roadType) {
         case 0:
             road->setRoadType(Road::curve);
@@ -477,9 +515,10 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
             _roadPath[i][j][3] = 1;
             break;
         }
+    // There is only a road coming from the top
     } else if (roadTop && !roadRight) {
+        // There are three roads possible in this particular configuration
         roadType = round((rand()/(double)RAND_MAX) * 2);
-        qDebug() << QString("Random2 = %1").arg(roadType);
         switch (roadType) {
         case 0:
             road->setRoadType(Road::curve);
@@ -504,9 +543,10 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
             _roadPath[i][j][3] = 1;
             break;
         }
+    // There is only a road coming from the left
     } else if (!roadTop && roadRight) {
+        // There are three roads possible in this particular configuration
         roadType = round((rand()/(double)RAND_MAX) * 2);
-        qDebug() << QString("Random3 = %1").arg(roadType);
         switch (roadType) {
         case 0:
             road->setRoadType(Road::curve);
@@ -533,9 +573,10 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
             _roadPath[i][j][3] = 0;
             break;
         }
+    // There is no road coming from the top nor the left
     } else {
         roadType = round((rand()/(double)RAND_MAX));
-        qDebug() << QString("Random4 = %1").arg(roadType);
+        // There are two roads possible in this particular configuration
         switch (roadType) {
         case 0:
             road->setRoadType(Road::curve);
@@ -555,60 +596,79 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
         }
     }
 
+    // Create the road geode thanks to the brand new road
     RoadGeode* roadGeode = new RoadGeode(road);
+
+    // Add brick to the world
     _world.addBrick(roadGeode);
-    _world.translation(-32*floor(length/2)+16 + 32*i, -32*floor(width/2)+16 + 32*j, -10);
+    // Translate the
+    _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)-16 + 32*j, -10);
     for (int k = 0; k < nbRotations; k++)     {
         _world.rotation(true);
     }
 }
 
 void MainWindow::generateRoad(void) {
+    // Call the road dialog to ask users the width and length of their road circuit
     GenerateRoadWindow* roadWindow = new GenerateRoadWindow(this);
 
+    // If users entered OK button
     if (roadWindow->exec() == QDialog::Accepted) {
+        // Get width and length entered by users
         int width = roadWindow->getWidth();
         int length = roadWindow->getLength();
 
         // 4 sides: left top right bottom; true = road, false = no road.
         _roadPath.clear();
+        // Record four bool values, one for each road, in order
         _roadPath = QVector<QVector<QVector<bool> > >(width, QVector<QVector<bool> >(length, QVector <bool>(4, false)));
 
+        // Bool values to know wheter there are roads coming from top and left road
         bool roadTop;
         bool roadLeft;
 
+        // Create road iteratively, from a corner
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < length; j++) {
+                // First road, road may or may not come from top or left
                 if (i == 0 && j == 0) {
                     roadTop = round((rand()/(double)RAND_MAX));
                     roadLeft = round((rand()/(double)RAND_MAX));
+                // On left side, top road coming depends on previous road, road may or may not come from left
                 } else if (i == 0 && j != 0) {
                     roadTop = _roadPath[i][j-1][1];
                     roadLeft = round((rand()/(double)RAND_MAX));
+                // On top side, left road coming depends on left road previously created, road may or may not come from top
                 } else if (i != 0 && j == 0) {
                     roadTop = round((rand()/(double)RAND_MAX));
                     roadLeft = _roadPath[i-1][j][2];
+                // Wherever else, roads coming from top and left depend on previously added roads
                 } else {
                     roadTop = _roadPath[i][j-1][1];
                     roadLeft = _roadPath[i-1][j][2];
                 }
-
-                qDebug() << QString("%1 %2 %3 %4 %5 %6").arg(i).arg(j).arg(width).arg(length).arg(roadTop).arg(roadLeft);
-
+                // Create a random road, according to roads coming or not from top and left
                 chooseRoad(i, j, width, length, roadTop, roadLeft);
-
-            }
-        }
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < length; j++) {
-                for (int k = 0; k < 4; k++) {
-                    qDebug() << QString("%1").arg(_roadPath[i][j][k]);
-                }
-                qDebug() << "\n";
             }
         }
     }
+}
+
+void MainWindow::save(void) {
+//    QString savePath =
+
+//    QString fileName = QFileDialog::getSaveFileName(this, "Save a file", _xmlPath+"/"+_windowTitle, "XML Files (*.xml)");
+//    if (fileName != "") {
+//        _xmlPath = QDir(fileName).absolutePath();
+//        if (fileName.split(".").last() != "xml") {
+//            fileName.append(".xml");
+//        }
+//        _fileName = fileName;
+//        _windowTitle = _fileName.split("/").last();
+//        writeXML();
+//        _saved = true;
+//        _neverSavedBefore = false;
+//    }
 }
 
 
