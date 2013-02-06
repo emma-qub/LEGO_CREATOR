@@ -14,6 +14,8 @@
 
 #include <QSettings>
 
+#include <osgDB/WriteFile>
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _legoColor(Qt::red),
@@ -602,7 +604,7 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
     // Add brick to the world
     _world.addBrick(roadGeode);
     // Translate the
-    _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)-16 + 32*j, -10);
+    _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)+16 + 32*j, -10);
     for (int k = 0; k < nbRotations; k++)     {
         _world.rotation(true);
     }
@@ -655,20 +657,26 @@ void MainWindow::generateRoad(void) {
 }
 
 void MainWindow::save(void) {
-//    QString savePath =
+    // Get the save path, according to last users directory visit
+    QString savePath = _settings.value("SavePath").toString();
 
-//    QString fileName = QFileDialog::getSaveFileName(this, "Save a file", _xmlPath+"/"+_windowTitle, "XML Files (*.xml)");
-//    if (fileName != "") {
-//        _xmlPath = QDir(fileName).absolutePath();
-//        if (fileName.split(".").last() != "xml") {
-//            fileName.append(".xml");
-//        }
-//        _fileName = fileName;
-//        _windowTitle = _fileName.split("/").last();
-//        writeXML();
-//        _saved = true;
-//        _neverSavedBefore = false;
-//    }
+    // Pop up to ask user where they want to save their file
+    QString fileName = QFileDialog::getSaveFileName(this, "Save your construction", savePath+"/untitled.osg", "OSG Files (*.osg)");
+
+    // If users have not canceled
+    if (fileName != "") {
+        // Get the directory in order to record it and open it directly next time users want to save
+        _settings.setValue("SavePath", QDir(fileName).absolutePath());
+        // If users missed to specify .osg at the end, we do for them because we are so nice!
+        if (fileName.split(".").last() != "osg") {
+            fileName.append(".osg");
+        }
+        // Time to really save the osg file
+        if (osgDB::writeNodeFile(*(_scene.get()), fileName.toStdString()))
+            QMessageBox::information(this, "Save", "Your construction is safe!");
+        else
+            QMessageBox::critical(this, "Save", "An error occured while tempting to save your construction. =(\nPlease retry (crossing fingers).");
+    }
 }
 
 
