@@ -20,7 +20,10 @@ SOURCES += \
     GenerateRoadWindow.cpp \
     Slop.cpp \
     SlopDialog.cpp \
-    SlopGeode.cpp
+    SlopGeode.cpp \
+    Character.cpp \
+    CharacterDialog.cpp \
+    CharacterGeode.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -43,7 +46,10 @@ HEADERS += \
     GenerateRoadWindow.h \
     Slop.h \
     SlopDialog.h \
-    SlopGeode.h
+    SlopGeode.h \
+    Character.h \
+    CharacterDialog.h \
+    CharacterGeode.h
 
 LIBS += \
     -L$OSG/lib \
@@ -52,6 +58,7 @@ LIBS += \
     -losgGA \
     -losgDB \
     -losgViewer \
+    -lOpenThreads \
     #-losgTerrain \
     -L
 
