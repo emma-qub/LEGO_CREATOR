@@ -10,7 +10,7 @@ SlopDialog::SlopDialog(const SlopDialog& slopDialog) :
     // Slop type
     _slopTypeComboBox = new QComboBox(this);
     QStringList slopTypeList;
-    slopTypeList << "Simple" << "Renforce";
+    slopTypeList << "Renforce" << "Simple";
     _slopTypeComboBox->addItems(slopTypeList);
     QFormLayout* slopTypeLayout = new QFormLayout;
     slopTypeLayout->addRow("Slop type:", _slopTypeComboBox);
@@ -18,7 +18,7 @@ SlopDialog::SlopDialog(const SlopDialog& slopDialog) :
     // Slop width
     _widthSpinBox = new QSpinBox(this);
     _widthSpinBox->setMinimum(1);
-    _widthSpinBox->setMaximum(3);
+    _widthSpinBox->setMaximum(2);
     _widthSpinBox->setValue(1);
     QFormLayout* widthLayout = new QFormLayout;
     widthLayout->addRow("Width", _widthSpinBox);

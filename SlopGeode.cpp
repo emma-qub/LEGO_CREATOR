@@ -20,7 +20,9 @@ SlopGeode::SlopGeode(Slop* slop) :
 }
 
 SlopGeode::SlopGeode(const SlopGeode& slopGeode) :
-    LegoGeode(slopGeode._lego) {
+    LegoGeode(slopGeode) {
+
+    _lego = slopGeode._lego;
 }
 
 void SlopGeode::createGeode(void) {

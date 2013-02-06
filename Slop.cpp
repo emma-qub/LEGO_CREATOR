@@ -2,18 +2,18 @@
 
 #include <QDebug>
 
-Slop::Slop(int length, int width, const QColor &color, SlopType slopType, QObject* parent) :
+Slop::Slop(int width, int length, const QColor &color, SlopType slopType, QObject* parent) :
     Lego(color, parent),
-    _length(length),
     _width(width),
+    _length(length),
     _slopType(slopType) {
 
     calculateBoundingBox();
 }
 
 Slop::Slop(const Slop& slop) : Lego(slop) {
-    _length = slop._length;
     _width = slop._width;
+    _length = slop._length;
     _slopType = slop._slopType;
 
     calculateBoundingBox();
@@ -28,7 +28,5 @@ QString Slop::whoiam(void) const {
 }
 
 void Slop::calculateBoundingBox(void) {
-    qDebug() << "Bouh";
-
     _boundingBox = BoundingBox(0, 0, 0, _length, _width, 3);
 }
