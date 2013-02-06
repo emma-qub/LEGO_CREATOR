@@ -19,7 +19,7 @@ public:
     void initPreview(void);
     void initDialogs(void);
 
-    void setStyle(void) ;
+    void setStyle(void);
 
     void createFileMenu(void);
     void createGenerateMenu(void);
@@ -27,6 +27,8 @@ public:
     void createParamsDock(void);
     void createMoveDock(void);
     void createScene(void);
+
+    void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 
 public slots:
     void browseColor(void);
@@ -90,6 +92,7 @@ private:
 
     World _world;
 
+    QVector<QVector<QVector<bool> > > _roadPath;
 };
 
 #endif // MAINWINDOW_H

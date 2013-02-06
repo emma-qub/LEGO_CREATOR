@@ -15,7 +15,8 @@
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _legoColor(Qt::red),
-    _world() {
+    _world(),
+    _roadPath() {
 
     // Register in factories
     initFactories();
@@ -385,27 +386,13 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     }
 
-    qDebug() << "4.1";
-
     _currLegoGeode->setLego(_currLego);
-    qDebug() << "4.2";
-
     _currLegoGeode->createGeode();
-    qDebug() << "4.3";
-
     _scene->setChild(0, _currLegoGeode.get());
 
-    qDebug() << "4.4";
-
     _legoDialog.at(dialogIndex)->initLego(_currLego);
-    qDebug() << "4.5";
-
     _legoDialog.at(dialogIndex)->initLegoGeode(_currLegoGeode.get());
-    qDebug() << "4.6";
-
     _legoDialog.at(dialogIndex)->reInitComboBox();
-
-    qDebug() << "4.7";
 }
 
 void MainWindow::legoUpdated(LegoGeode* legoGeode) {
@@ -419,9 +406,7 @@ void MainWindow::createLego(void) {
     _paramsDock->setEnabled(false);
     _moveDock->setEnabled(true);
 
-    qDebug() << "1";
     _world.addBrick(_currLegoGeode.get());
-    qDebug() << "2";
 
     // Reinit dialog
     _xTransSpinBox->setValue(0);
@@ -451,77 +436,179 @@ void MainWindow::rotateRight(void) {
     _world.rotation(false);
 }
 
-//void MainWindow::chooseRoad(bool[width][length][4] roadPath) {
+void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight) {
+    Road* road = new Road;
 
-//}
+    int nbRotations = 0;
+    int roadType = -1;
+
+    if (roadTop && roadRight) {
+        roadType = round((rand()/(double)RAND_MAX) * 3);
+        qDebug() << QString("Random1 = %1").arg(roadType);
+        switch (roadType) {
+        case 0:
+            road->setRoadType(Road::curve);
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 0;
+            _roadPath[i][j][2] = 0;
+            _roadPath[i][j][3] = 1;
+            break;
+        case 1:
+            road->setRoadType(Road::intersection);
+            nbRotations = 2;
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 0;
+            _roadPath[i][j][3] = 1;
+            break;
+        case 2:
+            road->setRoadType(Road::intersection);
+            nbRotations = 1;
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 0;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 1;
+            break;
+        case 3:
+            road->setRoadType(Road::cross);
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 1;
+            break;
+        }
+    } else if (roadTop && !roadRight) {
+        roadType = round((rand()/(double)RAND_MAX) * 2);
+        qDebug() << QString("Random2 = %1").arg(roadType);
+        switch (roadType) {
+        case 0:
+            road->setRoadType(Road::curve);
+            nbRotations = 3;
+            _roadPath[i][j][0] = 0;
+            _roadPath[i][j][1] = 0;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 1;
+            break;
+        case 1:
+            road->setRoadType(Road::straight);
+            _roadPath[i][j][0] = 0;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 0;
+            _roadPath[i][j][3] = 1;
+            break;
+        case 2:
+            road->setRoadType(Road::intersection);
+            _roadPath[i][j][0] = 0;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 1;
+            break;
+        }
+    } else if (!roadTop && roadRight) {
+        roadType = round((rand()/(double)RAND_MAX) * 2);
+        qDebug() << QString("Random3 = %1").arg(roadType);
+        switch (roadType) {
+        case 0:
+            road->setRoadType(Road::curve);
+            nbRotations = 1;
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 0;
+            _roadPath[i][j][3] = 0;
+            break;
+        case 1:
+            road->setRoadType(Road::straight);
+            nbRotations = 1;
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 0;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 0;
+            break;
+        case 2:
+            road->setRoadType(Road::intersection);
+            nbRotations = 3;
+            _roadPath[i][j][0] = 1;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 0;
+            break;
+        }
+    } else {
+        roadType = round((rand()/(double)RAND_MAX));
+        qDebug() << QString("Random4 = %1").arg(roadType);
+        switch (roadType) {
+        case 0:
+            road->setRoadType(Road::curve);
+            nbRotations = 2;
+            _roadPath[i][j][0] = 0;
+            _roadPath[i][j][1] = 1;
+            _roadPath[i][j][2] = 1;
+            _roadPath[i][j][3] = 0;
+            break;
+        case 1:
+            road->setRoadType(Road::none);
+            _roadPath[i][j][0] = 0;
+            _roadPath[i][j][1] = 0;
+            _roadPath[i][j][2] = 0;
+            _roadPath[i][j][3] = 0;
+            break;
+        }
+    }
+
+    RoadGeode* roadGeode = new RoadGeode(road);
+    _world.addBrick(roadGeode);
+    _world.translation(-32*floor(length/2)+16 + 32*i, -32*floor(width/2)+16 + 32*j, -10);
+    for (int k = 0; k < nbRotations; k++)     {
+        _world.rotation(true);
+    }
+}
 
 void MainWindow::generateRoad(void) {
     GenerateRoadWindow* roadWindow = new GenerateRoadWindow(this);
 
-//    if (roadWindow->exec() == QDialog::Accepted) {
-//        int width = roadWindow->getWidth();
-//        int length = roadWindow->getLength();
+    if (roadWindow->exec() == QDialog::Accepted) {
+        int width = roadWindow->getWidth();
+        int length = roadWindow->getLength();
 
-//        // 4 sides: left top right bottom; true = road, false = no road.
-//        bool roadPath[width][length][4];
+        // 4 sides: left top right bottom; true = road, false = no road.
+        _roadPath.clear();
+        _roadPath = QVector<QVector<QVector<bool> > >(width, QVector<QVector<bool> >(length, QVector <bool>(4, false)));
 
-//        for (int i = 0; i < width; i++) {
-//            for (int j = 0; j < length; j++) {
-//                Road* road = new Road;
+        bool roadTop;
+        bool roadLeft;
 
-//                int roadType = round((rand()/(double)RAND_MAX) * 4);
-//                road->setRoadType(roadType);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                if (i == 0 && j == 0) {
+                    roadTop = round((rand()/(double)RAND_MAX));
+                    roadLeft = round((rand()/(double)RAND_MAX));
+                } else if (i == 0 && j != 0) {
+                    roadTop = _roadPath[i][j-1][1];
+                    roadLeft = round((rand()/(double)RAND_MAX));
+                } else if (i != 0 && j == 0) {
+                    roadTop = round((rand()/(double)RAND_MAX));
+                    roadLeft = _roadPath[i-1][j][2];
+                } else {
+                    roadTop = _roadPath[i][j-1][1];
+                    roadLeft = _roadPath[i-1][j][2];
+                }
 
-//                switch (roadType) {
-//                case 0:
-//                    roadPath[i][j][0] = false;
-//                    roadPath[i][j][1] = true;
-//                    roadPath[i][j][2] = false;
-//                    roadPath[i][j][3] = true;
-//                    break;
-//                case 1:
-//                    roadPath[i][j][0] = true;
-//                    roadPath[i][j][1] = false;
-//                    roadPath[i][j][2] = false;
-//                    roadPath[i][j][3] = true;
-//                    break;
-//                case 2:
-//                    roadPath[i][j][0] = false;
-//                    roadPath[i][j][1] = true;
-//                    roadPath[i][j][2] = true;
-//                    roadPath[i][j][3] = true;
-//                    break;
-//                case 3:
-//                    roadPath[i][j][0] = true;
-//                    roadPath[i][j][1] = true;
-//                    roadPath[i][j][2] = true;
-//                    roadPath[i][j][3] = true;
-//                    break;
-//                case 4:
-//                    roadPath[i][j][0] = false;
-//                    roadPath[i][j][1] = false;
-//                    roadPath[i][j][2] = false;
-//                    roadPath[i][j][3] = false;
-//                    break;
-//                }
+                qDebug() << QString("%1 %2 %3 %4 %5 %6").arg(i).arg(j).arg(width).arg(length).arg(roadTop).arg(roadLeft);
 
+                chooseRoad(i, j, width, length, roadTop, roadLeft);
 
+            }
+        }
 
-//                RoadGeode* roadGeode = new RoadGeode(road);
-
-//                _world.addBrick(roadGeode);
-//                _world.translation(-32*floor(length/2)+16 + 32*i, -32*floor(width/2)+16 + 32*j, -10);
-//            }
-//        }
-
-//        for (int i = 0; i < width; i++) {
-//            for (int j = 0; j < length; j++) {
-//                for (int k = 0; k < 4; k++) {
-//                    qDebug() << QString("%1").arg(roadPath[i][j][k]);
-//                }
-//            }
-//        }
-//    }
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                for (int k = 0; k < 4; k++) {
+                    qDebug() << QString("%1").arg(_roadPath[i][j][k]);
+                }
+                qDebug() << "\n";
+            }
+        }
+    }
 }
 
 
