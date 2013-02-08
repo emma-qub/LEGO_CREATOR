@@ -44,7 +44,14 @@ public slots:
 
     void generateRoad(void);
 
-    void save(void);
+    void eraseScene(void);
+    void writeFile(const QString& fileName);
+
+    void newFile(void);
+    void openFile(void);
+    void saveFile(void);
+    void saveAsFile(void);
+    void quitSoft(void);
 
 private:
     QTabWidget* _tabs;
@@ -97,6 +104,9 @@ private:
     QVector<QVector<QVector<bool> > > _roadPath;
 
     QSettings _settings;
+
+    bool _alreadySaved;
+    bool _saved;
 };
 
 #endif // MAINWINDOW_H

@@ -21,10 +21,13 @@ MainWindow::MainWindow(QWidget* parent) :
     _legoColor(Qt::red),
     _world(),
     _roadPath(),
-    _settings(QSettings::UserScope, "Perso", "Lego Creator") {
+    _settings(QSettings::UserScope, "Perso", "Lego Creator"),
+    _alreadySaved(false),
+    _saved(true) {
 
     // Settings to record save path and other
     _settings.setValue("SavePath", "~/Documents");
+    _settings.setValue("FileName", "");
 
     // Register in factories
     initFactories();
@@ -66,7 +69,6 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_leftRotateButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
     connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
-    connect(_generateRoadAction, SIGNAL(triggered()), this, SLOT(generateRoad()));
 
     connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
@@ -423,6 +425,9 @@ void MainWindow::legoUpdated(LegoGeode* legoGeode) {
     // Setting new current objects
     _currLegoGeode = legoGeode;
     _currLego = _currLegoGeode->getLego();
+
+    // The file has changed
+    _saved = false;
 }
 
 void MainWindow::createLego(void) {
@@ -446,22 +451,34 @@ void MainWindow::createLego(void) {
         _zTransSpinBox->setValue(World::minHeight);
         _zTransSpinBox->setEnabled(false);
     }
+
+    // The scene has changed
+    _saved = false;
 }
 
 void MainWindow::fitLego(void) {
     // For the moment, users can fit LEGO wherever they want. So it only disables the move GUI and enables the construction GUI again.
     _moveDock->setEnabled(false);
     _paramsDock->setEnabled(true);
+
+    // The file has changed
+    _saved = false;
 }
 
 void MainWindow::translate(int) {
     // As soon as users have change one of the x, y, or z brick coordinate, we translate it
     _world.translationXYZ(_xTransSpinBox->text().toInt(), _yTransSpinBox->text().toInt(), _zTransSpinBox->text().toInt());
+
+    // The file has changed
+    _saved = false;
 }
 
 void MainWindow::rotateLeft(void) {
     // Rotate counter clock wise
     _world.rotation(true);
+
+    // The file has changed
+    _saved = false;
 }
 
 void MainWindow::rotateRight(void) {
@@ -654,9 +671,104 @@ void MainWindow::generateRoad(void) {
             }
         }
     }
+
+    // The file has changed
+    _saved = false;
 }
 
-void MainWindow::save(void) {
+void MainWindow::eraseScene(void) {
+    // remove everything from scene
+    _scene->removeChildren(0, _scene->getNumChildren());
+    _saved = true;
+    _alreadySaved = false;
+}
+
+void MainWindow::writeFile(const QString& fileName) {
+    // Try to write the scene in fileName file
+    if (osgDB::writeNodeFile(*(_scene.get()), fileName.toStdString())) {
+        QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
+        _saved = true;
+        _alreadySaved = true;
+    // Fail! Users can retry or not
+    } else {
+        int ret = QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction. =(\nPlease retry (crossing fingers), or abort if you want to give up.", QMessageBox::Retry | QMessageBox::Abort, QMessageBox::Retry);
+        // If users are fighters
+        if (ret == QMessageBox::Retry)
+            writeFile(fileName);
+        // If users are loosers
+        _saved = false;
+        _alreadySaved = false;
+    }
+}
+
+void MainWindow::newFile(void) {
+    // File modified?
+    if (!_saved) {
+        int ret = QMessageBox::warning(this, "The document has been modified", "Do you want to save your changes?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+
+        switch (ret) {
+        // Users want to save
+        case 0:
+            saveFile();
+            eraseScene();
+            break;
+        // Users don't give a ****
+        case 1:
+            eraseScene();
+            break;
+        // Users change their mind
+        case 2:
+            break;
+        }
+    } else {
+        // File saved? let's go!
+        eraseScene();
+    }
+}
+
+void MainWindow::openFile(void) {
+    // Get open path
+    QString openPath = _settings.value("SavePath").toString();
+
+    // Open dialog because users know what they want to open
+    QString fileName = QFileDialog::getOpenFileName(this, "Open object", openPath);
+
+    // Future node, or not
+    osg::ref_ptr<osg::Node> newLego = NULL;
+
+    // If users didn't cancel
+    if (fileName != "") {
+        // Read file to create a node
+        newLego = osgDB::readNodeFile(fileName.toStdString());
+        // If the new Lego has been correctly got
+        if (newLego) {
+            _scene->addChild(newLego);
+            _saved = false;
+        // Else, users have no luck, but they can retry!
+        } else {
+            int ret = QMessageBox::critical(this, "Your file could not have been read", "An error occured while tempting to open your file. =(\nPlease retry (crossing fingers), or abort if you want to give up.", QMessageBox::Retry | QMessageBox::Abort, QMessageBox::Retry);
+            // If users are fighters
+            if (ret == QMessageBox::Retry)
+                openFile();
+        }
+    }
+}
+
+void MainWindow::saveFile(void) {
+    // First time users save?
+    if (!_alreadySaved)
+        saveAsFile();
+    // File modified?
+    else if (!_saved) {
+        // Get the current file name, recorded whithin QSettings
+        QString fileName = _settings.value("FileName").toString();
+
+        // Time to really save the osg file
+        writeFile(fileName);
+    }
+}
+
+void MainWindow::saveAsFile(void) {
     // Get the save path, according to last users directory visit
     QString savePath = _settings.value("SavePath").toString();
 
@@ -671,13 +783,37 @@ void MainWindow::save(void) {
         if (fileName.split(".").last() != "osg") {
             fileName.append(".osg");
         }
+        _settings.setValue("FileName", fileName);
         // Time to really save the osg file
-        if (osgDB::writeNodeFile(*(_scene.get()), fileName.toStdString()))
-            QMessageBox::information(this, "Save", "Your construction is safe!");
-        else
-            QMessageBox::critical(this, "Save", "An error occured while tempting to save your construction. =(\nPlease retry (crossing fingers).");
+        writeFile(fileName);
     }
 }
+
+void MainWindow::quitSoft(void) {
+    // File modified?
+    if (!_saved) {
+        int ret = QMessageBox::warning(this, "The document has been modified", "Do you want to save your changes?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+
+        switch (ret) {
+        // Users want to save
+        case 0:
+            saveFile();
+            qApp->quit();
+            break;
+        // Users don't give a ****
+        case 1:
+            qApp->quit();
+            break;
+        // Users change their mind
+        case 2:
+            break;
+        }
+    } else {
+        // File saved? let's go!
+        qApp->quit();
+    }
+}
+
 
 
 // ////////////////////////////////////
@@ -691,6 +827,8 @@ void MainWindow::createFileMenu(void) {
     // Add New sub menu
     _newAction = fileMenu->addAction("&New...");
     _newAction->setShortcut(QKeySequence::New);
+    // Connect action
+    connect(_newAction, SIGNAL(triggered()), this, SLOT(newFile()));
 
     // Add separator
     fileMenu->addSeparator();
@@ -698,6 +836,8 @@ void MainWindow::createFileMenu(void) {
     // Add Open sub menu
     _openAction = fileMenu->addAction("&Open...");
     _openAction->setShortcut(QKeySequence::Open);
+    // Connect action
+    connect(_openAction, SIGNAL(triggered()), this, SLOT(openFile()));
 
     // Add separator
     fileMenu->addSeparator();
@@ -705,10 +845,14 @@ void MainWindow::createFileMenu(void) {
     // Add Save sub menu
     _saveAction = fileMenu->addAction("&Save");
     _saveAction->setShortcut(QKeySequence::Save);
+    // Connect action
+    connect(_saveAction, SIGNAL(triggered()), this, SLOT(saveFile()));
 
     // Add Save as sub menu
     _saveAsAction = fileMenu->addAction("Save &as...");
     _saveAsAction->setShortcut(QKeySequence::SaveAs);
+    // Connect action
+    connect(_saveAction, SIGNAL(triggered()), this, SLOT(saveAsFile()));
 
     // Add separator
     fileMenu->addSeparator();
@@ -716,6 +860,8 @@ void MainWindow::createFileMenu(void) {
     // Add Quit sub menu
     _quitAction = fileMenu->addAction("&Quit");
     _quitAction->setShortcut(QKeySequence::Quit);
+    // Connect action
+    connect(_quitAction, SIGNAL(triggered()), this, SLOT(quitSoft()));
 }
 
 void MainWindow::createGenerateMenu(void) {
@@ -725,6 +871,8 @@ void MainWindow::createGenerateMenu(void) {
     // Add Generate road sub menu
     _generateRoadAction = generateMenu->addAction("Generate &road...");
     _generateRoadAction->setShortcut(QKeySequence("CTRL+SHIFT+R"));
+    // Connect action
+    connect(_generateRoadAction, SIGNAL(triggered()), this, SLOT(generateRoad()));
 
     // Add Generate building sub menu
     _generateBuildingAction = generateMenu->addAction("Generate &building...");
