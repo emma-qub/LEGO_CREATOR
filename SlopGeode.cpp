@@ -26,6 +26,8 @@ SlopGeode::SlopGeode(const SlopGeode& slopGeode) :
 }
 
 void SlopGeode::createGeode(void) {
+    removeChildren(0, getNumChildren());
+
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
 

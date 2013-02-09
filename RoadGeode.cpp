@@ -25,6 +25,8 @@ RoadGeode::RoadGeode(const RoadGeode& roadGeode) :
 }
 
 void RoadGeode::createGeode(void) {
+    removeChildren(0, getNumChildren());
+
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
 

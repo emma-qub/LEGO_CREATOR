@@ -20,11 +20,10 @@ WindowGeode::WindowGeode(const WindowGeode& windowGeode) :
 }
 
 void WindowGeode::createGeode(void) {
+    removeChildren(0, getNumChildren());
+
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
-
-    // Add the brick basis
-    geode->removeDrawables(0, geode->getDrawableList().size());
     createWindow();
 
     // Distance between two plot center

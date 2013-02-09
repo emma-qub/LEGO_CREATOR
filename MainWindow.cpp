@@ -725,7 +725,7 @@ void MainWindow::generateRoad(void) {
 }
 
 void MainWindow::generateHouse(void) {
-    //osg::ref_ptr<osg::Group> = osgDB::readNodeFile();
+
 }
 
 void MainWindow::eraseScene(void) {

@@ -21,11 +21,11 @@ BrickGeode::BrickGeode(const BrickGeode& brickGeode) :
 }
 
 void BrickGeode::createGeode(void) {
+    // Add the brick basis
+    removeChildren(0, getNumChildren());
+
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
-
-    // Add the brick basis
-    geode->removeDrawables(0, geode->getDrawableList().size());
     geode->addDrawable(createBrick());
 
     // Distance between two plot center

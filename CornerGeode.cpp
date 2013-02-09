@@ -21,11 +21,11 @@ CornerGeode::CornerGeode(const CornerGeode& cornerGeode) :
 }
 
 void CornerGeode::createGeode(void) {
+    // Add the corner basis
+    removeChildren(0, getNumChildren());
+
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
-
-    // Add the corner basis
-    geode->removeDrawables(0, geode->getDrawableList().size());
     geode->addDrawable(createCorner(true));
     geode->addDrawable(createCorner(false));
 
