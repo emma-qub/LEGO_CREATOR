@@ -10,7 +10,7 @@ SlopDialog::SlopDialog(const SlopDialog& slopDialog) :
     // Slop type
     _slopTypeComboBox = new QComboBox(this);
     QStringList slopTypeList;
-    slopTypeList << "Renforce" << "Simple";
+    slopTypeList << "Simple" << "Renforce" << "roof";
     _slopTypeComboBox->addItems(slopTypeList);
     QFormLayout* slopTypeLayout = new QFormLayout;
     slopTypeLayout->addRow("Slop type:", _slopTypeComboBox);

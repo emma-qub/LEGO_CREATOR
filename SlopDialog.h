@@ -25,7 +25,6 @@ class SlopDialog : public LegoDialog {
         virtual void setLego(int);
 
     private:
-        QComboBox* _cornerTypeComboBox;
         QSpinBox* _lengthSpinBox;
         QSpinBox* _widthSpinBox;
         QComboBox* _slopTypeComboBox;

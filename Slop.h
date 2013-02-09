@@ -6,9 +6,9 @@
 class Slop : public Lego {
     public:
 
-        enum SlopType { renforce, simple };
+        enum SlopType { simple, renforce, roof };
 
-        Slop(int width = 1, int length = 1, const QColor& color = QColor(Qt::red), SlopType slopType = renforce, QObject* parent = 0);
+        Slop(int width = 1, int length = 1, SlopType slopType = renforce, const QColor& color = QColor(Qt::red), QObject* parent = 0);
         Slop(const Slop& Slop);
 
         int getWidth(void) const { return _width; }
@@ -18,7 +18,14 @@ class Slop : public Lego {
         void setWidth(int width) { _width = width; }
         void setLength(int length) { _length = length; }
         void setSlopType(SlopType slopType) { _slopType = slopType; }
-        void setSlopType(int index) { index == 0 ? _slopType = renforce : _slopType = simple; }
+        void setSlopType(int index) {
+                if(index == 0)
+                    _slopType = simple;
+                else if(index == 1)
+                    _slopType = renforce;
+                else
+                    _slopType = roof;
+            }
 
         virtual void calculateBoundingBox(void);
 
@@ -29,9 +36,9 @@ class Slop : public Lego {
         virtual QString whoiam(void) const;
 
     private:
-        SlopType _slopType;
         int _width;
         int _length;
+        SlopType _slopType;
 };
 
 #endif // SLOP_H

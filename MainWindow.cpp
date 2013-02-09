@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Settings to record save path and other
     _settings.setValue("SavePath", "~/Documents");
+    _settings.setValue("OpenPath", "~/Documents");
     _settings.setValue("FileName", "");
 
     // Register in factories
@@ -69,8 +70,6 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_leftRotateButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
     connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
-
-    connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
     // Change soft title
     setWindowTitle("LEGO Creator");

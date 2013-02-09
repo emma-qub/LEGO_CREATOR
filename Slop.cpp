@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-Slop::Slop(int width, int length, const QColor &color, SlopType slopType, QObject* parent) :
+Slop::Slop(int width, int length, SlopType slopType, const QColor &color, QObject* parent) :
     Lego(color, parent),
     _width(width),
     _length(length),

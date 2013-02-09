@@ -40,6 +40,10 @@ void SlopGeode::createGeode(void) {
     int length = slop->getLength();
     int width = slop->getWidth();
     bool renf = false;
+    bool rooff = false;
+    int width_2 = renf ? width_2 = 1 : width_2 = width;
+    if(slopType == Slop::roof)
+        rooff = true;
     if (slopType == Slop::renforce) {
         renf = true;
         //width ++;
@@ -69,10 +73,10 @@ void SlopGeode::createGeode(void) {
     osg::Vec3 rfd1 = rbd;
     osg::Vec3 rfu1 = rbu;
     osg::Vec3 lfu1 = lbu;
-    osg::Vec3 lbd1(l, b+1*Lego::length_unit, d);
-    osg::Vec3 rbd1(r, b+1*Lego::length_unit, d);
-    osg::Vec3 rbu1(r, b+1*Lego::length_unit, u);
-    osg::Vec3 lbu1(l, b+1*Lego::length_unit, u);
+    osg::Vec3 lbd1(l, b+width_2*Lego::length_unit, d);
+    osg::Vec3 rbd1(r, b+width_2*Lego::length_unit, d);
+    osg::Vec3 rbu1(r, b+width_2*Lego::length_unit, u);
+    osg::Vec3 lbu1(l, b+width_2*Lego::length_unit, u);
 
     // Add the slop basis
     removeDrawables(0, getDrawableList().size());
@@ -89,6 +93,13 @@ void SlopGeode::createGeode(void) {
         addDrawable(createCarre(lfu1, rfu1, rbu1, lbu1, osg::Vec3(0, 0, 1), color));  // top
         addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
     }
+    else if(rooff) {
+        //addDrawable(createCarre(lbd, rbd, rbu, lbu, osg::Vec3(0, 1, 0), color));  // back
+        addDrawable(createTriangle(rfu1, rfd1, rbd1, osg::Vec3(1, 0, 0), color));    // right
+        addDrawable(createTriangle(lfu1, lfd1, lbd1, osg::Vec3(-1, 0, 0), color));    // left
+        addDrawable(createCarre(lfu1, rfu1, rbd1, lbd1, osg::Vec3(0, 1, 1), color));  // slop
+        addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
+    }
     else
         addDrawable(createCarre(lfd, rfd, rbd, lbd, osg::Vec3(0, -1, 0), color, true));  // down
 
@@ -103,7 +114,7 @@ void SlopGeode::createGeode(void) {
 
 
     // Add plots iteratively if the slop type is not flat
-    if (renf) {
+    if (renf && !rooff) {
         width ++;
         for (int i = 0; i < length; i++) {
             double radiusX = xmin + i*distPlot;
@@ -111,6 +122,7 @@ void SlopGeode::createGeode(void) {
         }
     }
 
+     /*
     // Calculate x max and y max for bottom cylinder
     bool thinw = (width == 1);
     bool thinl = (slop->getLength() == 1);
@@ -133,14 +145,14 @@ void SlopGeode::createGeode(void) {
             double radiusX = xminb + i*distPlot;
             double radiusY = yminb + j*distPlot;
             ref_ptr<Drawable> cylinder = createCylinder(radiusX, radiusY, 1, thin);
-            /*ref_ptr<MatrixTransform> t = new MatrixTransform;
+            ref_ptr<MatrixTransform> t = new MatrixTransform;
             Matrix m;
             m.makeTranslate(Vec3(0,0,-distPlot));
             t->setMatrix(m);
             t->addChild(cylinder);
-            addDrawable(t);*/
+            addDrawable(t);
         }
-    }
+    }*/
 }
 
 void SlopGeode::set_Color_normals(Vec3 normal, Geometry& geoTriangle, QColor color)
