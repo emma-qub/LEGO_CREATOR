@@ -29,8 +29,8 @@ MainWindow::MainWindow(QWidget* parent) :
     _saved(true) {
 
     // Settings to record save path and other
-    _settings.setValue("SavePath", "~/Documents");
-    _settings.setValue("OpenPath", "~/Documents");
+    _settings.setValue("SavePath", "../LEGO_CREATOR/OSG/");
+    _settings.setValue("OpenPath", "../LEGO_CREATOR/OSG/");
     _settings.setValue("FileName", "");
 
     // Register in factories
@@ -735,7 +735,7 @@ void MainWindow::generateRoad(void) {
 void MainWindow::generateHouse(void) {
     delete _currLego;
 
-    if (_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile"))) {
+    if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile")))) {
         if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::create("FromFileGeode"))) {
             _currLegoGeode->setLego(_currLego);
             FromFile* fromFile = static_cast<FromFile*>(_currLego);
@@ -752,6 +752,7 @@ void MainWindow::generateHouse(void) {
 void MainWindow::eraseScene(void) {
     // remove everything from scene
     _world.getScene()->removeChildren(0, _world.getScene()->getNumChildren());
+    _settings.setValue("FileName", "");
     _saved = true;
     _alreadySaved = false;
 }
@@ -759,18 +760,13 @@ void MainWindow::eraseScene(void) {
 void MainWindow::writeFile(const QString& fileName) {
     // Try to write the scene in fileName file
     if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
-        QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
+        //QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
         _saved = true;
         _alreadySaved = true;
     // Fail! Users can retry or not
     } else {
-        int ret = QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction. =(\nPlease retry (crossing fingers), or abort if you want to give up.", QMessageBox::Retry | QMessageBox::Abort, QMessageBox::Retry);
-        // If users are fighters
-        if (ret == QMessageBox::Retry)
-            writeFile(fileName);
-        // If users are loosers
-        _saved = false;
-        _alreadySaved = false;
+        qDebug() << "On n'a pas reussi a ecrire dans le fichier ><";
+        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
     }
 }
 
@@ -800,69 +796,188 @@ void MainWindow::newFile(void) {
 }
 
 void MainWindow::openFile(void) {
-    // Get open path
-    QString openPath = _settings.value("SavePath").toString();
+    QDialog* dialog = new QDialog(this);
 
-    // Open dialog because users know what they want to open
-    QString fileName = QFileDialog::getOpenFileName(this, "Open object", openPath);
+    // Get the open path
+    QString openPath = _settings.value("OpenPath").toString();
+    if (!openPath.endsWith('/'))
+        openPath += "/";
 
-//    QString fileName = "./untitled.osg";
+    QDir directory(openPath);
+    QStringList allFiles = directory.entryList(QDir::Files | QDir::NoDotAndDotDot);
+    QComboBox* filesComboBox = new QComboBox;
+    filesComboBox->addItems(allFiles);
+    QFormLayout* fileNameLayout = new QFormLayout;
+    fileNameLayout->addRow("File name:", filesComboBox);
 
-    // Future node, or not
-    osg::ref_ptr<osg::Node> newLego = NULL;
+    QPushButton* cancelButton = new QPushButton("Cancel", dialog);
+    connect(cancelButton, SIGNAL(clicked()), dialog, SLOT(reject()));
 
-    // If users didn't cancel
-    if (fileName != "") {
-        // Read file to create a node
-        newLego = osgDB::readNodeFile(fileName.toStdString());
-        // If the new Lego has been correctly got
-        if (newLego) {
-            _world.getScene()->addChild(newLego);
-            _saved = false;
-        // Else, users have no luck, but they can retry!
+    QPushButton* saveButton = new QPushButton("Open", dialog);
+    connect(saveButton, SIGNAL(clicked()), dialog, SLOT(accept()));
+
+    QHBoxLayout* buttonsLayout = new QHBoxLayout;
+    buttonsLayout->addWidget(cancelButton);
+    buttonsLayout->addWidget(saveButton);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(fileNameLayout);
+    mainLayout->addLayout(buttonsLayout);
+
+    dialog->setLayout(mainLayout);
+
+    if (dialog->exec() == QDialog::Accepted) {
+        QString fileName = filesComboBox->currentText();
+        if (fileName.split(".").last() != "osg") {
+            QMessageBox::critical(this, "Not an OSG file", "The selected file is not an OSG file.\nPlease retry with a correct file.");
         } else {
-            int ret = QMessageBox::critical(this, "Your file could not have been read", "An error occured while tempting to open your file. =(\nPlease retry (crossing fingers), or abort if you want to give up.", QMessageBox::Retry | QMessageBox::Abort, QMessageBox::Retry);
-            // If users are fighters
-            if (ret == QMessageBox::Retry)
-                openFile();
+            delete _currLego;
+
+            if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile")))) {
+                if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::create("FromFileGeode"))) {
+                    _currLegoGeode->setLego(_currLego);
+                    FromFile* fromFile = static_cast<FromFile*>(_currLego);
+                    fromFile->setFileName(openPath+fileName);
+                    _currLegoGeode->createGeode();
+
+                    createLego();
+                } else
+                    qDebug() << "Cannot cast in FromFileGeode* within MainWindow::generateHouse";
+            } else
+                qDebug() << "Cannot cast in FromFile* within MainWindow::generateHouse";
         }
     }
+
+//    // Get open path
+//    QString openPath = _settings.value("SavePath").toString();
+
+//    // Open dialog because users know what they want to open
+//    QString fileName = QFileDialog::getOpenFileName(this, "Open object", openPath);
+
+//    // Future node, or not
+//    osg::ref_ptr<osg::Node> newLego = NULL;
+
+//    // If users didn't cancel
+//    if (fileName != "") {
+//        // Read file to create a node
+//        newLego = osgDB::readNodeFile(fileName.toStdString());
+//        // If the new Lego has been correctly got
+//        if (newLego) {
+//            _world.getScene()->addChild(newLego);
+//            _saved = false;
+//        // Else, users have no luck, but they can retry!
+//        } else {
+//            int ret = QMessageBox::critical(this, "Your file could not have been read", "An error occured while tempting to open your file. =(\nPlease retry (crossing fingers), or abort if you want to give up.", QMessageBox::Retry | QMessageBox::Abort, QMessageBox::Retry);
+//            // If users are fighters
+//            if (ret == QMessageBox::Retry)
+//                openFile();
+//        }
+//    }
 }
 
 void MainWindow::saveFile(void) {
-    // First time users save?
-    if (!_alreadySaved)
-        saveAsFile();
     // File modified?
-    else if (!_saved) {
-        // Get the current file name, recorded whithin QSettings
-        QString fileName = _settings.value("FileName").toString();
+    if (!_saved) {
+        // First time users save?
+        if (!_alreadySaved) {
+            saveAsFile();
+        // Not the first time? so we already know the file to write data
+        } else {
+            // Get the current save path
+            QString savePath = _settings.value("SavePath").toString();
+            if (!savePath.endsWith('/'))
+                savePath += "/";
 
-        // Time to really save the osg file
-//        QString fileName = "./untitled.osg";
-        writeFile(fileName);
+            // Get the current file name, recorded whithin QSettings
+            QString fileName = _settings.value("FileName").toString();
+
+            // Time to really save the OSG file
+            writeFile(savePath+fileName);
+        }
     }
 }
 
-void MainWindow::saveAsFile(void) {
-    // Get the save path, according to last users directory visit
+void MainWindow::checkExistence(QString fileName) {
     QString savePath = _settings.value("SavePath").toString();
+    if (!savePath.endsWith('/'))
+        savePath += "/";
 
-    // Pop up to ask user where they want to save their file
-    QString fileName = QFileDialog::getSaveFileName(this, "Save your construction", savePath+"/untitled.osg", "OSG Files (*.osg)");
+    // Current directory
+    QFile file(savePath+fileName);
 
-    // If users have not canceled
-    if (fileName != "") {
-        // Get the directory in order to record it and open it directly next time users want to save
-        _settings.setValue("SavePath", QDir(fileName).absolutePath());
-        // If users missed to specify .osg at the end, we do for them because we are so nice!
+    emit fileAlreadyExists(file.exists());
+}
+
+void MainWindow::saveAsFile(void) {
+    // Get the current save path
+    QDialog* dialog = new QDialog(this);
+
+    QLabel* warningFileAlreadyExists = new QLabel("Warning: the specified file already exists!");
+    warningFileAlreadyExists->setStyleSheet("color: #ff7700");
+    warningFileAlreadyExists->setVisible(false);
+
+    QLineEdit* fileNameLineEdit = new QLineEdit("untitled.osg", this);
+    QFormLayout* fileNameLayout = new QFormLayout;
+    fileNameLayout->addRow("File name:", fileNameLineEdit);
+
+    QPushButton* cancelButton = new QPushButton("Cancel", dialog);
+    connect(cancelButton, SIGNAL(clicked()), dialog, SLOT(reject()));
+
+    QPushButton* saveButton = new QPushButton("Save", dialog);
+    connect(saveButton, SIGNAL(clicked()), dialog, SLOT(accept()));
+
+    QHBoxLayout* buttonsLayout = new QHBoxLayout;
+    buttonsLayout->addWidget(cancelButton);
+    buttonsLayout->addWidget(saveButton);
+    buttonsLayout->setAlignment(Qt::AlignTop);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(warningFileAlreadyExists);
+    mainLayout->addLayout(fileNameLayout);
+    mainLayout->addLayout(buttonsLayout);
+
+    connect(fileNameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkExistence(QString)));
+    connect(this, SIGNAL(fileAlreadyExists(bool)), warningFileAlreadyExists, SLOT(setVisible(bool)));
+
+    dialog->setLayout(mainLayout);
+
+    if (dialog->exec() == QDialog::Accepted) {
+        // Get the file name entered by users
+        QString fileName = fileNameLineEdit->text();
         if (fileName.split(".").last() != "osg") {
             fileName.append(".osg");
         }
+
+        // Get the current save path
+        QString savePath = _settings.value("SavePath").toString();
+        if (!savePath.endsWith('/'))
+            savePath += "/";
+
+        // Set current file name
         _settings.setValue("FileName", fileName);
-        // Time to really save the osg file
-        writeFile(fileName);
+
+        // Write scene into OSG file
+        writeFile(savePath+fileName);
     }
+
+//    // Get the save path, according to last users directory visit
+//    QString savePath = _settings.value("SavePath").toString();
+
+//    // Pop up to ask user where they want to save their file
+//    QString fileName = QFileDialog::getSaveFileName(this, "Save your construction", savePath+"/untitled.osg", "OSG Files (*.osg)");
+
+//    // If users have not canceled
+//    if (fileName != "") {
+//        // Get the directory in order to record it and open it directly next time users want to save
+//        _settings.setValue("SavePath", QDir(fileName).absolutePath());
+//        // If users missed to specify .osg at the end, we do for them because we are so nice!
+//        if (fileName.split(".").last() != "osg") {
+//            fileName.append(".osg");
+//        }
+//        _settings.setValue("FileName", fileName);
+//        // Time to really save the osg file
+//        writeFile(fileName);
+//    }
 }
 
 void MainWindow::quitSoft(void) {
@@ -928,7 +1043,7 @@ void MainWindow::createFileMenu(void) {
     _saveAsAction = fileMenu->addAction("Save &as...");
     _saveAsAction->setShortcut(QKeySequence::SaveAs);
     // Connect action
-    connect(_saveAction, SIGNAL(triggered()), this, SLOT(saveAsFile()));
+    connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAsFile()));
 
     // Add separator
     fileMenu->addSeparator();

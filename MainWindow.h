@@ -30,6 +30,8 @@ public:
 
     void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 
+    void writeFile(const QString& fileName);
+
 public slots:
     void browseColor(void);
     void chooseDialog(int dialogIndex);
@@ -46,13 +48,13 @@ public slots:
     void generateHouse(void);
 
     void eraseScene(void);
-    void writeFile(const QString& fileName);
-
     void newFile(void);
     void openFile(void);
     void saveFile(void);
     void saveAsFile(void);
     void quitSoft(void);
+
+    void checkExistence(QString fileName);
 
 private:
     QTabWidget* _tabs;
@@ -108,6 +110,9 @@ private:
 
     bool _alreadySaved;
     bool _saved;
+
+signals:
+    void fileAlreadyExists(bool);
 };
 
 #endif // MAINWINDOW_H
