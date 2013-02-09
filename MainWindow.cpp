@@ -755,6 +755,8 @@ void MainWindow::eraseScene(void) {
     _settings.setValue("FileName", "");
     _saved = true;
     _alreadySaved = false;
+    _paramsDock->setEnabled(true);
+    _moveDock->setEnabled(false);
 }
 
 void MainWindow::writeFile(const QString& fileName) {
@@ -777,16 +779,18 @@ void MainWindow::newFile(void) {
 
         switch (ret) {
         // Users want to save
-        case 0:
+        case QMessageBox::Save:
             saveFile();
-            eraseScene();
+            // If users canceled saving operation, we assume they wanted to cancel new file action too
+            if (_saved)
+                eraseScene();
             break;
         // Users don't give a ****
-        case 1:
+        case QMessageBox::Discard:
             eraseScene();
             break;
         // Users change their mind
-        case 2:
+        case QMessageBox::Cancel:
             break;
         }
     } else {
@@ -913,10 +917,10 @@ void MainWindow::saveAsFile(void) {
     QDialog* dialog = new QDialog(this);
 
     QLabel* warningFileAlreadyExists = new QLabel("Warning: the specified file already exists!");
-    warningFileAlreadyExists->setStyleSheet("color: #ff7700");
+    warningFileAlreadyExists->setStyleSheet("color: #FF7700");
     warningFileAlreadyExists->setVisible(false);
 
-    QLineEdit* fileNameLineEdit = new QLineEdit("untitled.osg", this);
+    QLineEdit* fileNameLineEdit = new QLineEdit(this);
     QFormLayout* fileNameLayout = new QFormLayout;
     fileNameLayout->addRow("File name:", fileNameLineEdit);
 
@@ -958,6 +962,10 @@ void MainWindow::saveAsFile(void) {
 
         // Write scene into OSG file
         writeFile(savePath+fileName);
+    // If users canceled,
+    } else {
+        _saved = false;
+        _alreadySaved = false;
     }
 
 //    // Get the save path, according to last users directory visit
