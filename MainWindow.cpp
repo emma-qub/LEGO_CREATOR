@@ -13,6 +13,7 @@
 #include "CharacterDialog.h"
 #include "WindowDialog.h"
 #include "DoorDialog.h"
+#include "FromFileDialog.h"
 
 #include <QSettings>
 
@@ -136,6 +137,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<DoorGeode, QString>::registerLego(QString("DoorGeode"), new DoorGeode);
     // Register DoorDialog
     LegoFactory<DoorDialog, QString>::registerLego(QString("DoorDialog"), new DoorDialog);
+
+    // Register From File
+    LegoFactory<FromFile, QString>::registerLego(QString("FromFile"), new FromFile);
+    // Register FromFileGeode
+    LegoFactory<FromFileGeode, QString>::registerLego(QString("FromFileGeode"), new FromFileGeode);
+    // Register FromFileDialog
+    LegoFactory<FromFileDialog, QString>::registerLego(QString("FromFileDialog"), new FromFileDialog);
 
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
@@ -725,7 +733,20 @@ void MainWindow::generateRoad(void) {
 }
 
 void MainWindow::generateHouse(void) {
+    delete _currLego;
 
+    if (_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile"))) {
+        if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::create("FromFileGeode"))) {
+            _currLegoGeode->setLego(_currLego);
+            FromFile* fromFile = static_cast<FromFile*>(_currLego);
+            fromFile->setFileName("../LEGO_CREATOR/OSG/house.osg");
+            _currLegoGeode->createGeode();
+
+            createLego();
+        } else
+            qDebug() << "Cannot cast in FromFileGeode* within MainWindow::generateHouse";
+    } else
+        qDebug() << "Cannot cast in FromFile* within MainWindow::generateHouse";
 }
 
 void MainWindow::eraseScene(void) {

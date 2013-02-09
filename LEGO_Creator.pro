@@ -29,7 +29,10 @@ SOURCES += \
     WindowDialog.cpp \
     Door.cpp \
     DoorGeode.cpp \
-    DoorDialog.cpp
+    DoorDialog.cpp \
+    FromFile.cpp \
+    FromFileGeode.cpp \
+    FromFileDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -61,7 +64,10 @@ HEADERS += \
     WindowDialog.h \
     Door.h \
     DoorGeode.h \
-    DoorDialog.h
+    DoorDialog.h \
+    FromFile.h \
+    FromFileGeode.h \
+    FromFileDialog.h
 
 LIBS += \
     -L$OSG/lib \
