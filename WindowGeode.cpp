@@ -89,7 +89,7 @@ void WindowGeode::createWindow(void) {
     // Create down side
     createRectangle(rfd, lfd, lbd, rbd, osg::Vec3(0, 0, -1), color);
 
-    // A window has also a cross part
+    // A window has also a cross part...
     double d2 = -2;
     double u2 = 2;
 
@@ -104,17 +104,60 @@ void WindowGeode::createWindow(void) {
     osg::Vec3 ru2(r, f2, u2);
     osg::Vec3 lu2(l, f2, u2);
 
+    // Create horizontal cross part
+    createRectangle(ld2, rd2, ru2, lu2, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
     // Vertical cross part
     osg::Vec3 l2d(l2, f2, d);
     osg::Vec3 r2d(r2, f2, d);
     osg::Vec3 r2u(r2, f2, u);
     osg::Vec3 l2u(l2, f2, u);
 
-    // Create horizontal cross part
-    createRectangle(ld2, rd2, ru2, lu2, osg::Vec3(0, -1, 0), QColor(Qt::white));
-
     // Create vertical cross part
     createRectangle(l2d, r2d, r2u, l2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // ...and a frame
+    double l3 = l + 1;
+    double r3 = r - 1;
+
+    double u3 = u - 1;
+    double d3 = d + 1;
+
+    // left side frame
+    osg::Vec3 ld(l, f2, d);
+    osg::Vec3 l3d(l3, f2, d);
+    osg::Vec3 l3u(l3, f2, u);
+    osg::Vec3 lu(l, f2, u);
+
+    // create left side frame
+    createRectangle(ld, l3d, l3u, lu, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // right side frame
+    osg::Vec3 rd(r, f2, d);
+    osg::Vec3 r3d(r3, f2, d);
+    osg::Vec3 r3u(r3, f2, u);
+    osg::Vec3 ru(r, f2, u);
+
+    // create right side frame
+    createRectangle(rd, r3d, r3u, ru, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // up side frame
+    //osg::Vec3 lu(l, f2, u);
+    //osg::Vec3 ru(r, f2, u);
+    osg::Vec3 ru3(r, f2, u3);
+    osg::Vec3 lu3(l, f2, u3);
+
+    // create right side frame
+    createRectangle(lu, ru, ru3, lu3, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // down side frame
+    //osg::Vec3 ld(l, f2, d);
+    //osg::Vec3 rd(r, f2, d);
+    osg::Vec3 rd3(r, f2, d3);
+    osg::Vec3 ld3(l, f2, d3);
+
+    // create right side frame
+    createRectangle(ld, rd, rd3, ld3, osg::Vec3(0, -1, 0), QColor(Qt::white));
 }
 
 void WindowGeode::setColorAndNormal(const osg::Vec3& normal, osg::Geometry* geometry, const QColor& color) {
