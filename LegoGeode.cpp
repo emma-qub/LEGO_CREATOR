@@ -10,6 +10,8 @@ LegoGeode::LegoGeode(Lego* lego) :
 
 LegoGeode::LegoGeode(const LegoGeode& legoGeode) :
     osg::Geode(legoGeode) {
+
+    _lego = legoGeode._lego;
 }
 
 osg::ref_ptr<osg::Drawable> LegoGeode::createPlot(double radiusX, double radiusY, int height) const {

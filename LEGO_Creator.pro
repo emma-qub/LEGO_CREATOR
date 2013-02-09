@@ -23,7 +23,10 @@ SOURCES += \
     SlopGeode.cpp \
     Character.cpp \
     CharacterDialog.cpp \
-    CharacterGeode.cpp
+    CharacterGeode.cpp \
+    Window.cpp \
+    WindowGeode.cpp \
+    WindowDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -49,7 +52,10 @@ HEADERS += \
     SlopGeode.h \
     Character.h \
     CharacterDialog.h \
-    CharacterGeode.h
+    CharacterGeode.h \
+    Window.h \
+    WindowGeode.h \
+    WindowDialog.h
 
 LIBS += \
     -L$OSG/lib \

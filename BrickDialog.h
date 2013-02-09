@@ -10,7 +10,7 @@ class BrickDialog : public LegoDialog {
     Q_OBJECT
 
 public:
-    BrickDialog(QWidget *parent = 0);
+    BrickDialog(QWidget* parent = NULL);
     BrickDialog(const BrickDialog& brickDialog);
 
     int getWidth(void) const { return _widthSpinBox->text().toInt(); }

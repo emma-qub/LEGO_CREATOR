@@ -8,7 +8,7 @@ class Brick : public Lego {
 public:
     enum BrickType { classic, plate, flat };
 
-    Brick(int width = 1, int length = 1, const QColor &color = QColor(Qt::red), BrickType brickType = classic, QObject* parent = 0);
+    Brick(int width = 1, int length = 1, BrickType brickType = classic, const QColor &color = QColor(Qt::red), QObject* parent = 0);
     Brick(const Brick& brick);
 
     int getWidth(void) const { return _width; }

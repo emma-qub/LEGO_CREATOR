@@ -9,7 +9,7 @@ class LegoDialog : public QWidget {
     Q_OBJECT
 
 public:
-    LegoDialog(QWidget* parent = 0);
+    LegoDialog(QWidget* parent = NULL);
     LegoDialog(const LegoDialog&);
 
     virtual void initLego(Lego* lego) { _lego = lego; }

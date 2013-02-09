@@ -2,7 +2,7 @@
 
 #include "QDebug"
 
-Brick::Brick(int width, int length, const QColor &color, BrickType brickType, QObject* parent) :
+Brick::Brick(int width, int length, BrickType brickType, const QColor &color, QObject* parent) :
     Lego(color, parent),
     _width(width),
     _length(length),
