@@ -89,75 +89,130 @@ void WindowGeode::createWindow(void) {
     // Create down side
     createRectangle(rfd, lfd, lbd, rbd, osg::Vec3(0, 0, -1), color);
 
-    // A window has also a cross part...
-    double d2 = -2;
-    double u2 = 2;
+// ///////////////
+// WINDOW FRAME
+// ///////////////
 
-    double l2 = -2;
-    double r2 = 2;
+    // Window has a frame
+    double d2 = d+2;
+    double u2 = u-2;
+
+    double l2 = l+2;
+    double r2 = r-2;
+
+    // left side frame
+    //osg::Vec3 lfd(l, f, d);
+    osg::Vec3 l2fd(l2, f, d);
+    osg::Vec3 l2fu(l2, f, u);
+    //osg::Vec3 lfu(l, f, u);
+
+    // create left side frame
+    createRectangle(lfd, l2fd, l2fu, lfu, osg::Vec3(0, -1, 0), color);
+
+    // right side frame
+    //osg::Vec3 rfd(r, f, d);
+    osg::Vec3 r2fd(r2, f, d);
+    osg::Vec3 r2fu(r2, f, u);
+    //osg::Vec3 rfu(r, f, u);
+
+    // create right side frame
+    createRectangle(rfd, r2fd, r2fu, rfu, osg::Vec3(0, -1, 0), color);
+
+    // up side frame
+    //osg::Vec3 lfu(l, f, u);
+    //osg::Vec3 rfu(r, f, u);
+    osg::Vec3 rfu2(r, f, u2);
+    osg::Vec3 lfu2(l, f, u2);
+
+    // create up side frame
+    createRectangle(lfu, rfu, rfu2, lfu2, osg::Vec3(0, -1, 0), color);
+
+    // down side frame
+    //osg::Vec3 lfd(l, f, d);
+    //osg::Vec3 rfd(r, f, d);
+    osg::Vec3 rfd2(r, f, d2);
+    osg::Vec3 lfd2(l, f, d2);
+
+    // create down side frame
+    createRectangle(lfd, rfd, rfd2, lfd2, osg::Vec3(0, -1, 0), color);
+
+// ////////////////
+// CROSS PART
+// ////////////////
+
+    // A window has also a cross part...
+    double d4 = -2;
+    double u4 = 2;
+
+    double l4 = -2;
+    double r4 = 2;
 
     double f2 = f + 1;
 
     // Horizontal cross part
-    osg::Vec3 ld2(l, f2, d2);
-    osg::Vec3 rd2(r, f2, d2);
-    osg::Vec3 ru2(r, f2, u2);
-    osg::Vec3 lu2(l, f2, u2);
+    osg::Vec3 lf2d4(l, f2, d4);
+    osg::Vec3 rf2d4(r, f2, d4);
+    osg::Vec3 rf2u4(r, f2, u4);
+    osg::Vec3 lf2u4(l, f2, u4);
 
     // Create horizontal cross part
-    createRectangle(ld2, rd2, ru2, lu2, osg::Vec3(0, -1, 0), QColor(Qt::white));
+    createRectangle(lf2d4, rf2d4, rf2u4, lf2u4, osg::Vec3(0, -1, 0), QColor(Qt::white));
 
     // Vertical cross part
-    osg::Vec3 l2d(l2, f2, d);
-    osg::Vec3 r2d(r2, f2, d);
-    osg::Vec3 r2u(r2, f2, u);
-    osg::Vec3 l2u(l2, f2, u);
+    osg::Vec3 l4f2d(l4, f2, d);
+    osg::Vec3 r4f2d(r4, f2, d);
+    osg::Vec3 r4f2u(r4, f2, u);
+    osg::Vec3 l4f2u(l4, f2, u);
 
     // Create vertical cross part
-    createRectangle(l2d, r2d, r2u, l2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
+    createRectangle(l4f2d, r4f2d, r4f2u, l4f2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+// ////////////////
+// CROSS FRAME
+// ////////////////
 
     // ...and a frame
-    double l3 = l + 1;
-    double r3 = r - 1;
+    double l3 = l2 + 2;
+    double r3 = r2 - 2;
 
-    double u3 = u - 1;
-    double d3 = d + 1;
+    double u3 = u2 - 2;
+    double d3 = d2 + 2;
 
     // left side frame
-    osg::Vec3 ld(l, f2, d);
-    osg::Vec3 l3d(l3, f2, d);
-    osg::Vec3 l3u(l3, f2, u);
-    osg::Vec3 lu(l, f2, u);
+    osg::Vec3 lf2d(l, f2, d);
+    osg::Vec3 l3f2d(l3, f2, d);
+    osg::Vec3 l3f2u(l3, f2, u);
+    osg::Vec3 lf2u(l, f2, u);
 
     // create left side frame
-    createRectangle(ld, l3d, l3u, lu, osg::Vec3(0, -1, 0), QColor(Qt::white));
+    createRectangle(lf2d, l3f2d, l3f2u, lf2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
 
     // right side frame
-    osg::Vec3 rd(r, f2, d);
-    osg::Vec3 r3d(r3, f2, d);
-    osg::Vec3 r3u(r3, f2, u);
-    osg::Vec3 ru(r, f2, u);
+    osg::Vec3 rf2d(r, f2, d);
+    osg::Vec3 r3f2d(r3, f2, d);
+    osg::Vec3 r3f2u(r3, f2, u);
+    osg::Vec3 rf2u(r, f2, u);
 
     // create right side frame
-    createRectangle(rd, r3d, r3u, ru, osg::Vec3(0, -1, 0), QColor(Qt::white));
+    createRectangle(rf2d, r3f2d, r3f2u, rf2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
 
     // up side frame
-    //osg::Vec3 lu(l, f2, u);
-    //osg::Vec3 ru(r, f2, u);
-    osg::Vec3 ru3(r, f2, u3);
-    osg::Vec3 lu3(l, f2, u3);
+    //osg::Vec3 lf2u(l, f2, u);
+    //osg::Vec3 rf2u(r, f2, u);
+    osg::Vec3 rf2u3(r, f2, u3);
+    osg::Vec3 lf2u3(l, f2, u3);
 
-    // create right side frame
-    createRectangle(lu, ru, ru3, lu3, osg::Vec3(0, -1, 0), QColor(Qt::white));
+    // create up side frame
+    createRectangle(lf2u, rf2u, rf2u3, lf2u3, osg::Vec3(0, -1, 0), QColor(Qt::white));
 
     // down side frame
-    //osg::Vec3 ld(l, f2, d);
-    //osg::Vec3 rd(r, f2, d);
-    osg::Vec3 rd3(r, f2, d3);
-    osg::Vec3 ld3(l, f2, d3);
+    //osg::Vec3 lf2d(l, f2, d);
+    //osg::Vec3 rf2d(r, f2, d);
+    osg::Vec3 rf2d3(r, f2, d3);
+    osg::Vec3 lf2d3(l, f2, d3);
 
-    // create right side frame
-    createRectangle(ld, rd, rd3, ld3, osg::Vec3(0, -1, 0), QColor(Qt::white));
+    // create down side frame
+    createRectangle(lf2d, rf2d, rf2d3, lf2d3, osg::Vec3(0, -1, 0), QColor(Qt::white));
 }
 
 void WindowGeode::setColorAndNormal(const osg::Vec3& normal, osg::Geometry* geometry, const QColor& color) {
