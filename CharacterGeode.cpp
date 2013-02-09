@@ -20,8 +20,11 @@ CharacterGeode::CharacterGeode(const CharacterGeode& characterGeode) :
 }
 
 void CharacterGeode::createGeode(void) {
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
     // Add the Character basis
-    removeDrawables(0, getDrawableList().size());
+    geode->removeDrawables(0, geode->getDrawableList().size());
 
     qDebug() << _lego->whoiam();
 
@@ -33,7 +36,7 @@ void CharacterGeode::createGeode(void) {
 
     std::string location = "../LEGO_CREATOR/data/LegoGuy/LegoGuy.obj";
     if (osg::ref_ptr<osg::Geode> guy = dynamic_cast<osg::Geode*>(osgDB::readNodeFile(location))) {
-        this->addDrawable(guy->getDrawable(0));
+        geode->addDrawable(guy->getDrawable(0));
     } else {
         qDebug() << "Cannot set LEGO character from file within CharacterGeode::createGeode";
     }

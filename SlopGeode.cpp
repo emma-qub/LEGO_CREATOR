@@ -26,6 +26,9 @@ SlopGeode::SlopGeode(const SlopGeode& slopGeode) :
 }
 
 void SlopGeode::createGeode(void) {
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
     // Get the slop
     Slop* slop = static_cast<Slop*>(_lego);
 
@@ -79,29 +82,29 @@ void SlopGeode::createGeode(void) {
     osg::Vec3 lbu1(l, b+width_2*Lego::length_unit, u);
 
     // Add the slop basis
-    removeDrawables(0, getDrawableList().size());
-    addDrawable(createCarre(lbd, rbd, rbu, lbu, osg::Vec3(0, 1, 0), color));  // back
-    addDrawable(createTriangle(rfd, rbd, rbu, osg::Vec3(1, 0, 0), color));    // right
-    addDrawable(createTriangle(lfd, lbd, lbu, osg::Vec3(-1, 0, 0), color));    // left
-    addDrawable(createCarre(lfd, rfd, rbu, lbu, osg::Vec3(0, -1, 1), color));  // slop
+    geode->removeDrawables(0, geode->getDrawableList().size());
+    geode->addDrawable(createCarre(lbd, rbd, rbu, lbu, osg::Vec3(0, 1, 0), color));  // back
+    geode->addDrawable(createTriangle(rfd, rbd, rbu, osg::Vec3(1, 0, 0), color));    // right
+    geode->addDrawable(createTriangle(lfd, lbd, lbu, osg::Vec3(-1, 0, 0), color));    // left
+    geode->addDrawable(createCarre(lfd, rfd, rbu, lbu, osg::Vec3(0, -1, 1), color));  // slop
 
     // Add brick renforce
     if (renf) {
-        addDrawable(createCarre(lbd1, rbd1, rbu1, lbu1, osg::Vec3(0, 1, 0), color));  // back
-        addDrawable(createCarre(rfd1, rbd1, rbu1, rfu1, osg::Vec3(1, 0, 0), color));  // right
-        addDrawable(createCarre(lfd1, lbd1, lbu1, lfu1, osg::Vec3(-1, 0, 0), color));  // left
-        addDrawable(createCarre(lfu1, rfu1, rbu1, lbu1, osg::Vec3(0, 0, 1), color));  // top
-        addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
+        geode->addDrawable(createCarre(lbd1, rbd1, rbu1, lbu1, osg::Vec3(0, 1, 0), color));  // back
+        geode->addDrawable(createCarre(rfd1, rbd1, rbu1, rfu1, osg::Vec3(1, 0, 0), color));  // right
+        geode->addDrawable(createCarre(lfd1, lbd1, lbu1, lfu1, osg::Vec3(-1, 0, 0), color));  // left
+        geode->addDrawable(createCarre(lfu1, rfu1, rbu1, lbu1, osg::Vec3(0, 0, 1), color));  // top
+        geode->addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
     }
     else if(rooff) {
         //addDrawable(createCarre(lbd, rbd, rbu, lbu, osg::Vec3(0, 1, 0), color));  // back
-        addDrawable(createTriangle(rfu1, rfd1, rbd1, osg::Vec3(1, 0, 0), color));    // right
-        addDrawable(createTriangle(lfu1, lfd1, lbd1, osg::Vec3(-1, 0, 0), color));    // left
-        addDrawable(createCarre(lfu1, rfu1, rbd1, lbd1, osg::Vec3(0, 1, 1), color));  // slop
-        addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
+        geode->addDrawable(createTriangle(rfu1, rfd1, rbd1, osg::Vec3(1, 0, 0), color));    // right
+        geode->addDrawable(createTriangle(lfu1, lfd1, lbd1, osg::Vec3(-1, 0, 0), color));    // left
+        geode->addDrawable(createCarre(lfu1, rfu1, rbd1, lbd1, osg::Vec3(0, 1, 1), color));  // slop
+        geode->addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
     }
     else
-        addDrawable(createCarre(lfd, rfd, rbd, lbd, osg::Vec3(0, -1, 0), color, true));  // down
+        geode->addDrawable(createCarre(lfd, rfd, rbd, lbd, osg::Vec3(0, -1, 0), color, true));  // down
 
 
     // Distance between two plot center
@@ -118,7 +121,7 @@ void SlopGeode::createGeode(void) {
         width ++;
         for (int i = 0; i < length; i++) {
             double radiusX = xmin + i*distPlot;
-            addDrawable(createPlot(radiusX, (width)*Lego::length_unit/2, height));
+            geode->addDrawable(createPlot(radiusX, (width)*Lego::length_unit/2, height));
         }
     }
 

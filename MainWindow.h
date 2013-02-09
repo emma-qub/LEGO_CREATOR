@@ -43,6 +43,7 @@ public slots:
     void rotateRight(void);
 
     void generateRoad(void);
+    void generateHouse(void);
 
     void eraseScene(void);
     void writeFile(const QString& fileName);

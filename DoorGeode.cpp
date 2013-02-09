@@ -23,8 +23,11 @@ DoorGeode::DoorGeode(const DoorGeode& doorGeode) :
 }
 
 void DoorGeode::createGeode(void) {
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
     // Add the brick basis
-    removeDrawables(0, getDrawableList().size());
+    geode->removeDrawables(0, geode->getDrawableList().size());
     createDoor();
 
     // Distance between two plot center
@@ -44,7 +47,7 @@ void DoorGeode::createGeode(void) {
         for (int j = 0; j < width; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlot(radiusX, radiusY, height));
         }
     }
 }
@@ -230,7 +233,10 @@ void DoorGeode::createRectangle(const osg::Vec3& A, const osg::Vec3& B, const os
     }
 
     // Add drawable
-    addDrawable(geometry);
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
+    geode->addDrawable(geometry);
 }
 
 DoorGeode* DoorGeode::cloning(void) const {

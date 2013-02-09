@@ -20,8 +20,11 @@ WindowGeode::WindowGeode(const WindowGeode& windowGeode) :
 }
 
 void WindowGeode::createGeode(void) {
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
     // Add the brick basis
-    removeDrawables(0, getDrawableList().size());
+    geode->removeDrawables(0, geode->getDrawableList().size());
     createWindow();
 
     // Distance between two plot center
@@ -41,7 +44,7 @@ void WindowGeode::createGeode(void) {
         for (int j = 0; j < width; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlot(radiusX, radiusY, height));
         }
     }
 }
@@ -251,7 +254,10 @@ void WindowGeode::createRectangle(const osg::Vec3& A, const osg::Vec3& B, const 
     setColorAndNormal(normal, geometry.get(), color);
 
     // Add drawable
-    addDrawable(geometry);
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
+    geode->addDrawable(geometry);
 }
 
 WindowGeode* WindowGeode::cloning(void) const {

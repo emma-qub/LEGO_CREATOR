@@ -1,18 +1,18 @@
 #ifndef LEGOGEODE_H
 #define LEGOGEODE_H
 
-#include <osg/Geode>
+#include <osg/Node>
 #include <osg/ShapeDrawable>
+#include <osg/Geode>
 
 #include "Lego.h"
 
-class LegoGeode : public osg::Geode {
+class LegoGeode : public osg::Group {
 
 public:
     LegoGeode(Lego* lego = NULL);
     LegoGeode(const LegoGeode& legoGeode);
 
-    //virtual void createGeode(void) = 0;
     virtual void createGeode(void) {}
     virtual Lego* getLego(void) { return _lego; }
     virtual void setLego(Lego* lego) { _lego = lego; }

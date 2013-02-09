@@ -21,10 +21,13 @@ CornerGeode::CornerGeode(const CornerGeode& cornerGeode) :
 }
 
 void CornerGeode::createGeode(void) {
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
     // Add the corner basis
-    removeDrawables(0, getDrawableList().size());
-    addDrawable(createCorner(true));
-    addDrawable(createCorner(false));
+    geode->removeDrawables(0, geode->getDrawableList().size());
+    geode->addDrawable(createCorner(true));
+    geode->addDrawable(createCorner(false));
 
     // Get the corner
     Corner* corner = static_cast<Corner*>(_lego);
@@ -32,12 +35,12 @@ void CornerGeode::createGeode(void) {
     // Calculate height according to corner type
     int height = corner->calculateHeight();
 
-    addDrawable(createPlot(-Lego::length_unit/2, -Lego::length_unit/2, height));
-    addDrawable(createPlot(-Lego::length_unit/2, Lego::length_unit/2, height));
-    addDrawable(createPlot(Lego::length_unit/2, Lego::length_unit/2, height));
+    geode->addDrawable(createPlot(-Lego::length_unit/2, -Lego::length_unit/2, height));
+    geode->addDrawable(createPlot(-Lego::length_unit/2, Lego::length_unit/2, height));
+    geode->addDrawable(createPlot(Lego::length_unit/2, Lego::length_unit/2, height));
 
-    addDrawable(createCylinder(-Lego::length_unit/2, 0, height, true));
-    addDrawable(createCylinder(0, Lego::length_unit/2, height, true));
+    geode->addDrawable(createCylinder(-Lego::length_unit/2, 0, height, true));
+    geode->addDrawable(createCylinder(0, Lego::length_unit/2, height, true));
 }
 
 osg::ref_ptr<osg::Drawable> CornerGeode::createCorner(bool isLeftPart) const {

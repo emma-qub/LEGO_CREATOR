@@ -18,14 +18,15 @@ BrickGeode::BrickGeode(Brick* brick) :
 
 BrickGeode::BrickGeode(const BrickGeode& brickGeode) :
     LegoGeode(brickGeode) {
-
-    _lego = brickGeode._lego;
 }
 
 void BrickGeode::createGeode(void) {
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    addChild(geode);
+
     // Add the brick basis
-    removeDrawables(0, getDrawableList().size());
-    addDrawable(createBrick());
+    geode->removeDrawables(0, geode->getDrawableList().size());
+    geode->addDrawable(createBrick());
 
     // Distance between two plot center
     double distPlot = Lego::length_unit;
@@ -64,7 +65,7 @@ void BrickGeode::createGeode(void) {
             for (int j = 0; j < width; j++) {
                 double radiusX = xmin + i*distPlot;
                 double radiusY = ymin + j*distPlot;
-                addDrawable(createPlot(radiusX, radiusY, height));
+                geode->addDrawable(createPlot(radiusX, radiusY, height));
             }
         }
     }
@@ -79,7 +80,7 @@ void BrickGeode::createGeode(void) {
         for (int j = 0; j < width-1; j++) {
             double radiusX = xminb + i*distPlot;
             double radiusY = yminb + j*distPlot;
-            addDrawable(createCylinder(radiusX, radiusY, height, thin));
+            geode->addDrawable(createCylinder(radiusX, radiusY, height, thin));
         }
     }
 }

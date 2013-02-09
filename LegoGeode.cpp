@@ -4,12 +4,12 @@
 
 
 LegoGeode::LegoGeode(Lego* lego) :
-    osg::Geode() {
+    osg::Group() {
     _lego = lego;
 }
 
 LegoGeode::LegoGeode(const LegoGeode& legoGeode) :
-    osg::Geode(legoGeode) {
+    osg::Group(legoGeode) {
 
     _lego = legoGeode._lego;
 }

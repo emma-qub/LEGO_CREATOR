@@ -724,6 +724,10 @@ void MainWindow::generateRoad(void) {
     _saved = false;
 }
 
+void MainWindow::generateHouse(void) {
+    //osg::ref_ptr<osg::Group> = osgDB::readNodeFile();
+}
+
 void MainWindow::eraseScene(void) {
     // remove everything from scene
     _world.getScene()->removeChildren(0, _world.getScene()->getNumChildren());
@@ -925,13 +929,14 @@ void MainWindow::createGenerateMenu(void) {
     // Connect action
     connect(_generateRoadAction, SIGNAL(triggered()), this, SLOT(generateRoad()));
 
-    // Add Generate building sub menu
-    _generateBuildingAction = generateMenu->addAction("Generate &building...");
-    _generateBuildingAction->setShortcut(QKeySequence("CTRL+SHIFT+B"));
+//    // Add Generate building sub menu
+//    _generateBuildingAction = generateMenu->addAction("Generate &building...");
+//    _generateBuildingAction->setShortcut(QKeySequence("CTRL+SHIFT+B"));
 
     // Add Generate house sub menu
-    _generateHouseAction = generateMenu->addAction("Generate &house...");
+    _generateHouseAction = generateMenu->addAction("Generate &house");
     _generateHouseAction->setShortcut(QKeySequence("CTRL+SHIFT+H"));
+    connect(_generateHouseAction, SIGNAL(triggered()), this, SLOT(generateHouse()));
 }
 
 void MainWindow::createHelpMenu(void) {
