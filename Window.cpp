@@ -13,7 +13,7 @@ Window::Window(const Window& window) :
 }
 
 void Window::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, 4, 2, 6);
+    _boundingBox = BoundingBox(0, 0, 0, 4, 2, 9);
 }
 
 Window* Window::cloning(void) const {

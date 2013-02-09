@@ -26,7 +26,10 @@ SOURCES += \
     CharacterGeode.cpp \
     Window.cpp \
     WindowGeode.cpp \
-    WindowDialog.cpp
+    WindowDialog.cpp \
+    Door.cpp \
+    DoorGeode.cpp \
+    DoorDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -55,7 +58,10 @@ HEADERS += \
     CharacterGeode.h \
     Window.h \
     WindowGeode.h \
-    WindowDialog.h
+    WindowDialog.h \
+    Door.h \
+    DoorGeode.h \
+    DoorDialog.h
 
 LIBS += \
     -L$OSG/lib \

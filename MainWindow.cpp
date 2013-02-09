@@ -12,6 +12,7 @@
 #include "SlopDialog.h"
 #include "CharacterDialog.h"
 #include "WindowDialog.h"
+#include "DoorDialog.h"
 
 #include <QSettings>
 
@@ -129,6 +130,13 @@ void MainWindow::initFactories(void) {
     // Register WindowDialog
     LegoFactory<WindowDialog, QString>::registerLego(QString("WindowDialog"), new WindowDialog);
 
+    // Register Door
+    LegoFactory<Door, QString>::registerLego(QString("Door"), new Door);
+    // Register DoorGeode
+    LegoFactory<DoorGeode, QString>::registerLego(QString("DoorGeode"), new DoorGeode);
+    // Register DoorDialog
+    LegoFactory<DoorDialog, QString>::registerLego(QString("DoorDialog"), new DoorDialog);
+
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
@@ -183,6 +191,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create WindowDialog in MainWindow::initDialogs";
 
+    // DoorDialog
+    if (DoorDialog* doorDialog = dynamic_cast<DoorDialog*>(LegoFactory<DoorDialog, QString>::create("DoorDialog")))
+        _legoDialog << doorDialog;
+    else
+        qDebug() << "Cannot create DoorDialog in MainWindow::initDialogs";
+
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
     }
@@ -197,7 +211,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window";// "Character";
+    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door";// "Character";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -421,9 +435,18 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<WindowGeode*>(LegoFactory<WindowGeode, QString>::create("WindowGeode"))))
             qDebug() << "Cannot cast in WindowGeode* within MainWindow::chooseDialog";
         break;
-
+    case 5:
+        if ((_currLego = dynamic_cast<Door*>(LegoFactory<Door, QString>::create("Door")))) {
+            Door* lego = static_cast<Door*>(_currLego);
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Door* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<DoorGeode*>(LegoFactory<DoorGeode, QString>::create("DoorGeode"))))
+            qDebug() << "Cannot cast in DoorGeode* within MainWindow::chooseDialog";
+        break;
     // Character dialog
-//    case 4:
+//    case 6:
 //        if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::create("Character")))) {
 //            Character* lego = static_cast<Character*>(_currLego);
 //            lego->setColor(QColor(0, 112, 44));
