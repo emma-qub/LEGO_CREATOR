@@ -726,14 +726,14 @@ void MainWindow::generateRoad(void) {
 
 void MainWindow::eraseScene(void) {
     // remove everything from scene
-    _scene->removeChildren(0, _scene->getNumChildren());
+    _world.getScene()->removeChildren(0, _world.getScene()->getNumChildren());
     _saved = true;
     _alreadySaved = false;
 }
 
 void MainWindow::writeFile(const QString& fileName) {
     // Try to write the scene in fileName file
-    if (osgDB::writeNodeFile(*(_scene.get()), fileName.toStdString())) {
+    if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
         QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
         _saved = true;
         _alreadySaved = true;
@@ -781,6 +781,8 @@ void MainWindow::openFile(void) {
     // Open dialog because users know what they want to open
     QString fileName = QFileDialog::getOpenFileName(this, "Open object", openPath);
 
+//    QString fileName = "./untitled.osg";
+
     // Future node, or not
     osg::ref_ptr<osg::Node> newLego = NULL;
 
@@ -790,7 +792,7 @@ void MainWindow::openFile(void) {
         newLego = osgDB::readNodeFile(fileName.toStdString());
         // If the new Lego has been correctly got
         if (newLego) {
-            _scene->addChild(newLego);
+            _world.getScene()->addChild(newLego);
             _saved = false;
         // Else, users have no luck, but they can retry!
         } else {
@@ -812,6 +814,7 @@ void MainWindow::saveFile(void) {
         QString fileName = _settings.value("FileName").toString();
 
         // Time to really save the osg file
+//        QString fileName = "./untitled.osg";
         writeFile(fileName);
     }
 }

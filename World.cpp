@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-int World::minHeight = -10;
-int World::maxHeight = 90;
+int World::minHeight = 0;
+int World::maxHeight = 100;
 int World::minWidth = -500;
 int World::maxWidth = 500;
 int World::minLength = -500;
