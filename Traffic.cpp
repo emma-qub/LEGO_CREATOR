@@ -75,7 +75,7 @@ bool Traffic::runTraffic(void) {
         osg::ref_ptr<osg::MatrixTransform> t2 = new osg::MatrixTransform;
         t2->setName("transformation");
         osg::Matrix m;
-        m.preMultScale(osg::Vec3(10.0, 10.0, 10.0));
+        m.preMultScale(osg::Vec3(20.0, 20.0, 20.0));
         m.preMultRotate(osg::Quat(-M_PI/2, osg::Vec3d(1.0, 0.0, 0.0)));
         m.preMultRotate(osg::Quat(M_PI, osg::Vec3d(0.0, 0.0, 1.0)));
         //m.makeTranslate(osg::Vec3(0,0,-3.8));
