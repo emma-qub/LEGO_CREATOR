@@ -34,6 +34,7 @@ public:
 
     void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 
+    void openFromFile(const QString& fileName);
     void writeFile(const QString& fileName);
 
 public slots:
@@ -50,6 +51,7 @@ public slots:
 
     void generateRoad(void);
     void generateHouse(void);
+    void generateCity(void);
 
     void eraseScene(void);
     void newFile(void);
@@ -95,8 +97,8 @@ private:
     QAction* _quitAction;
 
     QAction* _generateRoadAction;
-    QAction* _generateBuildingAction;
     QAction* _generateHouseAction;
+    QAction* _generateCityAction;
 
     QAction* _viewTrafficAction;
 

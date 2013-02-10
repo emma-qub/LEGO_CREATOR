@@ -551,6 +551,36 @@ void MainWindow::rotateRight(void) {
     _world.rotation(false);
 }
 
+void MainWindow::writeFile(const QString& fileName) {
+    // Try to write the scene in fileName file
+    if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
+        //QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
+        _saved = true;
+        _alreadySaved = true;
+    // Fail! Users can retry or not
+    } else {
+        qDebug() << "On n'a pas reussi a ecrire dans le fichier ><";
+        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
+    }
+}
+
+void MainWindow::openFromFile(const QString& fileName) {
+    delete _currLego;
+
+    if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile")))) {
+        if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::create("FromFileGeode"))) {
+            _currLegoGeode->setLego(_currLego);
+            FromFile* fromFile = static_cast<FromFile*>(_currLego);
+            fromFile->setFileName(fileName);
+            _currLegoGeode->createGeode();
+
+            createLego();
+        } else
+            qDebug() << "Cannot cast in FromFileGeode* within MainWindow::openFromFile";
+    } else
+        qDebug() << "Cannot cast in FromFile* within MainWindow::openFromFile";
+}
+
 void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight) {
     // Create a road part, according to its top and left neighbour.
     // The algorithm could (might?) be improved
@@ -743,20 +773,11 @@ void MainWindow::generateRoad(void) {
 }
 
 void MainWindow::generateHouse(void) {
-    delete _currLego;
+    openFromFile("../LEGO_CREATOR/OSG/house.osg");
+}
 
-    if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile")))) {
-        if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::create("FromFileGeode"))) {
-            _currLegoGeode->setLego(_currLego);
-            FromFile* fromFile = static_cast<FromFile*>(_currLego);
-            fromFile->setFileName("../LEGO_CREATOR/OSG/house.osg");
-            _currLegoGeode->createGeode();
-
-            createLego();
-        } else
-            qDebug() << "Cannot cast in FromFileGeode* within MainWindow::generateHouse";
-    } else
-        qDebug() << "Cannot cast in FromFile* within MainWindow::generateHouse";
+void MainWindow::generateCity(void) {
+    openFromFile("../LEGO_CREATOR/OSG/town.osg");
 }
 
 void MainWindow::eraseScene(void) {
@@ -767,19 +788,6 @@ void MainWindow::eraseScene(void) {
     _alreadySaved = false;
     _paramsDock->setEnabled(true);
     _moveDock->setEnabled(false);
-}
-
-void MainWindow::writeFile(const QString& fileName) {
-    // Try to write the scene in fileName file
-    if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
-        //QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
-        _saved = true;
-        _alreadySaved = true;
-    // Fail! Users can retry or not
-    } else {
-        qDebug() << "On n'a pas reussi a ecrire dans le fichier ><";
-        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
-    }
 }
 
 void MainWindow::newFile(void) {
@@ -845,20 +853,7 @@ void MainWindow::openFile(void) {
         if (fileName.split(".").last() != "osg") {
             QMessageBox::critical(this, "Not an OSG file", "The selected file is not an OSG file.\nPlease retry with a correct file.");
         } else {
-            delete _currLego;
-
-            if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::create("FromFile")))) {
-                if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::create("FromFileGeode"))) {
-                    _currLegoGeode->setLego(_currLego);
-                    FromFile* fromFile = static_cast<FromFile*>(_currLego);
-                    fromFile->setFileName(openPath+fileName);
-                    _currLegoGeode->createGeode();
-
-                    createLego();
-                } else
-                    qDebug() << "Cannot cast in FromFileGeode* within MainWindow::generateHouse";
-            } else
-                qDebug() << "Cannot cast in FromFile* within MainWindow::generateHouse";
+            openFromFile(openPath+fileName);
         }
     }
 
@@ -1101,14 +1096,17 @@ void MainWindow::createGenerateMenu(void) {
     // Connect action
     connect(_generateRoadAction, SIGNAL(triggered()), this, SLOT(generateRoad()));
 
-//    // Add Generate building sub menu
-//    _generateBuildingAction = generateMenu->addAction("Generate &building...");
-//    _generateBuildingAction->setShortcut(QKeySequence("CTRL+SHIFT+B"));
-
     // Add Generate house sub menu
     _generateHouseAction = generateMenu->addAction("Generate &house");
     _generateHouseAction->setShortcut(QKeySequence("CTRL+SHIFT+H"));
+    // Connect action
     connect(_generateHouseAction, SIGNAL(triggered()), this, SLOT(generateHouse()));
+
+    // Add Generate city sub menu
+    _generateCityAction = generateMenu->addAction("Generate &city...");
+    _generateCityAction->setShortcut(QKeySequence("CTRL+SHIFT+C"));
+    // Connect action
+    connect(_generateCityAction, SIGNAL(triggered()), this, SLOT(generateCity()));
 }
 
 void MainWindow::createTrafficMenu(void) {
@@ -1116,7 +1114,7 @@ void MainWindow::createTrafficMenu(void) {
     QMenu* trafficMenu = menuBar()->addMenu("&Traffic");
 
     // Add View Traffic sub menu
-    _viewTrafficAction = trafficMenu->addAction("View traffic");
+    _viewTrafficAction = trafficMenu->addAction("Toggle traffic");
     _viewTrafficAction->setShortcut(QKeySequence("CTRL+SHIFT+T"));
     _viewTrafficAction->setCheckable(true);
     _viewTrafficAction->setChecked(false);
