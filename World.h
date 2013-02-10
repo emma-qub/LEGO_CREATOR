@@ -6,6 +6,7 @@
 #include <osg/Node>
 #include <osg/ref_ptr>
 #include <osg/MatrixTransform>
+#include <osg/LightSource>
 
 #include "LegoGeode.h"
 

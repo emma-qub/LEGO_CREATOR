@@ -30,12 +30,13 @@
 
 class Traffic : public osg::Node {
 public:
-    Traffic();
-    osg::ref_ptr<osg::AnimationPath> getTrafficPath(void);
-    osg::ref_ptr<osg::Node> getVehicules(void);
-    void runTrafic(osg::ref_ptr<osg::Group> root);
+    Traffic(osg::ref_ptr<osg::Group> root);
+    bool addVehicules(void);
+    bool runTraffic(void);
+    bool stopTraffic(void);
 
-public:
+private:
+    osg::ref_ptr<osg::Group> _root;
     osg::ref_ptr<osg::Group> _vehicules;
     osg::ref_ptr<osg::AnimationPath> _trafficPath;
 };

@@ -7,6 +7,8 @@
 #include "LegoDialog.h"
 #include "World.h"
 
+#include "Traffic.h"
+
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -28,6 +30,7 @@ public:
     void createParamsDock(void);
     void createMoveDock(void);
     void createScene(void);
+    void initTraffic(void);
 
     void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 
@@ -57,11 +60,11 @@ public slots:
 
     void checkExistence(QString fileName);
 
-    void recordPath(void);
-    void viewTraffic(void);
+    void viewTraffic(bool trafficOn = false);
 
 private:
     //QTabWidget* _tabs;
+    Traffic* _traffic;
 
     ViewerWidget* _brickViewer;
     ViewerWidget* _sceneViewer;
@@ -95,7 +98,6 @@ private:
     QAction* _generateBuildingAction;
     QAction* _generateHouseAction;
 
-    QAction* _recordPathAction;
     QAction* _viewTrafficAction;
 
     QAction* _helpAction;

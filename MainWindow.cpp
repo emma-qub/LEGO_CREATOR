@@ -15,6 +15,8 @@
 #include "DoorDialog.h"
 #include "FromFileDialog.h"
 
+#include "Traffic.h"
+
 #include <QSettings>
 
 #include <osgDB/WriteFile>
@@ -57,6 +59,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Create scene
     createScene();
+
+    // Init Traffic from world scene
+    initTraffic();
 
     // Set tabs mode
     setCentralWidget(_sceneFrame);
@@ -355,7 +360,7 @@ void MainWindow::createScene(void) {
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
-    _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0, 0, 100, 100));
+    _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.1, 0.1, 10.0, 10.0));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
 
@@ -363,6 +368,10 @@ void MainWindow::createScene(void) {
     QVBoxLayout* previewLayout = new QVBoxLayout;
     previewLayout->addWidget(_sceneViewer);
     _sceneFrame->setLayout(previewLayout);
+}
+
+void MainWindow::initTraffic(void) {
+    _traffic = new Traffic(_world.getScene());
 }
 
 // Open the color dialog to change our LEGO color
@@ -1014,10 +1023,22 @@ void MainWindow::quitSoft(void) {
     }
 }
 
-void MainWindow::recordPath(void) {
-}
-
-void MainWindow::viewTraffic(void) {
+void MainWindow::viewTraffic(bool trafficOn) {
+    if (trafficOn) {
+        if (!_traffic->runTraffic()) {
+            disconnect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
+            QMessageBox::critical(this, "Traffic error", "Traffic encountered an error\nwhile tempting to run.");
+            _viewTrafficAction->setChecked(false);
+            connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
+        }
+    } else {
+        if (!_traffic->stopTraffic()) {
+            disconnect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
+            QMessageBox::critical(this, "Traffic error", "Traffic encountered an error\nwhile tempting to stop.");
+            _viewTrafficAction->setChecked(true);
+            connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
+        }
+    }
 }
 
 
@@ -1094,15 +1115,12 @@ void MainWindow::createTrafficMenu(void) {
     // Create Traffic menu
     QMenu* trafficMenu = menuBar()->addMenu("&Traffic");
 
-    // Add Record Path sub menu
-    _recordPathAction = trafficMenu->addAction("&Record path");
-    _recordPathAction->setShortcut(QKeySequence("CTRL+SHIFT+P"));
-    connect(_recordPathAction, SIGNAL(triggered()), this, SLOT(recordPath()));
-
     // Add View Traffic sub menu
     _viewTrafficAction = trafficMenu->addAction("View traffic");
     _viewTrafficAction->setShortcut(QKeySequence("CTRL+SHIFT+T"));
-    connect(_viewTrafficAction, SIGNAL(triggered()), this, SLOT(viewTraffic()));
+    _viewTrafficAction->setCheckable(true);
+    _viewTrafficAction->setChecked(false);
+    connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
 }
 
 void MainWindow::createHelpMenu(void) {
