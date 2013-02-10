@@ -20,23 +20,6 @@
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
 
-//#include <osgTerrain/TerrainTile>
-//#include <osgTerrain/GeometryTechnique>
-//#include <osgTerrain/Layer>
-//#include <osg/Geode>
-//#include <osg/MatrixTransform>
-//#include <osg/Geometry>
-//#include <osg/ref_ptr>
-//#include <osg/Notify>
-//#include <osg/Camera>
-//#include <osg/ShapeDrawable>
-//#include <osg/Material>
-//#include <osg/Texture2D>
-//#include <osg/Light>
-//#include <osgText/Font>
-//#include <osgText/Text>
-//#include <osg/PositionAttitudeTransform>
-
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -51,6 +34,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _settings.setValue("SavePath", "../LEGO_CREATOR/OSG/");
     _settings.setValue("OpenPath", "../LEGO_CREATOR/OSG/");
     _settings.setValue("RecordPath", "../LEGO_CREATOR/OSG/RecordPath/");
+    _settings.setValue("VehiculesPath", "../LEGO_CREATOR/OSG/Vehicules");
     _settings.setValue("RecordFileName", "traffic.path");
     _settings.setValue("FileName", "");
 
