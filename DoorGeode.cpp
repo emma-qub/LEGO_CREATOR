@@ -23,7 +23,6 @@ DoorGeode::DoorGeode(const DoorGeode& doorGeode) :
 }
 
 void DoorGeode::createGeode(void) {
-    // Add the brick basis
     removeChildren(0, getNumChildren());
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
