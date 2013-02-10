@@ -7,8 +7,6 @@
 
 #include <QDebug>
 
-using namespace osg;
-
 SlopGeode::SlopGeode() :
     LegoGeode() {
 }
@@ -42,17 +40,28 @@ void SlopGeode::createGeode(void) {
 
     // Get integer sizes
     int height = 3;
+    if(slopType == Slop::plate)
+        height = 1;
     int length = slop->getLength();
     int width = slop->getWidth();
     bool renf = false;
     bool rooff = false;
-    int width_2 = renf ? width_2 = 1 : width_2 = width;
-    if(slopType == Slop::roof)
+    if(slopType != Slop::classic) {
         rooff = true;
-    if (slopType == Slop::renforce) {
-        renf = true;
-        //width ++;
+        if(width == 3)
+            width = 2;
     }
+    // Become type "renforce"
+    if (width > 1 && !rooff) {
+        renf = true;
+        width = width - 1;
+    }
+
+    int width_2 = 0;
+    if(renf)
+        width_2 = 1;
+    else if(rooff)
+        width_2 = width;
 
     // Get real position, according to slop size
     // d : down, u : up, l : left, r : right, f : front, b : back
@@ -64,7 +73,7 @@ void SlopGeode::createGeode(void) {
     double b = width*Lego::length_unit/2;
 
     // Create 8 vertices
-    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+//    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
     osg::Vec3 lfd(l, f, d);
     osg::Vec3 rfd(r, f, d);
 //    osg::Vec3 rfu(r, f, u);
@@ -84,13 +93,13 @@ void SlopGeode::createGeode(void) {
     osg::Vec3 lbu1(l, b+width_2*Lego::length_unit, u);
 
     // Add the slop basis
-    geode->removeDrawables(0, geode->getDrawableList().size());
     geode->addDrawable(createCarre(lbd, rbd, rbu, lbu, osg::Vec3(0, 1, 0), color));  // back
     geode->addDrawable(createTriangle(rfd, rbd, rbu, osg::Vec3(1, 0, 0), color));    // right
     geode->addDrawable(createTriangle(lfd, lbd, lbu, osg::Vec3(-1, 0, 0), color));    // left
     geode->addDrawable(createCarre(lfd, rfd, rbu, lbu, osg::Vec3(0, -1, 1), color));  // slop
 
     // Add brick renforce
+    //QDebug("laaaa111");
     if (renf) {
         geode->addDrawable(createCarre(lbd1, rbd1, rbu1, lbu1, osg::Vec3(0, 1, 0), color));  // back
         geode->addDrawable(createCarre(rfd1, rbd1, rbu1, rfu1, osg::Vec3(1, 0, 0), color));  // right
@@ -98,7 +107,8 @@ void SlopGeode::createGeode(void) {
         geode->addDrawable(createCarre(lfu1, rfu1, rbu1, lbu1, osg::Vec3(0, 0, 1), color));  // top
         geode->addDrawable(createCarre(lfd, rfd, rbd1, lbd1, osg::Vec3(0, -1, 0), color, true));  // down
     }
-    else if(rooff) {
+    if(rooff) {
+        //QDebug(laaaa);
         //addDrawable(createCarre(lbd, rbd, rbu, lbu, osg::Vec3(0, 1, 0), color));  // back
         geode->addDrawable(createTriangle(rfu1, rfd1, rbd1, osg::Vec3(1, 0, 0), color));    // right
         geode->addDrawable(createTriangle(lfu1, lfd1, lbd1, osg::Vec3(-1, 0, 0), color));    // left
@@ -114,9 +124,6 @@ void SlopGeode::createGeode(void) {
 
     // Calculate x max and y max for plots
     double xmin = -(length-1)*Lego::length_unit/2;
-    double ymin = -(width-1)*Lego::length_unit/2;
-
-
 
     // Add plots iteratively if the slop type is not flat
     if (renf && !rooff) {
@@ -125,6 +132,7 @@ void SlopGeode::createGeode(void) {
             double radiusX = xmin + i*distPlot;
             geode->addDrawable(createPlot(radiusX, (width)*Lego::length_unit/2, height));
         }
+        width --;
     }
 
      /*
@@ -160,46 +168,46 @@ void SlopGeode::createGeode(void) {
     }*/
 }
 
-void SlopGeode::set_Color_normals(Vec3 normal, Geometry& geoTriangle, QColor color)
+void SlopGeode::setColornormals(osg::Vec3 normal, osg::ref_ptr<osg::Geometry> geoTriangle, QColor color)
 {
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
     normals->push_back(normal);
-    geoTriangle.setNormalArray(normals);
-    geoTriangle.setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    geoTriangle->setNormalArray(normals);
+    geoTriangle->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     colors->push_back(colorVec);
-    geoTriangle.setColorArray(colors);
-    geoTriangle.setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    geoTriangle->setColorArray(colors);
+    geoTriangle->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
 }
 
-ref_ptr<Drawable> SlopGeode::createTriangle(Vec3 rfd, Vec3 rbd, Vec3 rbu, Vec3 normal, QColor color)
+osg::ref_ptr<osg::Drawable> SlopGeode::createTriangle(osg::Vec3 rfd, osg::Vec3 rbd, osg::Vec3 rbu, osg::Vec3 normal, QColor color)
 {
-    ref_ptr<Geometry> geoTriangle = new Geometry;
-     ref_ptr<Vec3Array> tabSommet = new Vec3Array;
+    osg::ref_ptr<osg::Geometry> geoTriangle = new osg::Geometry;
+     osg::ref_ptr<osg::Vec3Array> tabSommet = new osg::Vec3Array;
      tabSommet->push_back(rfd);
      tabSommet->push_back(rbd);
      tabSommet->push_back(rbu);
      geoTriangle ->setVertexArray(tabSommet);
 
      // Nous créons une primitive Triangle et nous ajoutons les sommets selon leur index dans le tableau tabSommet
-     ref_ptr<DrawElementsUInt> pPrimitiveSet = new DrawElementsUInt( PrimitiveSet::TRIANGLES, 0 );
+     osg::ref_ptr<osg::DrawElementsUInt> pPrimitiveSet = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, 0 );
      pPrimitiveSet->push_back(0);
      pPrimitiveSet->push_back(1);
      pPrimitiveSet->push_back(2);
      geoTriangle->addPrimitiveSet(pPrimitiveSet);
 
-     set_Color_normals( normal, *geoTriangle.get(), color);
+     setColornormals( normal, geoTriangle.get(), color);
 
      return geoTriangle.get();
 }
 
-void SlopGeode::add_transparency(Geometry& slopGeometry)
+void SlopGeode::addTransparency(osg::ref_ptr<osg::Geometry> slopGeometry)
 {
     double alpha = 0.1;
-    osg::StateSet* state = slopGeometry.getOrCreateStateSet();
+    osg::StateSet* state = slopGeometry->getOrCreateStateSet();
     state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
     osg::Material* mat = new osg::Material;
     mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
@@ -209,14 +217,14 @@ void SlopGeode::add_transparency(Geometry& slopGeometry)
     state->setAttributeAndModes(bf);
     state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    slopGeometry.setStateSet(state);
+    slopGeometry->setStateSet(state);
 
 }
 
-ref_ptr<Drawable> SlopGeode::createCarre(Vec3 A, Vec3 B, Vec3 C, Vec3 D, Vec3 normal, QColor color, bool transparency)
+osg::ref_ptr<osg::Drawable> SlopGeode::createCarre(osg::Vec3 A, osg::Vec3 B, osg::Vec3 C, osg::Vec3 D, osg::Vec3 normal, QColor color, bool transparency)
 {
-     ref_ptr<Geometry> geoTriangle = new Geometry;
-     ref_ptr<Vec3Array> tabSommet = new Vec3Array;
+     osg::ref_ptr<osg::Geometry> geoTriangle = new osg::Geometry;
+     osg::ref_ptr<osg::Vec3Array> tabSommet = new osg::Vec3Array;
      tabSommet->push_back(A);
      tabSommet->push_back(B);
      tabSommet->push_back(C);
@@ -224,7 +232,7 @@ ref_ptr<Drawable> SlopGeode::createCarre(Vec3 A, Vec3 B, Vec3 C, Vec3 D, Vec3 no
      geoTriangle ->setVertexArray(tabSommet);
 
      // Nous créons une primitive Triangle et nous ajoutons les sommets selon leur index dans le tableau tabSommet
-     ref_ptr<DrawElementsUInt> pPrimitiveSet = new DrawElementsUInt( PrimitiveSet::QUADS, 0 );
+     osg::ref_ptr<osg::DrawElementsUInt> pPrimitiveSet = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
      pPrimitiveSet->push_back(0);
      pPrimitiveSet->push_back(1);
      pPrimitiveSet->push_back(2);
@@ -261,11 +269,11 @@ ref_ptr<Drawable> SlopGeode::createCarre(Vec3 A, Vec3 B, Vec3 C, Vec3 D, Vec3 no
          // Macth color
          geoTriangle->setColorArray(colors);
          geoTriangle->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-//         add_transparency( *geoTriangle.get());
+//         addTransparency( geoTriangle.get());
 //         set_Color_normals( normal, *geoTriangle.get(), QColor(0, 0, 0, 0));
      }
      else
-         set_Color_normals( normal, *geoTriangle.get(), color);
+         setColornormals( normal, geoTriangle.get(), color);
 
      return geoTriangle.get();
 }
@@ -284,8 +292,8 @@ osg::ref_ptr<osg::Drawable> SlopGeode::createSlop(void) const {
     // Get integer sizes
     int height = 3;
     int length = slop->getLength();
-    int width = 1;
-    if (slopType == Slop::renforce)
+    int width = slop->getWidth();
+    if (slopType == Slop::roof)
         width = 2;
 
     // Get real position, according to slop size
