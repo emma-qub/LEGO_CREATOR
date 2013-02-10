@@ -676,9 +676,10 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
 
     // Add brick to the world
     _world.addBrick(roadGeode);
-    // Translate the
-    _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)+16 + 32*j, -10);
-    for (int k = 0; k < nbRotations; k++)     {
+    // Translate the road
+    _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)+16 + 32*j, World::minHeight);
+    // Apply rotation
+    for (int k = 0; k < nbRotations; k++) {
         _world.rotation(true);
     }
 }
