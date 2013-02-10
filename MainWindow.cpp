@@ -18,6 +18,33 @@
 #include <QSettings>
 
 #include <osgDB/WriteFile>
+#include <osgTerrain/TerrainTile>
+#include <osgTerrain/GeometryTechnique>
+#include <osgTerrain/Layer>
+#include <osg/Geode>
+#include <osg/MatrixTransform>
+#include <osg/Geometry>
+#include <osg/ref_ptr>
+#include <osgDB/WriteFile>
+#include <osgDB/ReadFile>
+#include <osg/Notify>
+#include <osgViewer/Viewer>
+#include <osg/Camera>
+#include <osg/ShapeDrawable>
+#include <osg/Material>
+#include <osg/Texture2D>
+#include <osg/Light>
+#include <osgText/Font>
+#include <osgText/Text>
+#include <osg/PositionAttitudeTransform>
+#include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/AnimationPathManipulator>
+#include <osgGA/TerrainManipulator>
+#include <osgViewer/ViewerEventHandlers>
+
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -53,12 +80,12 @@ MainWindow::MainWindow(QWidget* parent) :
     createScene();
 
     // Create tabs
-    _tabs = new QTabWidget(this);
-    _tabs->addTab(_sceneFrame, "Construction");
-    _tabs->addTab(new QWidget(this), "Interaction");
+//    _tabs = new QTabWidget(this);
+//    _tabs->addTab(_sceneFrame, "Build");
+//    _tabs->addTab(_sceneFrame, "Traffic");
 
     // Set tabs mode
-    setCentralWidget(_tabs);
+    setCentralWidget(_sceneFrame);
 
     // Connections
     connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
