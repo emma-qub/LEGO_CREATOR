@@ -18,32 +18,24 @@
 #include <QSettings>
 
 #include <osgDB/WriteFile>
-#include <osgTerrain/TerrainTile>
-#include <osgTerrain/GeometryTechnique>
-#include <osgTerrain/Layer>
-#include <osg/Geode>
-#include <osg/MatrixTransform>
-#include <osg/Geometry>
-#include <osg/ref_ptr>
-#include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
-#include <osg/Notify>
-#include <osgViewer/Viewer>
-#include <osg/Camera>
-#include <osg/ShapeDrawable>
-#include <osg/Material>
-#include <osg/Texture2D>
-#include <osg/Light>
-#include <osgText/Font>
-#include <osgText/Text>
-#include <osg/PositionAttitudeTransform>
-#include <osgGA/TrackballManipulator>
-#include <osgGA/FlightManipulator>
-#include <osgGA/DriveManipulator>
-#include <osgGA/KeySwitchMatrixManipulator>
-#include <osgGA/AnimationPathManipulator>
-#include <osgGA/TerrainManipulator>
-#include <osgViewer/ViewerEventHandlers>
+
+//#include <osgTerrain/TerrainTile>
+//#include <osgTerrain/GeometryTechnique>
+//#include <osgTerrain/Layer>
+//#include <osg/Geode>
+//#include <osg/MatrixTransform>
+//#include <osg/Geometry>
+//#include <osg/ref_ptr>
+//#include <osg/Notify>
+//#include <osg/Camera>
+//#include <osg/ShapeDrawable>
+//#include <osg/Material>
+//#include <osg/Texture2D>
+//#include <osg/Light>
+//#include <osgText/Font>
+//#include <osgText/Text>
+//#include <osg/PositionAttitudeTransform>
 
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -58,6 +50,8 @@ MainWindow::MainWindow(QWidget* parent) :
     // Settings to record save path and other
     _settings.setValue("SavePath", "../LEGO_CREATOR/OSG/");
     _settings.setValue("OpenPath", "../LEGO_CREATOR/OSG/");
+    _settings.setValue("RecordPath", "../LEGO_CREATOR/OSG/RecordPath/");
+    _settings.setValue("RecordFileName", "traffic.path");
     _settings.setValue("FileName", "");
 
     // Register in factories
@@ -70,6 +64,7 @@ MainWindow::MainWindow(QWidget* parent) :
     // Create menus
     createFileMenu();
     createGenerateMenu();
+    createTrafficMenu();
     createHelpMenu();
 
     // Create right dock
@@ -78,11 +73,6 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Create scene
     createScene();
-
-    // Create tabs
-//    _tabs = new QTabWidget(this);
-//    _tabs->addTab(_sceneFrame, "Build");
-//    _tabs->addTab(_sceneFrame, "Traffic");
 
     // Set tabs mode
     setCentralWidget(_sceneFrame);
@@ -271,7 +261,6 @@ void MainWindow::createParamsDock(void) {
     // CreateButton
     _createButton = new QPushButton("Create", this);
     _createButton->setFixedWidth(100);
-
 
     // Buttons Layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
@@ -1041,6 +1030,12 @@ void MainWindow::quitSoft(void) {
     }
 }
 
+void MainWindow::recordPath(void) {
+}
+
+void MainWindow::viewTraffic(void) {
+}
+
 
 
 // ////////////////////////////////////
@@ -1109,6 +1104,21 @@ void MainWindow::createGenerateMenu(void) {
     _generateHouseAction = generateMenu->addAction("Generate &house");
     _generateHouseAction->setShortcut(QKeySequence("CTRL+SHIFT+H"));
     connect(_generateHouseAction, SIGNAL(triggered()), this, SLOT(generateHouse()));
+}
+
+void MainWindow::createTrafficMenu(void) {
+    // Create Traffic menu
+    QMenu* trafficMenu = menuBar()->addMenu("&Traffic");
+
+    // Add Record Path sub menu
+    _recordPathAction = trafficMenu->addAction("&Record path");
+    _recordPathAction->setShortcut(QKeySequence("CTRL+SHIFT+P"));
+    connect(_recordPathAction, SIGNAL(triggered()), this, SLOT(recordPath()));
+
+    // Add View Traffic sub menu
+    _viewTrafficAction = trafficMenu->addAction("View traffic");
+    _viewTrafficAction->setShortcut(QKeySequence("CTRL+SHIFT+T"));
+    connect(_viewTrafficAction, SIGNAL(triggered()), this, SLOT(viewTraffic()));
 }
 
 void MainWindow::createHelpMenu(void) {

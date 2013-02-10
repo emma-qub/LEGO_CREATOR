@@ -1,7 +1,16 @@
 #include "ViewerWidget.h"
-#include "QDebug"
 
+#include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/AnimationPathManipulator>
+#include <osgGA/TerrainManipulator>
 #include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/ViewerEventHandlers>
+
+#include <QSettings>
+#include <QDebug>
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) :
     QWidget() {
@@ -34,7 +43,7 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
     traits->samples = ds->getNumMultiSamples();
 
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-    camera->setGraphicsContext( new osgQt::GraphicsWindowQt(traits.get()) );
+    camera->setGraphicsContext( new osgQt::GraphicsWindowQt(traits.get()));
 
     camera->setClearColor(color);
     camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
@@ -43,8 +52,30 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
 }
 
 void ViewerWidget::initView(void) {
+    // Get record path
+    QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
+    QString recordPath = settings.value("RecordPath").toString();
+    if (!recordPath.endsWith('/'))
+        recordPath += '/';
+
+    // Get record file name
+    QString recordFileName = settings.value("RecordFileName").toString();
+
     _view = new osgViewer::View;
     addView(_view);
+
+    // Manipulators
+    osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
+    keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
+    keyswitchManipulator->addMatrixManipulator('2', "Flight", new osgGA::FlightManipulator());
+    keyswitchManipulator->addMatrixManipulator('3', "Drive", new osgGA::DriveManipulator());
+    keyswitchManipulator->addMatrixManipulator('4', "Terrain", new osgGA::TerrainManipulator());
+    keyswitchManipulator->addMatrixManipulator('5', "Animation", new osgGA::AnimationPathManipulator());
+    keyswitchManipulator->selectMatrixManipulator(0);
+    _view->setCameraManipulator(keyswitchManipulator.get());
+
+    // Add the record camera path handler
+    _view->addEventHandler(new osgViewer::RecordCameraPathHandler((recordPath+recordFileName).toStdString()));
 }
 
 void ViewerWidget::changeCamera(osg::Camera* camera) {

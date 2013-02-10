@@ -23,6 +23,7 @@ public:
 
     void createFileMenu(void);
     void createGenerateMenu(void);
+    void createTrafficMenu(void);
     void createHelpMenu(void);
     void createParamsDock(void);
     void createMoveDock(void);
@@ -55,6 +56,9 @@ public slots:
     void quitSoft(void);
 
     void checkExistence(QString fileName);
+
+    void recordPath(void);
+    void viewTraffic(void);
 
 private:
     //QTabWidget* _tabs;
@@ -90,6 +94,9 @@ private:
     QAction* _generateRoadAction;
     QAction* _generateBuildingAction;
     QAction* _generateHouseAction;
+
+    QAction* _recordPathAction;
+    QAction* _viewTrafficAction;
 
     QAction* _helpAction;
     QAction* _aboutAction;
