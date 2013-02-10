@@ -360,7 +360,8 @@ void MainWindow::createScene(void) {
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
-    _sceneViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.1, 0.1, 10.0, 10.0));
+    _sceneViewer->initManipulators();
+    _sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.1, 0.1, 100.0, 100.0));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
 

@@ -29,6 +29,7 @@ public:
 
 public slots:
     void initView(void);
+    void initManipulators(void);
     void changeCamera(osg::Camera* camera);
     void changeScene(osg::Node* scene);
     void initWidget(void);

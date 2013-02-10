@@ -52,6 +52,11 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
 }
 
 void ViewerWidget::initView(void) {
+    _view = new osgViewer::View;
+    addView(_view);
+}
+
+void ViewerWidget::initManipulators(void) {
     // Get record path
     QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
     QString recordPath = settings.value("RecordPath").toString();
@@ -60,9 +65,6 @@ void ViewerWidget::initView(void) {
 
     // Get record file name
     QString recordFileName = settings.value("RecordFileName").toString();
-
-    _view = new osgViewer::View;
-    addView(_view);
 
     // Manipulators
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
