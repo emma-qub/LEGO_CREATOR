@@ -57,7 +57,7 @@ public slots:
     void checkExistence(QString fileName);
 
 private:
-    QTabWidget* _tabs;
+    //QTabWidget* _tabs;
 
     ViewerWidget* _brickViewer;
     ViewerWidget* _sceneViewer;
