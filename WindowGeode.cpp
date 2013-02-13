@@ -15,8 +15,6 @@ WindowGeode::WindowGeode(Window* window) :
 
 WindowGeode::WindowGeode(const WindowGeode& windowGeode) :
     LegoGeode(windowGeode) {
-
-    _lego = windowGeode._lego;
 }
 
 void WindowGeode::createGeode(void) {

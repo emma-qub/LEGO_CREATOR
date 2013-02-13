@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "BrickDialog.h"
+#include "WheelGeode.h"
 
 
 template<class Object, class Key = QString> class LegoFactory {

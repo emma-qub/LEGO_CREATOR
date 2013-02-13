@@ -20,8 +20,6 @@ RoadGeode::RoadGeode(Road* road) :
 
 RoadGeode::RoadGeode(const RoadGeode& roadGeode) :
     LegoGeode(roadGeode) {
-
-    _lego = roadGeode._lego;
 }
 
 void RoadGeode::createGeode(void) {

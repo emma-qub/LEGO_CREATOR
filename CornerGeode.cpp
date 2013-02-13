@@ -16,8 +16,6 @@ CornerGeode::CornerGeode(Corner* corner) :
 
 CornerGeode::CornerGeode(const CornerGeode& cornerGeode) :
     LegoGeode(cornerGeode) {
-
-    _lego = cornerGeode._lego;
 }
 
 void CornerGeode::createGeode(void) {

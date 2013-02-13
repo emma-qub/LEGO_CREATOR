@@ -14,6 +14,7 @@
 #include "WindowDialog.h"
 #include "DoorDialog.h"
 #include "FromFileDialog.h"
+#include "WheelDialog.h"
 
 #include "Traffic.h"
 
@@ -144,12 +145,19 @@ void MainWindow::initFactories(void) {
     // Register DoorDialog
     LegoFactory<DoorDialog, QString>::registerLego(QString("DoorDialog"), new DoorDialog);
 
-    // Register From File
+    // Register FromFile
     LegoFactory<FromFile, QString>::registerLego(QString("FromFile"), new FromFile);
     // Register FromFileGeode
     LegoFactory<FromFileGeode, QString>::registerLego(QString("FromFileGeode"), new FromFileGeode);
     // Register FromFileDialog
     LegoFactory<FromFileDialog, QString>::registerLego(QString("FromFileDialog"), new FromFileDialog);
+
+    // Register Wheel
+    LegoFactory<Wheel, QString>::registerLego(QString("Wheel"), new Wheel);
+    // Register WheelGeode
+    LegoFactory<WheelGeode, QString>::registerLego(QString("WheelGeode"), new WheelGeode);
+    // Register WheelDialog
+    LegoFactory<WheelDialog, QString>::registerLego(QString("WheelDialog"), new WheelDialog);
 
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
@@ -211,6 +219,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create DoorDialog in MainWindow::initDialogs";
 
+    // WheelDialog
+    if (WheelDialog* wheelDialog = dynamic_cast<WheelDialog*>(LegoFactory<WheelDialog, QString>::create("WheelDialog")))
+        _legoDialog << wheelDialog;
+    else
+        qDebug() << "Cannot create WheelDialog in MainWindow::initDialogs";
+
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
     }
@@ -225,7 +239,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door";// "Character";
+    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel";// "Character";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -463,8 +477,19 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<DoorGeode*>(LegoFactory<DoorGeode, QString>::create("DoorGeode"))))
             qDebug() << "Cannot cast in DoorGeode* within MainWindow::chooseDialog";
         break;
+    case 6:
+        if ((_currLego = dynamic_cast<Wheel*>(LegoFactory<Wheel, QString>::create("Wheel")))) {
+            Wheel* lego = static_cast<Wheel*>(_currLego);
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Wheel* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<WheelGeode*>(LegoFactory<WheelGeode, QString>::create("WheelGeode"))))
+            qDebug() << "Cannot cast in WheelGeode* within MainWindow::chooseDialog";
+
+        break;
     // Character dialog
-//    case 6:
+//    case 7:
 //        if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::create("Character")))) {
 //            Character* lego = static_cast<Character*>(_currLego);
 //            lego->setColor(QColor(0, 112, 44));

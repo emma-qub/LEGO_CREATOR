@@ -33,7 +33,10 @@ SOURCES += \
     FromFile.cpp \
     FromFileGeode.cpp \
     FromFileDialog.cpp \
-    Traffic.cpp
+    Traffic.cpp \
+    Wheel.cpp \
+    WheelGeode.cpp \
+    WheelDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -69,7 +72,10 @@ HEADERS += \
     FromFile.h \
     FromFileGeode.h \
     FromFileDialog.h \
-    Traffic.h
+    Traffic.h \
+    Wheel.h \
+    WheelGeode.h \
+    WheelDialog.h
 
 LIBS += \
     -L$OSG/lib \

@@ -21,7 +21,7 @@ BrickGeode::BrickGeode(const BrickGeode& brickGeode) :
 }
 
 void BrickGeode::createGeode(void) {
-    // Add the brick basis
+    // Remove children
     removeChildren(0, getNumChildren());
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
@@ -75,7 +75,7 @@ void BrickGeode::createGeode(void) {
     if (thinl && !thinw)
         length = 2;
 
-    // Add bottom cylinder iteratively
+    // Add bottom cylinders iteratively
     for (int i = 0; i < length-1; i++) {
         for (int j = 0; j < width-1; j++) {
             double radiusX = xminb + i*distPlot;

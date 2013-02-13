@@ -18,8 +18,6 @@ DoorGeode::DoorGeode(Door* door) :
 
 DoorGeode::DoorGeode(const DoorGeode& doorGeode) :
     LegoGeode(doorGeode) {
-
-    _lego = doorGeode._lego;
 }
 
 void DoorGeode::createGeode(void) {
