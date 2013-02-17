@@ -647,7 +647,8 @@ void MainWindow::openFromFile(const QString& fileName) {
 
     // Force dialog to refresh and avoid segfault
     int currDialogIndex = _shapeComboBox->currentIndex();
-    _shapeComboBox->setCurrentIndex(0);
+    int nextDialogIndex = (currDialogIndex+1)%(_shapeComboBox->count());
+    _shapeComboBox->setCurrentIndex(nextDialogIndex);
     _shapeComboBox->setCurrentIndex(currDialogIndex);
 }
 
