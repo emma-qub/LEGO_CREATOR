@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include "LegoFactory.h"
+
 int World::minHeight = 0;
 int World::maxHeight = 100;
 int World::minWidth = -500;
@@ -21,7 +23,6 @@ World::World() :
 }
 
 World::~World(void) {
-    delete _currLegoGeode->getLego();
 }
 
 void World::initBrick(void) {
@@ -45,6 +46,24 @@ void World::initBrick(void) {
 }
 
 void World::addBrick(LegoGeode* legoGeode) {
+//    Lego* newLego = NULL;
+//    if ((newLego = dynamic_cast<Lego*>(LegoFactory<Lego, QString>::instance()->create("Lego")))) {
+//        _currLegoGeode = LegoFactory<LegoGeode, QString>::instance()->create("LegoGeode");
+//        _currLegoGeode = legoGeode;
+//        _currLegoGeode->setLego(newLego);
+
+//        osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
+//        _currMatrixTransform = mt;
+
+//        mt->addChild(_currLegoGeode);
+//        _scene->addChild(mt.get());
+
+//        initBrick();
+//    } else {
+//        qDebug() << "Cannot cast in Lego* within World::addBrick";
+//    }
+
+
     Lego* newLego = legoGeode->getLego()->cloning();
     _currLegoGeode = legoGeode->cloning();
     _currLegoGeode->setLego(newLego);

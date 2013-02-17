@@ -12,16 +12,35 @@
 template<class Object, class Key = QString> class LegoFactory {
 
 public:
-    static void registerLego(Key key, Object* object);
-    static Object* create(const Key& key);
+    static LegoFactory<Object, Key>* instance(void);
+    static void kill(void);
+    void registerLego(Key key, Object* object);
+    Object* create(const Key& key);
 
-public:
+private:
+    static LegoFactory<Object, Key>* _self;
     static QMap<Key, Object*> _map;
 };
 
+template<class Object, class Key>
+LegoFactory<Object, Key>* LegoFactory<Object, Key>::_self = NULL;
 
 template<class Object, class Key>
 QMap<Key, Object*> LegoFactory<Object, Key>::_map = QMap<Key, Object*>();
+
+template<class Object, class Key>
+LegoFactory<Object, Key>* LegoFactory<Object, Key>::instance(void) {
+    if (!_self)
+        _self = new LegoFactory<Object, Key>();
+
+    return _self;
+}
+
+template<class Object, class Key>
+void LegoFactory<Object, Key>::kill(void) {
+    delete _self;
+    _self = NULL;
+}
 
 template<class Object, class Key>
 void LegoFactory<Object, Key>::registerLego(Key key, Object* object) {

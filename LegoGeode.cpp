@@ -14,6 +14,9 @@ LegoGeode::LegoGeode(const LegoGeode& legoGeode) :
     _lego = legoGeode._lego;
 }
 
+LegoGeode::~LegoGeode() {
+}
+
 osg::ref_ptr<osg::Drawable> LegoGeode::createPlot(double radiusX, double radiusY, int height) const {
     // Get plate color
     QColor color = _lego->getColor();

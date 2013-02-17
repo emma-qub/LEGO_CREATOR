@@ -12,6 +12,7 @@ class LegoGeode : public osg::Group {
 public:
     LegoGeode(Lego* lego = NULL);
     LegoGeode(const LegoGeode& legoGeode);
+    virtual ~LegoGeode();
 
     virtual void createGeode(void) {}
     virtual Lego* getLego(void) { return _lego; }
