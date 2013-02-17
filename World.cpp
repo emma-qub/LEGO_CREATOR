@@ -21,6 +21,7 @@ World::World() :
 }
 
 World::~World(void) {
+    delete _currLegoGeode->getLego();
 }
 
 void World::initBrick(void) {

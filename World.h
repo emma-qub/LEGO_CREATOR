@@ -41,7 +41,7 @@ private:
     bool _building;
     osg::ref_ptr<osg::Group> _scene;
     osg::ref_ptr<osg::MatrixTransform> _currMatrixTransform;
-    LegoGeode* _currLegoGeode;
+    osg::ref_ptr<LegoGeode> _currLegoGeode;
     QVector<osg::ref_ptr<osg::Node> > _assemblies;
 };
 
