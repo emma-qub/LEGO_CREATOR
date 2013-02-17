@@ -18,7 +18,7 @@ SlopDialog::SlopDialog(const SlopDialog& slopDialog) :
     // Slop width
     _widthSpinBox = new QSpinBox(this);
     _widthSpinBox->setMinimum(1);
-    _widthSpinBox->setMaximum(3);
+    _widthSpinBox->setMaximum(4);
     _widthSpinBox->setValue(2);
     QFormLayout* widthLayout = new QFormLayout;
     widthLayout->addRow("Width", _widthSpinBox);
