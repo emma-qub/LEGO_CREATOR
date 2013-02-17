@@ -4,6 +4,8 @@
 
 #include "LegoFactory.h"
 
+#include <osgUtil/Optimizer>
+
 int World::minHeight = 0;
 int World::maxHeight = 100;
 int World::minWidth = -500;
@@ -12,14 +14,17 @@ int World::minLength = -500;
 int World::maxLength = 500;
 
 World::World() :
-//    _brickPositions(QVector<QVector<QVector<bool> > >(maxHeight-minHeight, QVector<QVector<bool> >(maxLength-minLength, QVector<bool>(maxWidth-minWidth, false)))),
-//    _roadPositions(QVector<QVector<bool> >(maxLength-minLength, QVector<bool>(maxWidth-minWidth, false))),
     _building(false),
     _assemblies(QVector<osg::ref_ptr<osg::Node> >()) {
 
+    // Create scene
     _scene = new osg::Group;
     _currMatrixTransform = new osg::MatrixTransform;
     _currLegoGeode = NULL;
+
+    // Optimizer
+    osgUtil::Optimizer optimizer;
+    optimizer.optimize(_scene);
 }
 
 World::~World(void) {
@@ -45,25 +50,11 @@ void World::initBrick(void) {
     translation(x, y, z);
 }
 
+void World::deleteLego(void) {
+    _scene->removeChild(_currMatrixTransform);
+}
+
 void World::addBrick(LegoGeode* legoGeode) {
-//    Lego* newLego = NULL;
-//    if ((newLego = dynamic_cast<Lego*>(LegoFactory<Lego, QString>::instance()->create("Lego")))) {
-//        _currLegoGeode = LegoFactory<LegoGeode, QString>::instance()->create("LegoGeode");
-//        _currLegoGeode = legoGeode;
-//        _currLegoGeode->setLego(newLego);
-
-//        osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
-//        _currMatrixTransform = mt;
-
-//        mt->addChild(_currLegoGeode);
-//        _scene->addChild(mt.get());
-
-//        initBrick();
-//    } else {
-//        qDebug() << "Cannot cast in Lego* within World::addBrick";
-//    }
-
-
     Lego* newLego = legoGeode->getLego()->cloning();
     _currLegoGeode = legoGeode->cloning();
     _currLegoGeode->setLego(newLego);

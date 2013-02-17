@@ -22,6 +22,7 @@ public:
 
     void initBrick(void);
     void fitBrick(void);
+    void deleteLego(void);
     bool canBeFit(void) const;
     void addBrick(LegoGeode* legoGeode);
     void rotation(bool counterClockWise = false);

@@ -22,7 +22,6 @@
 
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
-#include <osgUtil/Optimizer>
 
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -68,10 +67,6 @@ MainWindow::MainWindow(QWidget* parent) :
     // Set tabs mode
     setCentralWidget(_sceneFrame);
 
-    // Optimizer
-    osgUtil::Optimizer optimizer;
-    optimizer.optimize(_scene.get());
-
     // Connections
     connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
     for (int k = 0; k < _shapeComboBox->count(); k++)
@@ -80,6 +75,7 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_createButton, SIGNAL(clicked()), this, SLOT(createLego()));
 
     connect(_fitButton, SIGNAL(clicked()), this, SLOT(fitLego()));
+    connect(_deleteButton, SIGNAL(clicked()), this, SLOT(deleteLego()));
     connect(_xTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_yTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
@@ -601,7 +597,15 @@ void MainWindow::fitLego(void) {
 }
 
 void MainWindow::deleteLego(void) {
+    // Delete Lego within world scene
+    _world.deleteLego();
 
+    // Users can create another brick
+    _moveDock->setEnabled(false);
+    _paramsDock->setEnabled(true);
+
+    // The file has changed
+    _saved = false;
 }
 
 void MainWindow::translate(int) {
