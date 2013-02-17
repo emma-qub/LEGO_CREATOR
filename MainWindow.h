@@ -44,6 +44,7 @@ public slots:
 
     void createLego(void);
     void fitLego(void);
+    void deleteLego(void);
 
     void translate(int);
     void rotateLeft(void);

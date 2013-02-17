@@ -85,6 +85,7 @@ LIBS += \
     -losgDB \
     -losgViewer \
     -lOpenThreads \
+    -losgUtil \
     #-losgTerrain \
     -L
 

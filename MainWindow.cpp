@@ -22,6 +22,7 @@
 
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
+#include <osgUtil/Optimizer>
 
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -66,6 +67,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Set tabs mode
     setCentralWidget(_sceneFrame);
+
+    // Optimizer
+    osgUtil::Optimizer optimizer;
+    optimizer.optimize(_scene.get());
 
     // Connections
     connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
@@ -593,6 +598,10 @@ void MainWindow::fitLego(void) {
 
     // The file has changed
     _saved = false;
+}
+
+void MainWindow::deleteLego(void) {
+
 }
 
 void MainWindow::translate(int) {
