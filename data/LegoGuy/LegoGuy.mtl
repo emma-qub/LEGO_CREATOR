@@ -5,6 +5,5 @@ Ni 0
 Ka 0.2 0.2 0.2
 Kd 1 1 1
 Ks 0 0 0
-Km 0
-map_Kd /Maps/cont4.jpg
+cont4.mpc
 
