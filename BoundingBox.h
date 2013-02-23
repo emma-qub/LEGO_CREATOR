@@ -17,6 +17,10 @@ public:
 
     void rotate(void);
 
+    int getWidth(void) const { return _width; }
+    int getLength(void) const { return _length; }
+    int getHeight(void) const { return _height; }
+
 private:
     QVector<int> _leftBottomFrontCorner;
     QVector<int> _rightTopBackCorner;

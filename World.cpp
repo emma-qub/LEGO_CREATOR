@@ -54,10 +54,10 @@ void World::deleteLego(void) {
     _scene->removeChild(_currMatrixTransform);
 }
 
-void World::addBrick(LegoGeode* legoGeode) {
-    Lego* newLego = legoGeode->getLego()->cloning();
+void World::addBrick(osg::ref_ptr<LegoGeode> legoGeode) {
+    osg::ref_ptr<Lego> newLego = legoGeode->getLego()->cloning();
     _currLegoGeode = legoGeode->cloning();
-    _currLegoGeode->setLego(newLego);
+    _currLegoGeode->setLego(newLego.get());
 
     osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
     _currMatrixTransform = mt;

@@ -24,7 +24,7 @@ public:
     void fitBrick(void);
     void deleteLego(void);
     bool canBeFit(void) const;
-    void addBrick(LegoGeode* legoGeode);
+    void addBrick(osg::ref_ptr<LegoGeode> legoGeode);
     void rotation(bool counterClockWise = false);
     void translation(double x, double y, double z);
     void translationXYZ(int x, int y, int z);

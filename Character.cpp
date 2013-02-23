@@ -17,7 +17,7 @@ Character::Character(const Character& character) :
 }
 
 void Character::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, 4, 1, 12);
+    _boundingBox = BoundingBox(0, 0, 0, 2, 1, 12);
 }
 
 void Character::setCharacterType(int index) {

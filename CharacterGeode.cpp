@@ -18,8 +18,6 @@ CharacterGeode::CharacterGeode(osg::ref_ptr<Character> character) :
 
 CharacterGeode::CharacterGeode(const CharacterGeode& characterGeode) :
     LegoGeode(characterGeode) {
-
-    _lego = characterGeode._lego;
 }
 
 void CharacterGeode::createGeode(void) {
@@ -30,6 +28,10 @@ void CharacterGeode::createGeode(void) {
     int s = 80;
     m.makeScale(s, s, s);
     mt->setMatrix(m);
+
+    int height = _lego->getBoundingBox().getHeight();
+    m.makeTranslate(0, 0, -height*Lego::height_unit/2);
+    mt->postMult(m);
 
     mt->addChild(osgDB::readNodeFile("../LEGO_CREATOR/OSG/LegoGuy/LegoGuy.osg"));
     addChild(mt);
