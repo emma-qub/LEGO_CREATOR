@@ -9,7 +9,7 @@ Character::Character(CharacterType characterType, QObject *parent) :
 }
 
 void Character::calculateBoundingBox(void) {
-
+    _boundingBox = BoundingBox(0, 0, 0, 4, 1, 12);
 }
 
 void Character::setCharacterType(int index) {

@@ -164,13 +164,6 @@ void MainWindow::initFactories(void) {
     // Register SlopDialog
     LegoFactory<SlopDialog, QString>::instance()->registerLego(QString("SlopDialog"), new SlopDialog);
 
-    // Register Character
-    LegoFactory<Character, QString>::instance()->registerLego(QString("Character"), new Character);
-    // Register CharacterGeode
-    LegoFactory<CharacterGeode, QString>::instance()->registerLego(QString("CharacterGeode"), new CharacterGeode);
-    // Register CharacterDialog
-    LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
-
     // Register Window
     LegoFactory<Window, QString>::instance()->registerLego(QString("Window"), new Window);
     // Register WindowGeode
@@ -199,17 +192,29 @@ void MainWindow::initFactories(void) {
     // Register WheelDialog
     LegoFactory<WheelDialog, QString>::instance()->registerLego(QString("WheelDialog"), new WheelDialog);
 
+    // Register Character
+    LegoFactory<Character, QString>::instance()->registerLego(QString("Character"), new Character);
+    // Register CharacterGeode
+    LegoFactory<CharacterGeode, QString>::instance()->registerLego(QString("CharacterGeode"), new CharacterGeode);
+    // Register CharacterDialog
+    LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
+
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
 
 void MainWindow::initPreview(void) {
+    // Create a 4x2 red classic brick by default
     _currLego = LegoFactory<Brick, QString>::instance()->create("Brick");
     static_cast<Brick*>(_currLego)->setColor(QColor(Qt::red));
     static_cast<Brick*>(_currLego)->setWidth(2);
     static_cast<Brick*>(_currLego)->setLength(4);
+
+    // Create associated brick geode
     _currLegoGeode = LegoFactory<BrickGeode, QString>::instance()->create("BrickGeode");
     _currLegoGeode->setLego(_currLego);
     _currLegoGeode->createGeode();
+
+    // Create root node and add brick geode
     _scene = new osg::Group;
     _scene->addChild(_currLegoGeode);
 }
@@ -259,11 +264,11 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create WheelDialog in MainWindow::initDialogs";
 
-//    // CharacterDialog
-//    if (CharacterDialog* characterDialog = dynamic_cast<CharacterDialog*>(LegoFactory<CharacterDialog, QString>::instance()->create("CharacterDialog")))
-//        _legoDialog << characterDialog;
-//    else
-//        qDebug() << "Cannot create CharacterDialog in MainWindow::initDialogs";
+    // CharacterDialog
+    if (CharacterDialog* characterDialog = dynamic_cast<CharacterDialog*>(LegoFactory<CharacterDialog, QString>::instance()->create("CharacterDialog")))
+        _legoDialog << characterDialog;
+    else
+        qDebug() << "Cannot create CharacterDialog in MainWindow::initDialogs";
 
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
@@ -279,7 +284,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel";// "Character";
+    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel" << "Character";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -529,16 +534,16 @@ void MainWindow::chooseDialog(int dialogIndex) {
 
         break;
     // Character dialog
-//    case 7:
-//        if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
-//            Character* lego = static_cast<Character*>(_currLego);
-//            lego->setColor(QColor(0, 112, 44));
-//        } else {
-//            qDebug() << "Cannot cast in Character* within MainWindow::chooseDialog";
-//        }
-//        if (!(_currLegoGeode = dynamic_cast<CharacterGeode*>(LegoFactory<CharacterGeode, QString>::instance()->create("CharacterGeode"))))
-//            qDebug() << "Cannot cast in CharacterGeode* within MainWindow::chooseDialog";
-//        break;
+    case 7:
+        if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
+            Character* lego = static_cast<Character*>(_currLego);
+            lego->setColor(QColor(0, 112, 44));
+        } else {
+            qDebug() << "Cannot cast in Character* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<CharacterGeode*>(LegoFactory<CharacterGeode, QString>::instance()->create("CharacterGeode"))))
+            qDebug() << "Cannot cast in CharacterGeode* within MainWindow::chooseDialog";
+        break;
     }
 
     // Set current objects
