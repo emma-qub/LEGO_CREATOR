@@ -2,8 +2,8 @@
 
 #include "QDebug"
 
-Brick::Brick(int width, int length, BrickType brickType, const QColor &color, QObject* parent) :
-    Lego(color, parent),
+Brick::Brick(int width, int length, BrickType brickType, const QColor &color) :
+    Lego(color),
     _width(width),
     _length(length),
     _brickType(brickType) {

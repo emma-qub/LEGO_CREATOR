@@ -10,13 +10,13 @@ double Lego::plot_top_height = 1.7;
 double Lego::plot_bottom_height = Lego::height_unit-EPS;
 
 
-Lego::Lego(const QColor &color, QObject* parent) :
-    QObject(parent),
+Lego::Lego(const QColor &color) :
+    osg::Referenced(),
     _color(color) {
 }
 
 Lego::Lego(const Lego& lego) :
-    QObject() {
+    osg::Referenced() {
 
     _color = lego._color;
 }

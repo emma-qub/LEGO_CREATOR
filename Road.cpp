@@ -1,7 +1,7 @@
 #include "Road.h"
 
-Road::Road(RoadType roadType, const QColor& color, QObject* parent) :
-    Lego(color, parent),
+Road::Road(RoadType roadType, const QColor& color) :
+    Lego(color),
     _roadType(roadType) {
 
     calculateBoundingBox();

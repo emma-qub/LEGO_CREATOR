@@ -1,7 +1,7 @@
 #include "Corner.h"
 
-Corner::Corner(CornerType cornerType, const QColor &color, QObject *parent) :
-    Lego(color, parent),
+Corner::Corner(CornerType cornerType, const QColor &color) :
+    Lego(color),
     _cornerType(cornerType) {
 
     calculateBoundingBox();

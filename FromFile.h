@@ -6,7 +6,7 @@
 class FromFile : public Lego {
 
 public:
-    FromFile(const QString& fileName = "", const QColor &color = QColor(Qt::red), QObject* parent = NULL);
+    FromFile(const QString& fileName = "", const QColor &color = QColor(Qt::red));
     FromFile(const FromFile& fromFile);
 
     QString getFileName(void) const { return _fileName; }

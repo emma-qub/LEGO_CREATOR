@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-Slop::Slop(int width, int length, SlopType slopType, const QColor &color, QObject* parent) :
-    Lego(color, parent),
+Slop::Slop(int width, int length, SlopType slopType, const QColor &color) :
+    Lego(color),
     _width(width),
     _length(length),
     _slopType(slopType) {

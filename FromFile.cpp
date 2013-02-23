@@ -1,7 +1,7 @@
 #include "FromFile.h"
 
-FromFile::FromFile(const QString& fileName, const QColor &color, QObject *parent) :
-    Lego(color, parent),
+FromFile::FromFile(const QString& fileName, const QColor &color) :
+    Lego(color),
     _fileName(fileName) {
 }
 

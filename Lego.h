@@ -2,7 +2,7 @@
 #define LEGO_H
 
 #include <QColor>
-#include <QObject>
+#include <osg/Referenced>
 
 #include "BoundingBox.h"
 
@@ -10,10 +10,10 @@
 #define EPS 0.01
 
 
-class Lego : public QObject {
+class Lego : public osg::Referenced {
 
 public:
-    Lego(const QColor& color = QColor(Qt::red), QObject* parent = 0);
+    Lego(const QColor& color = QColor(Qt::red));
     Lego(const Lego& lego);
 
     virtual QColor getColor(void) const { return _color; }

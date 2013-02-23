@@ -8,7 +8,7 @@ class Slop : public Lego {
 
         enum SlopType { classic, roof, plate };
 
-        Slop(int width = 2, int length = 1, SlopType slopType = classic, const QColor& color = QColor(Qt::red), QObject* parent = 0);
+        Slop(int width = 2, int length = 1, SlopType slopType = classic, const QColor& color = QColor(Qt::red));
         Slop(const Slop& Slop);
 
         int getWidth(void) const { return _width; }

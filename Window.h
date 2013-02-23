@@ -6,7 +6,7 @@
 class Window : public Lego {
 
 public:
-    Window(const QColor &color = QColor(Qt::red), QObject* parent = 0);
+    Window(const QColor &color = QColor(Qt::red));
     Window(const Window& window);
 
     virtual void calculateBoundingBox(void);

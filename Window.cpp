@@ -1,7 +1,7 @@
 #include "Window.h"
 
-Window::Window(const QColor &color, QObject* parent) :
-    Lego(color, parent) {
+Window::Window(const QColor &color) :
+    Lego(color) {
 
     calculateBoundingBox();
 }

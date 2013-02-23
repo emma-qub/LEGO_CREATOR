@@ -8,7 +8,8 @@ class Character : public Lego
 {
 public:
     enum CharacterType { classic, R2D2 };
-    Character(CharacterType charactertype = classic, QObject* parent = 0);
+    Character(CharacterType characterType = classic, const QColor& color = QColor(Qt::yellow));
+    Character(const Character& character);
 
     CharacterType getCharacterType(void) const { return _characterType; }
 

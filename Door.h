@@ -6,7 +6,7 @@
 class Door : public Lego {
 
 public:
-    Door(const QColor &color = QColor(Qt::red), QObject* parent = 0);
+    Door(const QColor &color = QColor(Qt::red));
     Door(const Door& door);
 
     virtual void calculateBoundingBox(void);

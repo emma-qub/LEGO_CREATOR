@@ -1,7 +1,7 @@
 #include "Door.h"
 
-Door::Door(const QColor &color, QObject* parent) :
-    Lego(color, parent) {
+Door::Door(const QColor &color) :
+    Lego(color) {
 
     calculateBoundingBox();
 }

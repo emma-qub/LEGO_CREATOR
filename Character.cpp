@@ -1,11 +1,19 @@
 #include "Character.h"
 #include <QObject>
 
-Character::Character(CharacterType characterType, QObject *parent) :
-    Lego(QColor(), parent),
+Character::Character(CharacterType characterType, const QColor &color) :
+    Lego(color),
     _characterType(characterType) {
 
      calculateBoundingBox();
+}
+
+Character::Character(const Character& character) :
+    Lego(character) {
+
+    _characterType = character._characterType;
+
+    calculateBoundingBox();
 }
 
 void Character::calculateBoundingBox(void) {

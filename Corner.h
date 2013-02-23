@@ -8,7 +8,7 @@ class Corner : public Lego {
 public:
     enum CornerType { brick, plate };
 
-    Corner(CornerType cornerType = brick, const QColor& color = QColor(Qt::red), QObject* parent = 0);
+    Corner(CornerType cornerType = brick, const QColor& color = QColor(Qt::red));
     Corner(const Corner& corner);
 
     CornerType getCornerType(void) const { return _cornerType; }

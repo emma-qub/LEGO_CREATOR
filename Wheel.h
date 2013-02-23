@@ -6,7 +6,7 @@
 class Wheel : public Lego {
 
 public:
-    Wheel(const QColor &color = QColor(Qt::red), QObject* parent = NULL);
+    Wheel(const QColor &color = QColor(Qt::red));
     Wheel(const Wheel& wheel);
 
     virtual void calculateBoundingBox(void);

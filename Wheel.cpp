@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-Wheel::Wheel(const QColor& color, QObject* parent) :
-    Lego(color, parent) {
+Wheel::Wheel(const QColor& color) :
+    Lego(color) {
 
     calculateBoundingBox();
 }
