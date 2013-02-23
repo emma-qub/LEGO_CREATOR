@@ -11,7 +11,7 @@ SlopGeode::SlopGeode() :
     LegoGeode() {
 }
 
-SlopGeode::SlopGeode(Slop* slop) :
+SlopGeode::SlopGeode(osg::ref_ptr<Slop> slop) :
     LegoGeode(slop) {
 
     createGeode();

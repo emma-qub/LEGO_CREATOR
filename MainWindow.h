@@ -110,7 +110,7 @@ private:
 
     osg::ref_ptr<osg::Group> _scene;
     osg::ref_ptr<LegoGeode> _currLegoGeode;
-    Lego* _currLego;
+    osg::ref_ptr<Lego> _currLego;
 
     QVector<LegoDialog*> _legoDialog;
 

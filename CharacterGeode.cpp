@@ -10,7 +10,7 @@ CharacterGeode::CharacterGeode() :
     LegoGeode() {
 }
 
-CharacterGeode::CharacterGeode(Character* character) :
+CharacterGeode::CharacterGeode(osg::ref_ptr<Character> character) :
     LegoGeode(character) {
 
     createGeode();

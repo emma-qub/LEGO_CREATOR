@@ -10,7 +10,7 @@
 class LegoGeode : public osg::Group {
 
 public:
-    LegoGeode(Lego* lego = NULL);
+    LegoGeode(osg::ref_ptr<Lego> lego = NULL);
     LegoGeode(const LegoGeode& legoGeode);
     virtual ~LegoGeode();
 

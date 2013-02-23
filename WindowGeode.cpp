@@ -7,7 +7,7 @@ WindowGeode::WindowGeode() :
     LegoGeode() {
 }
 
-WindowGeode::WindowGeode(Window* window) :
+WindowGeode::WindowGeode(osg::ref_ptr<Window> window) :
     LegoGeode(window) {
 
     createGeode();

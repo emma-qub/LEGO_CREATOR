@@ -8,7 +8,7 @@ class FromFileGeode : public LegoGeode {
 
 public:
     FromFileGeode();
-    FromFileGeode(FromFile* fromFile);
+    FromFileGeode(osg::ref_ptr<FromFile> fromFile);
     FromFileGeode(const FromFileGeode& fromFileGeode);
 
     virtual void createGeode(void);

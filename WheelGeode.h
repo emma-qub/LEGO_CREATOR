@@ -8,7 +8,7 @@ class WheelGeode : public LegoGeode {
 
 public:
     WheelGeode();
-    WheelGeode(Wheel* wheel);
+    WheelGeode(osg::ref_ptr<Wheel> wheel);
     WheelGeode(const WheelGeode& wheelGeode);
 
     virtual void createGeode(void);

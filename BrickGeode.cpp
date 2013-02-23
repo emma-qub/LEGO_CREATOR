@@ -10,7 +10,7 @@ BrickGeode::BrickGeode() :
     LegoGeode() {
 }
 
-BrickGeode::BrickGeode(Brick* brick) :
+BrickGeode::BrickGeode(osg::ref_ptr<Brick> brick) :
     LegoGeode(brick) {
 
     createGeode();

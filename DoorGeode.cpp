@@ -10,7 +10,7 @@ DoorGeode::DoorGeode() :
     LegoGeode() {
 }
 
-DoorGeode::DoorGeode(Door* door) :
+DoorGeode::DoorGeode(osg::ref_ptr<Door> door) :
     LegoGeode(door) {
 
     createGeode();

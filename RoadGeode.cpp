@@ -12,7 +12,7 @@ RoadGeode::RoadGeode() :
     LegoGeode() {
 }
 
-RoadGeode::RoadGeode(Road* road) :
+RoadGeode::RoadGeode(osg::ref_ptr<Road> road) :
     LegoGeode(road) {
 
     createGeode();

@@ -12,7 +12,7 @@ WheelGeode::WheelGeode() :
     LegoGeode() {
 }
 
-WheelGeode::WheelGeode(Wheel* wheel) :
+WheelGeode::WheelGeode(osg::ref_ptr<Wheel> wheel) :
     LegoGeode(wheel) {
 
     createGeode();

@@ -8,7 +8,7 @@ class SlopGeode : public LegoGeode {
 
 public:
     SlopGeode();
-    SlopGeode(Slop* slop);
+    SlopGeode(osg::ref_ptr<Slop> slop);
     SlopGeode(const SlopGeode& slopGeode);
 
     virtual void createGeode(void);

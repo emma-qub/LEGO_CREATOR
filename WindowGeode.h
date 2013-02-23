@@ -7,7 +7,7 @@
 class WindowGeode : public LegoGeode {
 public:
     WindowGeode();
-    WindowGeode(Window* window);
+    WindowGeode(osg::ref_ptr<Window> window);
     WindowGeode(const WindowGeode& windowGeode);
 
     virtual void createGeode(void);

@@ -6,7 +6,7 @@ FromFileGeode::FromFileGeode() :
     LegoGeode() {
 }
 
-FromFileGeode::FromFileGeode(FromFile* fromFile) :
+FromFileGeode::FromFileGeode(osg::ref_ptr<FromFile> fromFile) :
     LegoGeode(fromFile) {
 
     createGeode();

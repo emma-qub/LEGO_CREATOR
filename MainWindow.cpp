@@ -93,9 +93,6 @@ MainWindow::MainWindow(QWidget* parent) :
 }
 
 MainWindow::~MainWindow() {
-    delete _currLego;
-    _currLego = NULL;
-
     // Delete all factories
     LegoFactory<Brick, QString>::kill();
     LegoFactory<BrickGeode, QString>::kill();
@@ -205,9 +202,9 @@ void MainWindow::initFactories(void) {
 void MainWindow::initPreview(void) {
     // Create a 4x2 red classic brick by default
     _currLego = LegoFactory<Brick, QString>::instance()->create("Brick");
-    static_cast<Brick*>(_currLego)->setColor(QColor(Qt::red));
-    static_cast<Brick*>(_currLego)->setWidth(2);
-    static_cast<Brick*>(_currLego)->setLength(4);
+    static_cast<Brick*>(_currLego.get())->setColor(QColor(Qt::red));
+    static_cast<Brick*>(_currLego.get())->setWidth(2);
+    static_cast<Brick*>(_currLego.get())->setLength(4);
 
     // Create associated brick geode
     _currLegoGeode = LegoFactory<BrickGeode, QString>::instance()->create("BrickGeode");
@@ -450,15 +447,13 @@ void MainWindow::chooseDialog(int dialogIndex) {
             _legoDialog.at(k)->setVisible(false);
     }
 
-    delete _currLego;
-
     // Create dialog, according to
     switch (dialogIndex) {
     // Brick dialog
     case 0:
         if ((_currLego = dynamic_cast<Brick*>(LegoFactory<Brick, QString>::instance()->create("Brick")))) {
             BrickDialog* dialog = static_cast<BrickDialog*>(_legoDialog.at(dialogIndex));
-            Brick* lego = static_cast<Brick*>(_currLego);
+            Brick* lego = static_cast<Brick*>(_currLego.get());
             lego->setColor(_legoColor);
             lego->setWidth(dialog->getWidth());
             lego->setLength(dialog->getLength());
@@ -471,7 +466,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
     // Corner dialog
     case 1:
         if ((_currLego = dynamic_cast<Corner*>(LegoFactory<Corner, QString>::instance()->create("Corner")))) {
-            Corner* lego = static_cast<Corner*>(_currLego);
+            Corner* lego = static_cast<Corner*>(_currLego.get());
             lego->setColor(_legoColor);
         } else {
             qDebug() << "Cannot cast in Corner* within MainWindow::chooseDialog";
@@ -482,7 +477,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
     // Slop dialog
     case 2:
         if ((_currLego = dynamic_cast<Slop*>(LegoFactory<Slop, QString>::instance()->create("Slop")))) {
-            Slop* lego = static_cast<Slop*>(_currLego);
+            Slop* lego = static_cast<Slop*>(_currLego.get());
             lego->setColor(_legoColor);
         } else {
             qDebug() << "Cannot cast in Slop* within MainWindow::chooseDialog";
@@ -493,7 +488,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
     // Road dialog
     case 3:
         if ((_currLego = dynamic_cast<Road*>(LegoFactory<Road, QString>::instance()->create("Road")))) {
-            Road* lego = static_cast<Road*>(_currLego);
+            Road* lego = static_cast<Road*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));
         } else {
             qDebug() << "Cannot cast in Road* within MainWindow::chooseDialog";
@@ -504,7 +499,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
     // Window dialog
     case 4:
         if ((_currLego = dynamic_cast<Window*>(LegoFactory<Window, QString>::instance()->create("Window")))) {
-            Window* lego = static_cast<Window*>(_currLego);
+            Window* lego = static_cast<Window*>(_currLego.get());
             lego->setColor(_legoColor);
         } else {
             qDebug() << "Cannot cast in Window* within MainWindow::chooseDialog";
@@ -514,7 +509,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     case 5:
         if ((_currLego = dynamic_cast<Door*>(LegoFactory<Door, QString>::instance()->create("Door")))) {
-            Door* lego = static_cast<Door*>(_currLego);
+            Door* lego = static_cast<Door*>(_currLego.get());
             lego->setColor(_legoColor);
         } else {
             qDebug() << "Cannot cast in Door* within MainWindow::chooseDialog";
@@ -524,7 +519,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         break;
     case 6:
         if ((_currLego = dynamic_cast<Wheel*>(LegoFactory<Wheel, QString>::instance()->create("Wheel")))) {
-            Wheel* lego = static_cast<Wheel*>(_currLego);
+            Wheel* lego = static_cast<Wheel*>(_currLego.get());
             lego->setColor(_legoColor);
         } else {
             qDebug() << "Cannot cast in Wheel* within MainWindow::chooseDialog";
@@ -536,7 +531,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
     // Character dialog
     case 7:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
-            Character* lego = static_cast<Character*>(_currLego);
+            Character* lego = static_cast<Character*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));
         } else {
             qDebug() << "Cannot cast in Character* within MainWindow::chooseDialog";
@@ -583,7 +578,7 @@ void MainWindow::createLego(void) {
     _zTransSpinBox->setValue(0);
 
     // Check whether the LEGO is a road, and disable z spin box after having set it at minHeight world specification
-    if (dynamic_cast<Road*>(_currLego)) {
+    if (dynamic_cast<Road*>(_currLego.get())) {
         _zTransSpinBox->setValue(World::minHeight);
         _zTransSpinBox->setEnabled(false);
     }
@@ -648,12 +643,10 @@ void MainWindow::writeFile(const QString& fileName) {
 }
 
 void MainWindow::openFromFile(const QString& fileName) {
-    delete _currLego;
-
     if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::instance()->create("FromFile")))) {
         if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::instance()->create("FromFileGeode"))) {
             _currLegoGeode->setLego(_currLego);
-            FromFile* fromFile = static_cast<FromFile*>(_currLego);
+            FromFile* fromFile = static_cast<FromFile*>(_currLego.get());
             fromFile->setFileName(fileName);
             _currLegoGeode->createGeode();
 

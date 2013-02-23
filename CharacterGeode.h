@@ -9,7 +9,7 @@ class CharacterGeode : public LegoGeode
 {
 public:
     CharacterGeode();
-    CharacterGeode(Character* character);
+    CharacterGeode(osg::ref_ptr<Character> character);
     CharacterGeode(const CharacterGeode& characterGeode);
 
     virtual void createGeode(void);

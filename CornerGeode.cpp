@@ -8,7 +8,7 @@ CornerGeode::CornerGeode() :
     LegoGeode() {
 }
 
-CornerGeode::CornerGeode(Corner* corner) :
+CornerGeode::CornerGeode(osg::ref_ptr<Corner> corner) :
     LegoGeode(corner) {
 
     createGeode();

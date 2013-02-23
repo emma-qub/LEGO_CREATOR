@@ -8,7 +8,7 @@ class CornerGeode : public LegoGeode {
 
 public:
     CornerGeode();
-    CornerGeode(Corner* corner);
+    CornerGeode(osg::ref_ptr<Corner> corner);
     CornerGeode(const CornerGeode& cornerGeode);
 
     virtual void createGeode(void);

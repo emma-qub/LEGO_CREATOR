@@ -3,7 +3,7 @@
 #include <QDebug>
 
 
-LegoGeode::LegoGeode(Lego* lego) :
+LegoGeode::LegoGeode(osg::ref_ptr<Lego> lego) :
     osg::Group() {
     _lego = lego;
 }

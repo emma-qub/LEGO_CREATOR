@@ -8,7 +8,7 @@ class BrickGeode : public LegoGeode {
 
 public:
     BrickGeode();
-    BrickGeode(Brick* brick);
+    BrickGeode(osg::ref_ptr<Brick> brick);
     BrickGeode(const BrickGeode& brickGeode);
 
     virtual void createGeode(void);

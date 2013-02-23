@@ -7,7 +7,7 @@
 class DoorGeode : public LegoGeode {
 public:
     DoorGeode();
-    DoorGeode(Door* door);
+    DoorGeode(osg::ref_ptr<Door> door);
     DoorGeode(const DoorGeode& doorGeode);
 
     virtual void createGeode(void);
