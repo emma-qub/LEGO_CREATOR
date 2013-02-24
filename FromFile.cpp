@@ -16,5 +16,5 @@ FromFile* FromFile::cloning(void) const {
 }
 
 QString FromFile::whoiam(void) const {
-    return "I am a FromFile";
+    return "file: "+_fileName;
 }

@@ -27,5 +27,5 @@ void Lego::translateBoundingBox(double x, double y, double z) {
 }
 
 QString Lego::whoiam(void) const {
-    return "I am a Lego";
+    return "Lego";
 }

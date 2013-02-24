@@ -44,5 +44,5 @@ Road* Road::cloning(void) const {
 }
 
 QString Road::whoiam(void) const {
-    return "I am a Road";
+    return "Road";
 }

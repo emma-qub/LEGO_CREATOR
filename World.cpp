@@ -13,9 +13,7 @@ int World::maxWidth = 500;
 int World::minLength = -500;
 int World::maxLength = 500;
 
-World::World() :
-    _building(false),
-    _assemblies(QVector<osg::ref_ptr<osg::Node> >()) {
+World::World() {
 
     // Create scene
     _scene = new osg::Group;
@@ -37,35 +35,41 @@ void World::initBrick(void) {
     // Get the Bounding Box
     BoundingBox box = _currLegoGeode->getLego()->getBoundingBox();
 
-    // Get corners
-    QVector<int> lBFC = box.getLeftBottomFrontCorner();
-    QVector<int> rTBC = box.getRightTopBackCorner();
-
     // Calculate x, y and z translations
-    double x = (rTBC.at(0) - lBFC.at(0))/2.0;
-    double y = (rTBC.at(1) - lBFC.at(1))/2.0;
-    double z = (rTBC.at(2) - lBFC.at(2))/2.0;
+    _x = Lego::length_unit*box.getLength()/2.0;
+    _y = Lego::length_unit*box.getWidth()/2.0;
+    _z = Lego::height_unit*box.getHeight()/2.0;
 
     // Translation
-    translation(x, y, z);
+    osg::Matrix mat = _currMatrixTransform->getMatrix();
+    mat.makeTranslate(_x, _y, _z);
+    _currMatrixTransform->setMatrix(mat);
+
+    _isTurned = false;
 }
 
 void World::deleteLego(void) {
     _scene->removeChild(_currMatrixTransform);
 }
 
-void World::addBrick(osg::ref_ptr<LegoGeode> legoGeode) {
+void World::deleteLego(unsigned int matTransIndex) {
+    _scene->removeChild(matTransIndex);
+}
+
+unsigned int World::addBrick(osg::ref_ptr<osg::MatrixTransform> matTrans) {
+    LegoGeode* legoGeode = static_cast<LegoGeode*>(matTrans->getChild(0));
+
     osg::ref_ptr<Lego> newLego = legoGeode->getLego()->cloning();
     _currLegoGeode = legoGeode->cloning();
     _currLegoGeode->setLego(newLego.get());
 
-    osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
-    _currMatrixTransform = mt;
-
-    mt->addChild(_currLegoGeode);
-    _scene->addChild(mt.get());
+    _currMatrixTransform = new osg::MatrixTransform;
+    _currMatrixTransform->addChild(_currLegoGeode.get());
+    _scene->addChild(_currMatrixTransform.get());
 
     initBrick();
+
+    return _scene->getChildIndex(_currMatrixTransform);
 }
 
 void World::rotation(bool counterClockWise) {
@@ -78,28 +82,42 @@ void World::rotation(bool counterClockWise) {
     osg::Matrix rotate;
     rotate.makeRotate(osg::Quat(direction*M_PI/2, osg::Vec3(0, 0, 1)));
 
+    int x = static_cast<int>(2*_x/Lego::length_unit);
+    int y = static_cast<int>(2*_y/Lego::length_unit);
+    if ((x%2==0 && y%2==1) || (x%2==1 && y%2==0)) {
+        osg::Matrix mat = _currMatrixTransform->getMatrix();
+        mat.makeTranslate(-Lego::length_unit/2, Lego::length_unit*1/2, 0);
+        _currMatrixTransform->preMult(mat);
+        _isTurned = !_isTurned;
+    }
+
     // Apply rotation.
     // NB: rotate * mat -> local rotation
     //     mat * rotate -> global rotation
-    _currMatrixTransform->setMatrix(rotate*_currMatrixTransform->getMatrix());
+    _currMatrixTransform->preMult(rotate);
 
-    // Update bounding box
-    _currLegoGeode->getLego()->getBoundingBox().rotate();
 }
 
-void World::translationXYZ(int x, int y, int z) {
-    _currLegoGeode->getLego()->translateBoundingBox(x, y, z);
-
+void World::translationXYZ(double x, double y, double z) {
     x *= Lego::length_unit;
     y *= Lego::length_unit;
     z *= Lego::height_unit;
 
-    initBrick();
-
     osg::Matrix mat = _currMatrixTransform->getMatrix();
-    mat.makeTranslate(x, y, z);
 
-    _currMatrixTransform->setMatrix(mat*_currMatrixTransform->getMatrix());
+    osg::Vec3d trans = mat.getTrans();
+    //osg::Matrixd rotate = mat.getRotate();
+
+    mat.makeTranslate(-trans[0]+x+_x, -trans[1]+y+_y, -trans[2]+z+_z);
+
+    _currMatrixTransform->postMult(mat);
+
+    if (_isTurned) {
+        osg::Matrix mat = _currMatrixTransform->getMatrix();
+        mat.makeTranslate(Lego::length_unit/2, -Lego::length_unit*1/2, 0);
+        _currMatrixTransform->preMult(mat);
+    }
+
 }
 
 void World::translation(double x, double y, double z) {

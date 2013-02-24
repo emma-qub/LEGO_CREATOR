@@ -24,9 +24,11 @@ public:
     void setStyle(void);
 
     void createFileMenu(void);
+    void createEditMenu(void);
     void createGenerateMenu(void);
     void createTrafficMenu(void);
     void createHelpMenu(void);
+    void createUndoView(void);
     void createParamsDock(void);
     void createMoveDock(void);
     void createScene(void);
@@ -97,6 +99,9 @@ private:
     QAction* _saveAsAction;
     QAction* _quitAction;
 
+    QAction* _undoAction;
+    QAction* _redoAction;
+
     QAction* _generateRoadAction;
     QAction* _generateHouseAction;
     QAction* _generateCityAction;
@@ -109,6 +114,7 @@ private:
     QColor _legoColor;
 
     osg::ref_ptr<osg::Group> _scene;
+    osg::ref_ptr<osg::MatrixTransform> _currMatTrans;
     osg::ref_ptr<LegoGeode> _currLegoGeode;
     osg::ref_ptr<Lego> _currLego;
 
@@ -122,6 +128,9 @@ private:
 
     bool _alreadySaved;
     bool _saved;
+
+    QUndoStack* _undoStack;
+    QUndoView* _undoView;
 
 signals:
     void fileAlreadyExists(bool);

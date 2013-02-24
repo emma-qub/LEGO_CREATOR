@@ -54,5 +54,5 @@ Brick* Brick::cloning(void) const {
 }
 
 QString Brick::whoiam(void) const {
-    return "I am a Brick";
+    return "Brick";
 }

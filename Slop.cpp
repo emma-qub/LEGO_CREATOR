@@ -19,14 +19,14 @@ Slop::Slop(const Slop& slop) : Lego(slop) {
     calculateBoundingBox();
 }
 
+void Slop::calculateBoundingBox(void) {
+    _boundingBox = BoundingBox(0, 0, 0, _length, _width, 3);
+}
+
 Slop* Slop::cloning(void) const {
     return new Slop(*this);
 }
 
 QString Slop::whoiam(void) const {
-    return "I am a Slop";
-}
-
-void Slop::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, _length, _width, 3);
+    return "Slop";
 }

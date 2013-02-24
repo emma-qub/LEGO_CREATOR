@@ -4,6 +4,7 @@
 
 #include "MainWindow.h"
 #include "GenerateRoadWindow.h"
+#include "Commands.h"
 
 #include "LegoFactory.h"
 #include "BrickDialog.h"
@@ -33,6 +34,9 @@ MainWindow::MainWindow(QWidget* parent) :
     _alreadySaved(false),
     _saved(true) {
 
+    // Create undo stack to manage undo/redo actions
+    _undoStack = new QUndoStack(this);
+
     // Settings to record save path and other
     _settings.setValue("SavePath", "../LEGO_CREATOR/OSG/");
     _settings.setValue("OpenPath", "../LEGO_CREATOR/OSG/");
@@ -50,9 +54,13 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Create menus
     createFileMenu();
+    createEditMenu();
     createGenerateMenu();
     createTrafficMenu();
     createHelpMenu();
+
+    // Create undo/redo window
+    createUndoView();
 
     // Create right dock
     createParamsDock();
@@ -200,6 +208,9 @@ void MainWindow::initFactories(void) {
 }
 
 void MainWindow::initPreview(void) {
+    // Create matrix transform
+    _currMatTrans = new osg::MatrixTransform;
+
     // Create a 4x2 red classic brick by default
     _currLego = LegoFactory<Brick, QString>::instance()->create("Brick");
     static_cast<Brick*>(_currLego.get())->setColor(QColor(Qt::red));
@@ -211,9 +222,11 @@ void MainWindow::initPreview(void) {
     _currLegoGeode->setLego(_currLego);
     _currLegoGeode->createGeode();
 
+    _currMatTrans->addChild(_currLegoGeode);
+
     // Create root node and add brick geode
     _scene = new osg::Group;
-    _scene->addChild(_currLegoGeode);
+    _scene->addChild(_currMatTrans);
 }
 
 void MainWindow::initDialogs(void) {
@@ -542,9 +555,11 @@ void MainWindow::chooseDialog(int dialogIndex) {
     }
 
     // Set current objects
+    _currMatTrans = new osg::MatrixTransform;
     _currLegoGeode->setLego(_currLego);
     _currLegoGeode->createGeode();
-    _scene->setChild(0, _currLegoGeode.get());
+    _currMatTrans->addChild(_currLegoGeode);
+    _scene->setChild(0, _currMatTrans.get());
 
     // Initialize current objects
     _legoDialog.at(dialogIndex)->initLego(_currLego);
@@ -569,8 +584,16 @@ void MainWindow::createLego(void) {
     _paramsDock->setEnabled(false);
     _moveDock->setEnabled(true);
 
+    // Create current Matrix Transform
+    _currMatTrans = new osg::MatrixTransform;
+    _currMatTrans->addChild(_currLegoGeode);
+
     // Add brick geode in world
-    _world.addBrick(_currLegoGeode.get());
+    _world.addBrick(_currMatTrans.get());
+
+//    // Create AddCommand to handle undo/redo action
+//    QUndoCommand* addLegoCommand = new AddLegoCommand(&_world, _currMatTrans.get());
+//    _undoStack->push(addLegoCommand);
 
     // Reinit dialog, because a new brick is always put at the origin of the scene
     _xTransSpinBox->setValue(0);
@@ -795,8 +818,11 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
     // Create the road geode thanks to the brand new road
     RoadGeode* roadGeode = new RoadGeode(road);
 
+    osg::ref_ptr<osg::MatrixTransform> matTrans = new osg::MatrixTransform;
+    matTrans->addChild(roadGeode);
+
     // Add brick to the world
-    _world.addBrick(roadGeode);
+    _world.addBrick(matTrans);
     // Translate the road
     _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)+16 + 32*j, World::minHeight);
     // Apply rotation
@@ -1168,6 +1194,22 @@ void MainWindow::createFileMenu(void) {
     connect(_quitAction, SIGNAL(triggered()), this, SLOT(quitSoft()));
 }
 
+void MainWindow::createEditMenu(void) {
+    // Create Edit menu
+    QMenu* editMenu = menuBar()->addMenu("&Edit");
+
+    // Add Undo action
+    _undoAction = _undoStack->createUndoAction(this, "&Undo");
+    editMenu->addAction(_undoAction);
+    _undoAction->setShortcut(QKeySequence::Undo);
+
+    // Add Redo action
+    _redoAction = _undoStack->createRedoAction(this, "&Redo");
+    editMenu->addAction(_redoAction);
+    _redoAction->setShortcut(QKeySequence::Redo);
+
+}
+
 void MainWindow::createGenerateMenu(void) {
     // Create Generate menu
     QMenu* generateMenu = menuBar()->addMenu("&Generate");
@@ -1219,6 +1261,12 @@ void MainWindow::createHelpMenu(void) {
     _aboutAction->setShortcut(QKeySequence("Alt+F1"));
 }
 
+void MainWindow::createUndoView(void) {
+    _undoView = new QUndoView(_undoStack);
+    _undoView->setWindowTitle("Command list");
+    _undoView->show();
+    _undoView->setAttribute(Qt::WA_QuitOnClose, false);
+}
 
 
 // ////////////////////////////////////

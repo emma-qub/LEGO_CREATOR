@@ -36,7 +36,8 @@ SOURCES += \
     Traffic.cpp \
     Wheel.cpp \
     WheelGeode.cpp \
-    WheelDialog.cpp
+    WheelDialog.cpp \
+    Commands.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -75,7 +76,8 @@ HEADERS += \
     Traffic.h \
     Wheel.h \
     WheelGeode.h \
-    WheelDialog.h
+    WheelDialog.h \
+    Commands.h
 
 LIBS += \
     -L$OSG/lib \

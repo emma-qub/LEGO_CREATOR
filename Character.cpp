@@ -36,5 +36,5 @@ Character* Character::cloning(void) const {
 }
 
 QString Character::whoiam(void) const {
-    return "I am a Character";
+    return "Character";
 }

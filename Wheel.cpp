@@ -23,5 +23,5 @@ Wheel* Wheel::cloning(void) const {
 }
 
 QString Wheel::whoiam(void) const {
-    return "I am a Wheel";
+    return "Wheel";
 }

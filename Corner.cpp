@@ -31,5 +31,5 @@ Corner* Corner::cloning(void) const {
 }
 
 QString Corner::whoiam(void) const {
-    return "I am a Corner";
+    return "Corner";
 }

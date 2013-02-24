@@ -21,5 +21,5 @@ Window* Window::cloning(void) const {
 }
 
 QString Window::whoiam(void) const {
-    return "I am a Window";
+    return "Window";
 }

@@ -21,5 +21,5 @@ Door* Door::cloning(void) const {
 }
 
 QString Door::whoiam(void) const {
-    return "I am a Door";
+    return "Door";
 }
