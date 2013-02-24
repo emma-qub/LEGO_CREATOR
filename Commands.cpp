@@ -9,21 +9,21 @@
 // AddLegoCommand
 // /////////////////////////////////////////////////////////////////
 
-AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<osg::MatrixTransform> matTrans, QUndoCommand* parent) :
+AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, QUndoCommand* parent) :
     QUndoCommand(parent) {
 
     _world = world;
-    _matTrans = matTrans;
+    _currLegoGeode = legoGeode->cloning();
+    _currLego = legoGeode->getLego()->cloning();
+    _currLegoGeode->setLego(_currLego);
 
-    LegoGeode* legoGeode = static_cast<LegoGeode*>(matTrans->getChild(0));
-    setText("Add "+legoGeode->getLego()->whoiam());
+    setText("Add "+_currLegoGeode->getLego()->whoiam());
 }
 
 void AddLegoCommand::undo(void) {
-    unsigned int matTransIndex = _world->getScene()->getChildIndex(_matTrans);
-    _world->deleteLego(matTransIndex);
+    _world->deleteLego(_matTransIndex);
 }
 
 void AddLegoCommand::redo(void) {
-    _matTransIndex = _world->addBrick(_matTrans.get());
+    _matTransIndex = _world->addBrick(_currLegoGeode.get(), _currLego.get());
 }

@@ -9,7 +9,7 @@
 
 class AddLegoCommand : public QUndoCommand {
 public:
-    AddLegoCommand(World* world, osg::ref_ptr<osg::MatrixTransform> matTrans, QUndoCommand* parent = NULL);
+    AddLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, QUndoCommand* parent = NULL);
 
     virtual void undo(void);
     virtual void redo(void);
@@ -17,6 +17,8 @@ public:
 private:
     World* _world;
     osg::ref_ptr<osg::MatrixTransform> _matTrans;
+    osg::ref_ptr<LegoGeode> _currLegoGeode;
+    osg::ref_ptr<Lego> _currLego;
     unsigned int _matTransIndex;
 };
 

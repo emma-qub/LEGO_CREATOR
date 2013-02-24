@@ -67,6 +67,9 @@ public slots:
 
     void viewTraffic(bool trafficOn = false);
 
+    void freezeFit(void);
+    void freezeCreate(void);
+
 private:
     //QTabWidget* _tabs;
     Traffic* _traffic;

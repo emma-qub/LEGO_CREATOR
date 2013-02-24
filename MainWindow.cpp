@@ -89,6 +89,8 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
     connect(_leftRotateButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
     connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
+    connect(_undoAction, SIGNAL(triggered()), this, SLOT(freezeFit()));
+    connect(_redoAction, SIGNAL(triggered()), this, SLOT(freezeCreate()));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
@@ -98,6 +100,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Apply style sheet
     setStyle();
+
+    // Undo stack view always on top
+    _undoView->setWindowFlags(Qt::WindowStaysOnTopHint);
+    _undoView->show();
 }
 
 MainWindow::~MainWindow() {
@@ -137,7 +143,6 @@ MainWindow::~MainWindow() {
     LegoFactory<Wheel, QString>::kill();
     LegoFactory<WheelGeode, QString>::kill();
     LegoFactory<WheelDialog, QString>::kill();
-
 }
 
 void MainWindow::initFactories(void) {
@@ -581,19 +586,15 @@ void MainWindow::createLego(void) {
     _zTransSpinBox->setEnabled(true);
 
     // When a new brick has been created, users have to fit it before being able to create another one
-    _paramsDock->setEnabled(false);
-    _moveDock->setEnabled(true);
+    freezeCreate();
 
     // Create current Matrix Transform
     _currMatTrans = new osg::MatrixTransform;
     _currMatTrans->addChild(_currLegoGeode);
 
-    // Add brick geode in world
-    _world.addBrick(_currMatTrans.get());
-
-//    // Create AddCommand to handle undo/redo action
-//    QUndoCommand* addLegoCommand = new AddLegoCommand(&_world, _currMatTrans.get());
-//    _undoStack->push(addLegoCommand);
+    // Create AddCommand to handle undo/redo action
+    QUndoCommand* addLegoCommand = new AddLegoCommand(&_world, _currLegoGeode);
+    _undoStack->push(addLegoCommand);
 
     // Reinit dialog, because a new brick is always put at the origin of the scene
     _xTransSpinBox->setValue(0);
@@ -612,8 +613,7 @@ void MainWindow::createLego(void) {
 
 void MainWindow::fitLego(void) {
     // For the moment, users can fit LEGO wherever they want. So it only disables the move GUI and enables the construction GUI again.
-    _moveDock->setEnabled(false);
-    _paramsDock->setEnabled(true);
+    freezeFit();
 
     // The file has changed
     _saved = false;
@@ -691,7 +691,7 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
     // The algorithm could (might?) be improved
 
     // The new road
-    Road* road = new Road;
+    osg::ref_ptr<Road> road = new Road;
 
     // Road might have to be rotated several times
     int nbRotations = 0;
@@ -816,13 +816,13 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
     }
 
     // Create the road geode thanks to the brand new road
-    RoadGeode* roadGeode = new RoadGeode(road);
+    osg::ref_ptr<RoadGeode> roadGeode = new RoadGeode(road);
 
     osg::ref_ptr<osg::MatrixTransform> matTrans = new osg::MatrixTransform;
     matTrans->addChild(roadGeode);
 
     // Add brick to the world
-    _world.addBrick(matTrans);
+    _world.addBrick(roadGeode.get(), road.get());
     // Translate the road
     _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)+16 + 32*j, World::minHeight);
     // Apply rotation
@@ -1144,6 +1144,15 @@ void MainWindow::viewTraffic(bool trafficOn) {
     }
 }
 
+void MainWindow::freezeFit(void) {
+    _moveDock->setEnabled(false);
+    _paramsDock->setEnabled(true);
+}
+
+void MainWindow::freezeCreate(void) {
+    _paramsDock->setEnabled(false);
+    _moveDock->setEnabled(true);
+}
 
 
 // ////////////////////////////////////
@@ -1266,8 +1275,8 @@ void MainWindow::createUndoView(void) {
     _undoView->setWindowTitle("Command list");
     _undoView->show();
     _undoView->setAttribute(Qt::WA_QuitOnClose, false);
+    //_undoView->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
-
 
 // ////////////////////////////////////
 // STYLE SHEETS
