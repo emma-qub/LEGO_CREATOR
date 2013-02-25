@@ -38,6 +38,7 @@ public:
 private:
     osg::ref_ptr<osg::Group> _scene;
     osg::ref_ptr<osg::MatrixTransform> _currMatrixTransform;
+    QVector<unsigned int> _matTransIndexes;
     double _x;
     double _y;
     double _z;

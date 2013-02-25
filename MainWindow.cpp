@@ -620,7 +620,15 @@ void MainWindow::fitLego(void) {
 }
 
 void MainWindow::deleteLego(void) {
-    // Delete Lego within world scene
+//    // Get current matrix index whithin world scene
+//    unsigned int matTransIndex = _world.getScene()->getChildIndex(_currMatTrans.get());
+//    qDebug() << matTransIndex;
+
+//    // Create DeleteCommand to handle undo/redo action
+//    QUndoCommand* delLegoCommand = new DeleteLegoCommand(&_world, _currLegoGeode, matTransIndex);
+//    _undoStack->push(delLegoCommand);
+
+    // Delete brick
     _world.deleteLego();
 
     // Users can create another brick
@@ -640,7 +648,7 @@ void MainWindow::translate(int) {
 }
 
 void MainWindow::rotateLeft(void) {
-    // Rotate counter clock wise
+    // Rotate clock wise
     _world.rotation(true);
 
     // The file has changed
@@ -648,7 +656,7 @@ void MainWindow::rotateLeft(void) {
 }
 
 void MainWindow::rotateRight(void) {
-    // Rotate clock wise
+    // Rotate counter clock wise
     _world.rotation(false);
 }
 

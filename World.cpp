@@ -14,6 +14,9 @@ int World::minLength = -500;
 int World::maxLength = 500;
 
 World::World() {
+    // Initialize matrix transform indexes
+    _matTransIndexes = QVector<unsigned int>(0);
+
     // Create scene
     _scene = new osg::Group;
     _currMatrixTransform = new osg::MatrixTransform;
@@ -50,7 +53,8 @@ void World::initBrick(void) {
 }
 
 void World::deleteLego(void) {
-    _scene->removeChild(_currMatrixTransform);
+    _scene->removeChild(_matTransIndexes.last());
+    _matTransIndexes.pop_back();
 }
 
 void World::deleteLego(unsigned int matTransIndex) {
@@ -68,7 +72,9 @@ unsigned int World::addBrick(LegoGeode* legoGeode, Lego* lego) {
 
     initBrick();
 
-    return _scene->getChildIndex(_currMatrixTransform);
+    int matTransIndex = _scene->getChildIndex(_currMatrixTransform);
+    _matTransIndexes << matTransIndex;
+    return matTransIndex;
 }
 
 void World::rotation(bool counterClockWise) {
