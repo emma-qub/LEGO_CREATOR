@@ -16,6 +16,7 @@
 #include "DoorDialog.h"
 #include "FromFileDialog.h"
 #include "WheelDialog.h"
+#include "TileDialog.h"
 
 #include "Traffic.h"
 
@@ -143,6 +144,14 @@ MainWindow::~MainWindow() {
     LegoFactory<Wheel, QString>::kill();
     LegoFactory<WheelGeode, QString>::kill();
     LegoFactory<WheelDialog, QString>::kill();
+
+    LegoFactory<Character, QString>::kill();
+    LegoFactory<CharacterGeode, QString>::kill();
+    LegoFactory<CharacterDialog, QString>::kill();
+
+    LegoFactory<Tile, QString>::kill();
+    LegoFactory<TileGeode, QString>::kill();
+    LegoFactory<TileDialog, QString>::kill();
 }
 
 void MainWindow::initFactories(void) {
@@ -208,6 +217,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<CharacterGeode, QString>::instance()->registerLego(QString("CharacterGeode"), new CharacterGeode);
     // Register CharacterDialog
     LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
+
+    // Register Tile
+    LegoFactory<Tile, QString>::instance()->registerLego(QString("Tile"), new Tile);
+    // Register TileGeode
+    LegoFactory<TileGeode, QString>::instance()->registerLego(QString("TileGeode"), new TileGeode);
+    // Register TileDialog
+    LegoFactory<TileDialog, QString>::instance()->registerLego(QString("TileDialog"), new TileDialog);
 
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
@@ -285,6 +301,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create CharacterDialog in MainWindow::initDialogs";
 
+    // TileDialog
+    if (TileDialog* tileDialog = dynamic_cast<TileDialog*>(LegoFactory<TileDialog, QString>::instance()->create("TileDialog")))
+        _legoDialog << tileDialog;
+    else
+        qDebug() << "Cannot create TileDialog in MainWindow::initDialogs";
+
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
     }
@@ -299,7 +321,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel" << "Character";
+    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "Tile";
     _shapeComboBox->addItems(brickForms);
     QFormLayout* shapeLayout = new QFormLayout;
     shapeLayout->addRow("LEGO shape:", _shapeComboBox);
@@ -556,6 +578,20 @@ void MainWindow::chooseDialog(int dialogIndex) {
         }
         if (!(_currLegoGeode = dynamic_cast<CharacterGeode*>(LegoFactory<CharacterGeode, QString>::instance()->create("CharacterGeode"))))
             qDebug() << "Cannot cast in CharacterGeode* within MainWindow::chooseDialog";
+        break;
+    // Tile dialog
+    case 8:
+        if ((_currLego = dynamic_cast<Tile*>(LegoFactory<Tile, QString>::instance()->create("Tile")))) {
+            TileDialog* dialog = static_cast<TileDialog*>(_legoDialog.at(dialogIndex));
+            Tile* lego = static_cast<Tile*>(_currLego.get());
+            lego->setColor(_legoColor);
+            lego->setWidth(dialog->getWidth());
+            lego->setLength(dialog->getLength());
+        } else {
+            qDebug() << "Cannot cast in Tile* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<TileGeode*>(LegoFactory<TileGeode, QString>::instance()->create("TileGeode"))))
+            qDebug() << "Cannot cast in TileGeode* within MainWindow::chooseDialog";
         break;
     }
 
@@ -1290,7 +1326,7 @@ void MainWindow::createUndoView(void) {
 // STYLE SHEETS
 // ////////////////////////////////////
 void MainWindow::setStyle(void) {
-    //_paramsWidget->setStyleSheet("background-image: url(../LEGO_GIT/IMG/tileBrick.png);");
+    /*_paramsWidget->*/QString generalStyle = "";//"background-image: url(../LEGO_CREATOR/IMG/tileBrick.png);";
     //_paramsWidget->setStyleSheet("background: yellow;");
 
     QString dockWidgetStyle = "";
@@ -1325,6 +1361,6 @@ void MainWindow::setStyle(void) {
     dockWidgetButtonsStyle += "    padding: 1px -1px -1px 1px;";
     dockWidgetButtonsStyle += "}";
 
-    QString style = dockWidgetStyle + dockWidgetTitleStyle + dockWidgetButtonsStyle;
+    QString style = generalStyle + dockWidgetStyle + dockWidgetTitleStyle + dockWidgetButtonsStyle;
     setStyleSheet(style);
 }

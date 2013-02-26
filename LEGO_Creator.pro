@@ -37,7 +37,11 @@ SOURCES += \
     Wheel.cpp \
     WheelGeode.cpp \
     WheelDialog.cpp \
-    Commands.cpp
+    Commands.cpp \
+    Inspector.cpp \
+    Tile.cpp \
+    TileGeode.cpp \
+    TileDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -77,7 +81,11 @@ HEADERS += \
     Wheel.h \
     WheelGeode.h \
     WheelDialog.h \
-    Commands.h
+    Commands.h \
+    Inspector.h \
+    Tile.h \
+    TileGeode.h \
+    TileDialog.h
 
 LIBS += \
     -L$OSG/lib \
