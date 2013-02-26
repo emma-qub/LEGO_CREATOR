@@ -38,7 +38,7 @@ osg::ref_ptr<osg::Drawable> LegoGeode::createPlot(double radiusX, double radiusY
 }
 
 
-osg::ref_ptr<osg::Drawable> LegoGeode::createCylinder(double radiusX, double radiusY, int height, bool thin) const {
+osg::ref_ptr<osg::Drawable> LegoGeode::createCylinder(double radiusX, double radiusY, double height, bool thin, double center) const {
     // Get plate color
     QColor color = _lego->getColor();
 
@@ -52,7 +52,7 @@ osg::ref_ptr<osg::Drawable> LegoGeode::createCylinder(double radiusX, double rad
     // Since the plate z-middle is 0, the middle of the cylinder equals to the half of the part above the plate
     osg::ref_ptr<osg::ShapeDrawable> cyl = new osg::ShapeDrawable(
                                                 new osg::Cylinder(
-                                                    osg::Vec3(radiusX, radiusY, 0),
+                                                    osg::Vec3(radiusX, radiusY, center),
                                                     radius,
                                                     height*Lego::plot_bottom_height
                                                 )

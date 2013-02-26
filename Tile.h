@@ -6,14 +6,19 @@
 class Tile : public Lego {
 
 public:
-    Tile(int width = 3, int length = 2, const QColor &color = QColor(Qt::red));
+    enum TileType { classic, roof };
+
+    Tile(int width = 3, int length = 2, TileType tileType = classic, const QColor &color = QColor(Qt::red));
     Tile(const Tile& tile);
 
     int getWidth(void) const { return _width; }
     int getLength(void) const { return _length; }
+    TileType getTileType(void) const { return _tileType; }
 
     void setWidth(int width) { _width = width; }
     void setLength(int length) { _length = length; }
+    void setTileType(TileType tileType) { _tileType = tileType; }
+    void setTileType(int index);
 
     virtual void calculateBoundingBox(void);
 
@@ -24,6 +29,8 @@ public:
 private:
     int _width;
     int _length;
+    TileType _tileType;
+
 };
 
 #endif // TILE_H

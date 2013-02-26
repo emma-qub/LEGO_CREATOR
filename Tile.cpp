@@ -1,9 +1,10 @@
 #include "Tile.h"
 
-Tile::Tile(int width, int length, const QColor& color) :
+Tile::Tile(int width, int length, TileType tileType, const QColor& color) :
     Lego(color),
     _width(width),
-    _length(length) {
+    _length(length),
+    _tileType(tileType) {
 
     calculateBoundingBox();
 }
@@ -13,12 +14,27 @@ Tile::Tile(const Tile& tile) :
 
     _width = tile._width;
     _length = tile._length;
+    _tileType = tile._tileType;
 
     calculateBoundingBox();
 }
 
+void Tile::setTileType(int index) {
+    switch (index) {
+    case 0 :
+        _tileType = classic;
+        break;
+    case 1 :
+        _tileType = roof;
+        break;
+    }
+}
+
 void Tile::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+    if (_tileType == classic)
+        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+    else
+        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 2);
 }
 
 Tile* Tile::cloning(void) const {
