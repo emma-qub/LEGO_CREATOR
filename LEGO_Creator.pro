@@ -97,6 +97,7 @@ LIBS += \
     -lOpenThreads \
     -losgUtil \
     #-losgTerrain \
+    #-lX11 \
     -L
 
 QT += opengl

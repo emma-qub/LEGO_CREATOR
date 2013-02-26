@@ -4,17 +4,24 @@
 #include <QSettings>
 #include <QDir>
 
-Traffic::Traffic(osg::ref_ptr<osg::Group> root) :
-    _root(root.get()) {
+Traffic::Traffic() {
+    // Create switch node
+    _root = new osg::Switch;
+
+    // By default, when adding a child, it has to be hidden
+    _root->setNewChildDefaultValue(false);
 
     // Create animation path
     _trafficPath = new osg::AnimationPath;
 
-    // Create vehicules
-    _vehicules = new osg::Group;
+    // Create vehicules switch node
+    _vehicules = new osg::Switch;
+
+    // Add all vehicules
+    createTraffic();
 }
 
-bool Traffic::addVehicules(void) {
+void Traffic::addVehicules(void) {
     // Get settings
     QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
 
@@ -41,27 +48,23 @@ bool Traffic::addVehicules(void) {
         vehicules.push_back((vehiculesPath+v).toStdString());
     }
 
-    // Try to had vehicules from files
-    if (_vehicules = dynamic_cast<osg::Group*>(osgDB::readNodeFiles(vehicules))) {
-        // Reading animation
-        std::ifstream file((recordPath+recordFileName).toStdString().c_str(), std::ios::in);
-        if (file) {
-            _trafficPath->read(file);
-            file.close();
-        }
-    } else {
-        qDebug() << "cannot dynamic_cast _vehicules within Traffic::addVehicules";
-        return false;
+    // Add vehicules from files
+    _vehicules->addChild(osgDB::readNodeFiles(vehicules));
+
+    // Reading animation
+    std::ifstream file((recordPath+recordFileName).toStdString().c_str(), std::ios::in);
+    if (file) {
+        _trafficPath->read(file);
+        file.close();
     }
-    return true;
 }
 
-bool Traffic::runTraffic(void) {
+void Traffic::createTraffic(void) {
     // In case _vehicules is not empty
     _vehicules->removeChildren(0, _vehicules->getNumChildren());
 
     // Add vehicules from files
-    bool succes = addVehicules();
+    addVehicules();
 
     // Loop on vehicules
     for (unsigned int i = 0 ; i < _vehicules->getNumChildren(); i++) {
@@ -88,18 +91,10 @@ bool Traffic::runTraffic(void) {
         t->addChild(t2);
         _root->addChild(t.get());
     }
-
-    return succes;
 }
 
-bool Traffic::stopTraffic(void) {
-    // Remove all traffic transformation from scene
-    for (unsigned int k = 0; k < _root->getNumChildren(); k++) {
-        if (_root->getChild(k)->getName() == "transformation") {
-            _root->removeChild(k);
-            k--;
-        }
-    }
-    // Remove all vehicules
-    return _vehicules->removeChildren(0, _vehicules->getNumChildren());
+void Traffic::switchTraffic(bool b) {
+    qDebug() << _root->getNumChildren() << b;
+    for (unsigned int k = 0; k < _root->getNumChildren(); k++)
+        _root->setValue(k, b);
 }

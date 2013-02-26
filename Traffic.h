@@ -29,14 +29,17 @@
 #include <osgViewer/ViewerEventHandlers>
 
 class Traffic : public osg::Node {
+
 public:
-    Traffic(osg::ref_ptr<osg::Group> root);
-    bool addVehicules(void);
-    bool runTraffic(void);
-    bool stopTraffic(void);
+    Traffic(void);
+    void addVehicules(void);
+    void createTraffic(void);
+    void switchTraffic(bool b);
+
+    osg::Switch* getRoot(void) const { return _root; }
 
 private:
-    osg::ref_ptr<osg::Group> _root;
+    osg::ref_ptr<osg::Switch> _root;
     osg::ref_ptr<osg::Group> _vehicules;
     osg::ref_ptr<osg::AnimationPath> _trafficPath;
 };

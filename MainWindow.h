@@ -65,7 +65,7 @@ public slots:
 
     void checkExistence(QString fileName);
 
-    void viewTraffic(bool trafficOn = false);
+    void switchTraffic(bool b);
 
     void freezeFit(void);
     void freezeCreate(void);

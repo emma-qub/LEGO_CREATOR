@@ -468,7 +468,11 @@ void MainWindow::createScene(void) {
 }
 
 void MainWindow::initTraffic(void) {
-    _traffic = new Traffic(_world.getScene());
+   // Create a new traffic
+    _traffic = new Traffic;
+
+    // Add traffic root to the scene
+    _world.getScene()->addChild(_traffic->getRoot());
 }
 
 // Open the color dialog to change our LEGO color
@@ -932,6 +936,10 @@ void MainWindow::generateCity(void) {
     openFromFile("../LEGO_CREATOR/OSG/town.osg");
 }
 
+void MainWindow::switchTraffic(bool b) {
+    _traffic->switchTraffic(b);
+}
+
 void MainWindow::eraseScene(void) {
     // remove everything from scene
     _world.getScene()->removeChildren(0, _world.getScene()->getNumChildren());
@@ -1170,24 +1178,6 @@ void MainWindow::quitSoft(void) {
     }
 }
 
-void MainWindow::viewTraffic(bool trafficOn) {
-    if (trafficOn) {
-        if (!_traffic->runTraffic()) {
-            disconnect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
-            QMessageBox::critical(this, "Traffic error", "Traffic encountered an error\nwhile tempting to run.");
-            _viewTrafficAction->setChecked(false);
-            connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
-        }
-    } else {
-        if (!_traffic->stopTraffic()) {
-            disconnect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
-            QMessageBox::critical(this, "Traffic error", "Traffic encountered an error\nwhile tempting to stop.");
-            _viewTrafficAction->setChecked(true);
-            connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
-        }
-    }
-}
-
 void MainWindow::freezeFit(void) {
     _moveDock->setEnabled(false);
     _paramsDock->setEnabled(true);
@@ -1295,7 +1285,7 @@ void MainWindow::createTrafficMenu(void) {
     _viewTrafficAction->setShortcut(QKeySequence("CTRL+SHIFT+T"));
     _viewTrafficAction->setCheckable(true);
     _viewTrafficAction->setChecked(false);
-    connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(viewTraffic(bool)));
+    connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(switchTraffic(bool)));
 }
 
 void MainWindow::createHelpMenu(void) {

@@ -18,7 +18,7 @@ Tile::Tile(const Tile& tile) :
 }
 
 void Tile::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, _length, _width, 3);
+    _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
 }
 
 Tile* Tile::cloning(void) const {
