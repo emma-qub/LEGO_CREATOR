@@ -5,23 +5,20 @@
 #include <QDir>
 
 Traffic::Traffic() {
-    // Create switch node
-    _root = new osg::Switch;
+    // Add all vehicules
+    createTraffic();
+}
 
-    // By default, when adding a child, it has to be hidden
-    _root->setNewChildDefaultValue(false);
-
+void Traffic::addVehicules(void) {
     // Create animation path
     _trafficPath = new osg::AnimationPath;
 
     // Create vehicules switch node
     _vehicules = new osg::Switch;
 
-    // Add all vehicules
-    createTraffic();
-}
+    // In case _vehicules is not empty
+    _vehicules->removeChildren(0, _vehicules->getNumChildren());
 
-void Traffic::addVehicules(void) {
     // Get settings
     QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
 
@@ -43,13 +40,9 @@ void Traffic::addVehicules(void) {
     QStringList vehiculesList = vehiculesDir.entryList(QDir::Files | QDir::NoDotAndDotDot);
 
     // Create vehicules from vehicules directory
-    std::vector<std::string> vehicules;
     foreach (QString v, vehiculesList) {
-        vehicules.push_back((vehiculesPath+v).toStdString());
+        _vehicules->addChild(osgDB::readNodeFile((vehiculesPath+v).toStdString()));
     }
-
-    // Add vehicules from files
-    _vehicules->addChild(osgDB::readNodeFiles(vehicules));
 
     // Reading animation
     std::ifstream file((recordPath+recordFileName).toStdString().c_str(), std::ios::in);
@@ -60,8 +53,11 @@ void Traffic::addVehicules(void) {
 }
 
 void Traffic::createTraffic(void) {
-    // In case _vehicules is not empty
-    _vehicules->removeChildren(0, _vehicules->getNumChildren());
+    // Create switch node
+    _root = new osg::Switch;
+
+    // By default, when adding a child, it has to be hidden
+    _root->setNewChildDefaultValue(false);
 
     // Add vehicules from files
     addVehicules();
@@ -94,7 +90,6 @@ void Traffic::createTraffic(void) {
 }
 
 void Traffic::switchTraffic(bool b) {
-    qDebug() << _root->getNumChildren() << b;
     for (unsigned int k = 0; k < _root->getNumChildren(); k++)
         _root->setValue(k, b);
 }

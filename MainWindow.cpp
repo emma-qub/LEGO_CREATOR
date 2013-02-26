@@ -929,25 +929,46 @@ void MainWindow::generateRoad(void) {
 }
 
 void MainWindow::generateHouse(void) {
+    // Load saved house
     openFromFile("../LEGO_CREATOR/OSG/house.osg");
 }
 
 void MainWindow::generateCity(void) {
+    // Load saved city
     openFromFile("../LEGO_CREATOR/OSG/town.osg");
 }
 
 void MainWindow::switchTraffic(bool b) {
+    // Switch traffic to on or off, according to traffic toggle action state
     _traffic->switchTraffic(b);
 }
 
 void MainWindow::eraseScene(void) {
     // remove everything from scene
     _world.getScene()->removeChildren(0, _world.getScene()->getNumChildren());
+
+    // There is no file associated anymore
     _settings.setValue("FileName", "");
+
+    // No object = no modification, the scene is considered as saved...
     _saved = true;
+
+    // ... and has never been saved before
     _alreadySaved = false;
+
+    // We can create LEGO pieces, and therefore not move/fit them
     _paramsDock->setEnabled(true);
     _moveDock->setEnabled(false);
+
+    // Traffic has been removed, we regenerate it
+    _traffic->createTraffic();
+    _world.getScene()->addChild(_traffic->getRoot());
+
+    // To avoid any bug, traffic toggle action is set to off
+    _viewTrafficAction->setChecked(false);
+
+    // Empty undo/redo stack, ofc
+    _undoStack->clear();
 }
 
 void MainWindow::newFile(void) {
