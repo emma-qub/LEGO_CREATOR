@@ -55,6 +55,7 @@ public slots:
     void generateRoad(void);
     void generateHouse(void);
     void generateCity(void);
+    void generateFormule1(void);
 
     void eraseScene(void);
     void newFile(void);
@@ -108,6 +109,7 @@ private:
     QAction* _generateRoadAction;
     QAction* _generateHouseAction;
     QAction* _generateCityAction;
+    QAction* _generateFormule1Action;
 
     QAction* _viewTrafficAction;
 

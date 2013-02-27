@@ -939,6 +939,11 @@ void MainWindow::generateCity(void) {
     openFromFile("../LEGO_CREATOR/OSG/town.osg");
 }
 
+void MainWindow::generateFormule1(void) {
+    // Load saved formule1
+    openFromFile("../LEGO_CREATOR/OSG/formule1.osg");
+}
+
 void MainWindow::switchTraffic(bool b) {
     // Switch traffic to on or off, according to traffic toggle action state
     _traffic->switchTraffic(b);
@@ -1296,6 +1301,12 @@ void MainWindow::createGenerateMenu(void) {
     _generateCityAction->setShortcut(QKeySequence("CTRL+SHIFT+C"));
     // Connect action
     connect(_generateCityAction, SIGNAL(triggered()), this, SLOT(generateCity()));
+
+    // Add Generate Formule 1 sub menu
+    _generateFormule1Action = generateMenu->addAction("Generate Formule1");
+    _generateFormule1Action->setShortcut(QKeySequence("CTRL+SHIFT+F"));
+    // Connect action
+    connect(_generateFormule1Action, SIGNAL(triggered()), this, SLOT(generateFormule1()));
 }
 
 void MainWindow::createTrafficMenu(void) {
