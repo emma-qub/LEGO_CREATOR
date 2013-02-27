@@ -17,16 +17,14 @@ BrickDialog::BrickDialog(const BrickDialog& brickDialog) :
 
     // Brick width
     _widthSpinBox = new QSpinBox(this);
-    _widthSpinBox->setMinimum(1);
-    _widthSpinBox->setMaximum(2);
+    _widthSpinBox->setRange(1, 2);
     _widthSpinBox->setValue(2);
     QFormLayout* widthLayout = new QFormLayout;
     widthLayout->addRow("Width:", _widthSpinBox);
 
     // Brick length
     _lengthSpinBox = new QSpinBox(this);
-    _lengthSpinBox->setMinimum(1);
-    _lengthSpinBox->setMaximum(16);
+    _lengthSpinBox->setRange(1, 16);
     _lengthSpinBox->setValue(4);
     QFormLayout* lengthLayout = new QFormLayout;
     lengthLayout->addRow("Length", _lengthSpinBox);

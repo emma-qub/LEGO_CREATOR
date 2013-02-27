@@ -10,23 +10,21 @@ TileDialog::TileDialog(const TileDialog& tileDialog) :
     // Tile type
     _tileTypeComboBox = new QComboBox(this);
     QStringList tileTypeList;
-    tileTypeList << "Classic" << "Roof";
+    tileTypeList << "Classic" << "Roof" << "Big Roof";
     _tileTypeComboBox->addItems(tileTypeList);
     QFormLayout* tileTypeLayout = new QFormLayout;
     tileTypeLayout->addRow("Tile type:", _tileTypeComboBox);
 
     // Tile width
     _widthSpinBox = new QSpinBox(this);
-    _widthSpinBox->setMinimum(2);
-    _widthSpinBox->setMaximum(4);
+    _widthSpinBox->setRange(1, 4);
     _widthSpinBox->setValue(3);
     QFormLayout* widthLayout = new QFormLayout;
     widthLayout->addRow("Width:", _widthSpinBox);
 
     // Tile length
     _lengthSpinBox = new QSpinBox(this);
-    _lengthSpinBox->setMinimum(1);
-    _lengthSpinBox->setMaximum(6);
+    _lengthSpinBox->setRange(1, 6);
     _lengthSpinBox->setValue(2);
     QFormLayout* lengthLayout = new QFormLayout;
     lengthLayout->addRow("Length", _lengthSpinBox);
@@ -69,10 +67,12 @@ void TileDialog::setLego(int) {
 }
 
 void TileDialog::updateMaxWidth(int tileType) {
-    if (tileType == 0) {
-        _widthSpinBox->setMaximum(16);
+    if (tileType == Tile::classic) {
+        _widthSpinBox->setRange(1, 4);
+        _lengthSpinBox->setRange(1, 6);
     } else {
-        _widthSpinBox->setMaximum(2);
+        _widthSpinBox->setRange(2, 2);
+        _lengthSpinBox->setRange(1, 6);
     }
 }
 

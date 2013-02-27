@@ -6,7 +6,7 @@
 class Tile : public Lego {
 
 public:
-    enum TileType { classic, roof };
+    enum TileType { classic, roof, bigRoof };
 
     Tile(int width = 3, int length = 2, TileType tileType = classic, const QColor &color = QColor(Qt::red));
     Tile(const Tile& tile);

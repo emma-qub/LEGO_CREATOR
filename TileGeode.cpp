@@ -25,7 +25,7 @@ void TileGeode::createGeode(void) {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
-    // Get brick type
+    // Get tile type
     Tile::TileType tileType = tile->getTileType();
 
     // Get integer sizes
@@ -49,7 +49,7 @@ void TileGeode::createGeode(void) {
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
     switch (tileType) {
-    case 0:
+    case Tile::classic:
         // If tile has plots (width > 1)
         if (width > 1) {
             // Add box
@@ -65,7 +65,10 @@ void TileGeode::createGeode(void) {
             geode->addDrawable(createTinyClassic());
         }
         break;
-    case 1:
+    case Tile::roof:
+        geode->addDrawable(createRoof());
+        break;
+    case Tile::bigRoof:
         geode->addDrawable(createRoof());
         break;
     }
@@ -83,7 +86,115 @@ void TileGeode::createGeode(void) {
 }
 
 osg::ref_ptr<osg::Drawable> TileGeode::createTinyClassic(void) const {
-    return new osg::Geometry;
+    // Get the tile
+    Tile* tile = static_cast<Tile*>(_lego);
+
+    // Get tile color
+    QColor color = tile->getColor();
+
+    // Get integer sizes
+    int width = tile->getWidth();
+    int length = tile->getLength();
+    int height = 2;
+
+    // Get real position, according to tile size
+    double mw = (-width)*Lego::length_unit/2;
+    double pw = (width)*Lego::length_unit/2;
+    double ml = (-length)*Lego::length_unit/2;
+    double pl = (length)*Lego::length_unit/2;
+    double mh = (-height)*Lego::height_unit/2;
+    double ph = (height)*Lego::height_unit/2;
+
+    // Create 14 vertices
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    osg::Vec3 v0(mw, ml, mh);
+    osg::Vec3 v1(mw, pl, mh);
+    osg::Vec3 v2(pw, pl, mh);
+    osg::Vec3 v3(pw, ml, mh);
+    osg::Vec3 v4(mw, pl, ph);
+    osg::Vec3 v5(mw, ml, ph);
+
+    // Create 8 faces, 6 faces are quads splitted in two triangles
+    // Down face t1
+    vertices->push_back(v0);
+    vertices->push_back(v1);
+    vertices->push_back(v2);
+    // Down face t2
+    vertices->push_back(v0);
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+
+    // Back face t1
+    vertices->push_back(v5);
+    vertices->push_back(v4);
+    vertices->push_back(v1);
+    // Back face t2
+    vertices->push_back(v5);
+    vertices->push_back(v1);
+    vertices->push_back(v0);
+
+    // Slop face t1
+    vertices->push_back(v4);
+    vertices->push_back(v3);
+    vertices->push_back(v2);
+    // Slop face t2
+    vertices->push_back(v3);
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+
+    // Right triangle face
+    vertices->push_back(v4);
+    vertices->push_back(v2);
+    vertices->push_back(v1);
+
+    // Left triangle face
+    vertices->push_back(v5);
+    vertices->push_back(v3);
+    vertices->push_back(v0);
+
+    // Create tile geometry
+    osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
+
+    // Handle transparency
+    double alpha = 0.1;
+    osg::StateSet* state = tileGeometry->getOrCreateStateSet();
+    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
+    osg::Material* mat = new osg::Material;
+    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
+    osg::StateAttribute::OVERRIDE);
+    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+    state->setAttributeAndModes(bf);
+    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+    tileGeometry->setStateSet(state);
+
+    // Match vertices
+    tileGeometry->setVertexArray(vertices);
+
+    // Add color (each rectangle has the same color except for the down one which is transparent)
+    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    // Add transparent color
+    colors->push_back(transparent);
+    colors->push_back(transparent);
+    // Add color to 6 other faces
+    for (int k = 2; k < 8; k++)
+        colors->push_back(colorVec);
+
+    // Match color
+    tileGeometry->setColorArray(colors);
+    tileGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define tile 8 GL_TRIANGLES with 8*3 vertices
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 8*3));
+
+    // Calculate smooth normals
+    osgUtil::SmoothingVisitor::smooth(*tileGeometry);
+
+    // Return the tile whithout plot
+    return tileGeometry.get();
 }
 
 osg::ref_ptr<osg::Drawable> TileGeode::createClassic(void) const {
@@ -269,10 +380,15 @@ osg::ref_ptr<osg::Drawable> TileGeode::createRoof(void) const {
     // Get tile color
     QColor color = tile->getColor();
 
+    // Get tile type
+    Tile::TileType tileType = tile->getTileType();
+
     // Get integer sizes
     int width = tile->getWidth();
     int length = tile->getLength();
     int height = 2;
+    if (tileType == Tile::bigRoof)
+        height = 3;
 
     // Get real position, according to tile size
     double mw = (-width)*Lego::length_unit/2;

@@ -27,14 +27,16 @@ void Tile::setTileType(int index) {
     case 1 :
         _tileType = roof;
         break;
+    case 2:
+        _tileType = bigRoof;
     }
 }
 
 void Tile::calculateBoundingBox(void) {
-    if (_tileType == classic)
-        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
-    else
+    if (_tileType == roof)
         _boundingBox = BoundingBox(0, 0, 0, _width, _length, 2);
+    else
+        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
 }
 
 Tile* Tile::cloning(void) const {
