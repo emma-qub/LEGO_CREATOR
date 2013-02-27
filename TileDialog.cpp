@@ -69,10 +69,8 @@ void TileDialog::setLego(int) {
 void TileDialog::updateMaxWidth(int tileType) {
     if (tileType == Tile::classic) {
         _widthSpinBox->setRange(1, 4);
-        _lengthSpinBox->setRange(1, 6);
     } else {
         _widthSpinBox->setRange(2, 2);
-        _lengthSpinBox->setRange(1, 6);
     }
 }
 

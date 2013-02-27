@@ -332,6 +332,7 @@ void MainWindow::createParamsDock(void) {
     // Create osg viewer widget that displays bricks
     _brickViewer = new ViewerWidget;
     _brickViewer->initView();
+    _brickViewer->initManipulators();
     _brickViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
     _brickViewer->changeScene(_scene.get());
     _brickViewer->initWidget();

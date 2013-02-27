@@ -9,6 +9,15 @@
 #include <osgViewer/ViewerEventHandlers>
 
 #include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/AnimationPathManipulator>
+#include <osgGA/TerrainManipulator>
+#include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/ViewerEventHandlers>
+
+#include <osgGA/TrackballManipulator>
 
 #include <osgDB/ReadFile>
 
@@ -38,6 +47,7 @@ protected:
     osg::ref_ptr<osgViewer::View> _view;
     osg::ref_ptr<osg::Camera> _camera;
     QWidget* _widget;
+    osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> _keyswitchManipulator;
 };
 
 #endif // VIEWERWIDGET_H

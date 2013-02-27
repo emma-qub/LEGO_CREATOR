@@ -1,14 +1,5 @@
 #include "ViewerWidget.h"
 
-#include <osgGA/TrackballManipulator>
-#include <osgGA/FlightManipulator>
-#include <osgGA/DriveManipulator>
-#include <osgGA/KeySwitchMatrixManipulator>
-#include <osgGA/AnimationPathManipulator>
-#include <osgGA/TerrainManipulator>
-#include <osgViewer/ViewerEventHandlers>
-#include <osgViewer/ViewerEventHandlers>
-
 #include <QSettings>
 #include <QDebug>
 
@@ -67,17 +58,20 @@ void ViewerWidget::initManipulators(void) {
     QString recordFileName = settings.value("RecordFileName").toString();
 
     // Manipulators
-    osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
-    keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
-    keyswitchManipulator->addMatrixManipulator('2', "Flight", new osgGA::FlightManipulator());
-    keyswitchManipulator->addMatrixManipulator('3', "Drive", new osgGA::DriveManipulator());
-    keyswitchManipulator->addMatrixManipulator('4', "Terrain", new osgGA::TerrainManipulator());
-    keyswitchManipulator->addMatrixManipulator('5', "Animation", new osgGA::AnimationPathManipulator());
-    keyswitchManipulator->selectMatrixManipulator(0);
-    _view->setCameraManipulator(keyswitchManipulator.get());
+    _keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
+    _keyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
+    _keyswitchManipulator->addMatrixManipulator('2', "Flight", new osgGA::FlightManipulator());
+    _keyswitchManipulator->addMatrixManipulator('3', "Drive", new osgGA::DriveManipulator());
+    _keyswitchManipulator->addMatrixManipulator('4', "Terrain", new osgGA::TerrainManipulator());
+    _keyswitchManipulator->addMatrixManipulator('5', "Animation", new osgGA::AnimationPathManipulator());
+    _keyswitchManipulator->selectMatrixManipulator(0);
+    _view->setCameraManipulator(_keyswitchManipulator.get());
 
     // Add the record camera path handler
     _view->addEventHandler(new osgViewer::RecordCameraPathHandler((recordPath+recordFileName).toStdString()));
+
+    // Add the stats information
+    _view->addEventHandler(new osgViewer::StatsHandler);
 }
 
 void ViewerWidget::changeCamera(osg::Camera* camera) {
@@ -87,8 +81,6 @@ void ViewerWidget::changeCamera(osg::Camera* camera) {
 
 void ViewerWidget::changeScene(osg::Node* scene) {
     _view->setSceneData(scene);
-    _view->addEventHandler(new osgViewer::StatsHandler);
-    _view->setCameraManipulator(new osgGA::TrackballManipulator);
 }
 
 void ViewerWidget::initWidget(void) {
