@@ -2,6 +2,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <QDir>
 
 ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) :
     QWidget() {
@@ -67,8 +68,12 @@ void ViewerWidget::initManipulators(void) {
     _keyswitchManipulator->selectMatrixManipulator(0);
     _view->setCameraManipulator(_keyswitchManipulator.get());
 
+    // Get how many path are records in the file
+    QDir recordDir(recordPath);
+    QString nbPath = QString::number(recordDir.entryList(QDir::Files | QDir::NoDotAndDotDot).size());
+
     // Add the record camera path handler
-    _view->addEventHandler(new osgViewer::RecordCameraPathHandler((recordPath+recordFileName).toStdString()));
+    _view->addEventHandler(new osgViewer::RecordCameraPathHandler((recordPath+recordFileName+nbPath).toStdString()));
 
     // Add the stats information
     _view->addEventHandler(new osgViewer::StatsHandler);
