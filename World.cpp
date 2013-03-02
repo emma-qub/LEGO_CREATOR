@@ -22,12 +22,60 @@ World::World() {
     _scene = new osg::Group;
     _currMatrixTransform = new osg::MatrixTransform;
 
+    // Add guide lines
+    createGuideLines();
+
     // Optimizer
     osgUtil::Optimizer optimizer;
     optimizer.optimize(_scene);
 }
 
 World::~World(void) {
+}
+
+void World::createGuideLines(void) {
+    // Create line geode
+    osg::ref_ptr<osg::Geode> line = new osg::Geode;
+
+    for (int i = -20; i <= 20; i+=2) {
+        for (int j = -30; j <= 30; j+=2) {
+            // Create four points
+            osg::Vec3 v0(i*Lego::length_unit, -30.0*Lego::length_unit, 0.0);
+            osg::Vec3 v1(i*Lego::length_unit, 30.0*Lego::length_unit, 0.0);
+            osg::Vec3 v2(-20*Lego::length_unit, j*Lego::length_unit, 0.0);
+            osg::Vec3 v3(20*Lego::length_unit, j*Lego::length_unit, 0.0);
+
+            // Add points
+            osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+            vertices->push_back(v0);
+            vertices->push_back(v1);
+            vertices->push_back(v2);
+            vertices->push_back(v3);
+
+            // Create geometry
+            osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+            geometry->setVertexArray(vertices);
+
+            // Create color
+            osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+            osg::Vec4 colorVec(0.0, 0.0, 0.0, 1.0);
+            for (int k = 0; k < 4; k++)
+                colors->push_back(colorVec);
+
+            // Match color
+            geometry->setColorArray(colors);
+            geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+            // Define line
+            geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));
+
+            // Add drawables geode
+            line->addDrawable(geometry);
+        }
+    }
+
+    // Add line to scene
+    _scene->addChild(line);
 }
 
 void World::initBrick(void) {

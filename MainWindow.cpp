@@ -328,6 +328,7 @@ void MainWindow::createParamsDock(void) {
     _brickViewer->initManipulators();
     _brickViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
     _brickViewer->changeScene(_scene.get());
+
     _brickViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
     previewLayout->addWidget(_brickViewer);
@@ -388,6 +389,7 @@ void MainWindow::createParamsDock(void) {
     _paramsDock->setWidget(_paramsTabWidget);
     _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
     _paramsDock->setFloating(true);
+    _paramsDock->move(50, 200);
 }
 
 void MainWindow::createScene(void) {
@@ -400,7 +402,7 @@ void MainWindow::createScene(void) {
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
     _sceneViewer->initManipulators();
-    _sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 100.0, 100.0));
+    _sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     //_sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(233.0/255.0, 233.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 100.0, 100.0));
     _sceneViewer->changeScene(_world.getScene().get());
 //    osg::Vec3 eye, center, up;
@@ -1190,7 +1192,6 @@ void MainWindow::freezeFit(void) {
     // Piece has been fit, users can create another one
     _moveToolBar->setEnabled(false);
     _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(true);
-    _moveToolBar->setEnabled(true);
 
     // When fit is frozen, users can generate or open file
     _generateCityAction->setEnabled(true);
@@ -1493,7 +1494,7 @@ void MainWindow::setStyle(void) {
     //dockWidgetStyle += "    background: #bbdd00;";
     dockWidgetStyle += "    background-color: #fff;";
     dockWidgetStyle += "    border: 2px solid #ac0;";
-    dockWidgetStyle += "    border-radius: 5px;";
+    //dockWidgetStyle += "    border-radius: 5px;";
     dockWidgetStyle += "}";
 
     QString dockWidgetTitleStyle;
