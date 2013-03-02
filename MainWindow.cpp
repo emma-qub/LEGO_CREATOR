@@ -1190,12 +1190,27 @@ void MainWindow::freezeFit(void) {
     // Piece has been fit, users can create another one
     _moveToolBar->setEnabled(false);
     _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(true);
+    _moveToolBar->setEnabled(true);
+
+    // When fit is frozen, users can generate or open file
+    _generateCityAction->setEnabled(true);
+    _generateFormule1Action->setEnabled(true);
+    _generateHouseAction->setEnabled(true);
+    _generateRoadAction->setEnabled(true);
+    _openAction->setEnabled(true);
 }
 
 void MainWindow::freezeCreate(void) {
     // Piece has been created, users can move/translate and then fit it
     _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(false);
     _moveToolBar->setEnabled(true);
+
+    // When create is frozen, users can't generate nor open file
+    _generateCityAction->setEnabled(false);
+    _generateFormule1Action->setEnabled(false);
+    _generateHouseAction->setEnabled(false);
+    _generateRoadAction->setEnabled(false);
+    _openAction->setEnabled(false);
 }
 
 
@@ -1484,7 +1499,7 @@ void MainWindow::setStyle(void) {
     QString dockWidgetTitleStyle;
     dockWidgetTitleStyle += "QDockWidget::title {";
     dockWidgetTitleStyle += "    text-align: center;";
-    dockWidgetTitleStyle += "    padding: 3px;";
+    dockWidgetTitleStyle += "    padding: 10px;";
     dockWidgetTitleStyle += "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
     dockWidgetTitleStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
     dockWidgetTitleStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
