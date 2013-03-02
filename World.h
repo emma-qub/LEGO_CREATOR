@@ -8,6 +8,8 @@
 #include <osg/MatrixTransform>
 #include <osg/LightSource>
 
+#include <string>
+
 #include "LegoGeode.h"
 
 class World {
@@ -21,9 +23,9 @@ public:
     void initBrick(void);
     void fitBrick(void);
     void deleteLego(void);
-    void deleteLego(unsigned int matTransIndex);
+    void deleteLego(const std::string& matrixName);
+    std::string addBrick(LegoGeode* legoGeode, Lego* lego);
     bool canBeFit(void) const;
-    unsigned int addBrick(LegoGeode* legoGeode, Lego* lego);
     void rotation(bool counterClockWise = false);
     void translation(double x, double y, double z);
     void translationXYZ(double x, double y, double z);
@@ -34,6 +36,8 @@ public:
     static int maxWidth;
     static int minLength;
     static int maxLength;
+
+    static int count;
 
 private:
     osg::ref_ptr<osg::Group> _scene;

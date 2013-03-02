@@ -12,6 +12,7 @@ int World::minWidth = -500;
 int World::maxWidth = 500;
 int World::minLength = -500;
 int World::maxLength = 500;
+int World::count = 0;
 
 World::World() {
     // Initialize matrix transform indexes
@@ -57,24 +58,52 @@ void World::deleteLego(void) {
     _matTransIndexes.pop_back();
 }
 
-void World::deleteLego(unsigned int matTransIndex) {
-    _scene->removeChild(matTransIndex);
+void World::deleteLego(const std::string& matrixName) {
+    // The node to delete
+    osg::Node* concernedMatTrans = NULL;
+    // We search for the _scene child that has the right name
+    for (unsigned int k = 0; k < _scene->getNumChildren(); k++) {
+        if (_scene->getChild(k)->getName() == matrixName) {
+            concernedMatTrans = _scene->getChild(k);
+            break;
+        }
+    }
+
+    // If we found the right child, we delete it
+    if (concernedMatTrans)
+        _scene->removeChild(concernedMatTrans);
+    // Else, we print a message...
+    else
+        qDebug() << "Cannot find the right child within World::deleteLego";
 }
 
-unsigned int World::addBrick(LegoGeode* legoGeode, Lego* lego) {
+std::string World::addBrick(LegoGeode* legoGeode, Lego* lego) {
+    // ClonelegoGeode and Lego to create a new one in the scene
     osg::ref_ptr<LegoGeode> newLegoGeode = legoGeode->cloning();
     osg::ref_ptr<Lego> newLego = lego->cloning();
     newLegoGeode->setLego(newLego.get());
 
+    // Create a matrix transform parent
     _currMatrixTransform = new osg::MatrixTransform;
     _currMatrixTransform->addChild(newLegoGeode.get());
     _scene->addChild(_currMatrixTransform.get());
 
+    // Assign a brand new name to the previous matrix, in order to find it later
+    // First, we increment the counter
+    count++;
+    // Create the brand new name and assign it
+    std::string matrixName = QString("MatrixTransform%1").arg(count).toStdString();
+    _currMatrixTransform->setName(matrixName);
+
+    // Init brick, to place it at the right place
     initBrick();
 
-    int matTransIndex = _scene->getChildIndex(_currMatrixTransform);
-    _matTransIndexes << matTransIndex;
-    return matTransIndex;
+    // Add curr matrix transform index in array
+    _matTransIndexes << _scene->getChildIndex(_currMatrixTransform);
+
+    // Return the matrix transform name, because we need to record it within addCommand class
+    // Therefore, we will be able to find it later, when undo/redo several times
+    return matrixName;
 }
 
 void World::rotation(bool counterClockWise) {

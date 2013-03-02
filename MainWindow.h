@@ -28,9 +28,9 @@ public:
     void createGenerateMenu(void);
     void createTrafficMenu(void);
     void createHelpMenu(void);
+    void createToolBar(void);
     void createUndoView(void);
     void createParamsDock(void);
-    void createMoveDock(void);
     void createScene(void);
     void initTraffic(void);
 
@@ -79,6 +79,7 @@ private:
     ViewerWidget* _sceneViewer;
     QFrame* _sceneFrame;
 
+    QTabWidget* _paramsTabWidget;
     QWidget* _paramsWidget;
     QDockWidget* _paramsDock;
 
@@ -86,16 +87,13 @@ private:
     QPushButton* _colorButton;
     QPushButton* _createButton;
 
-    QWidget* _moveWidget;
-    QDockWidget* _moveDock;
-
     QSpinBox* _xTransSpinBox;
     QSpinBox* _yTransSpinBox;
     QSpinBox* _zTransSpinBox;
-    QPushButton* _leftRotateButton;
-    QPushButton* _rightRotateButton;
-    QPushButton* _fitButton;
-    QPushButton* _deleteButton;
+    QAction* _leftRotateAction;
+    QAction* _rightRotateAction;
+    QAction* _fitAction;
+    QAction* _deleteAction;
 
     QAction* _newAction;
     QAction* _openAction;
@@ -136,6 +134,8 @@ private:
 
     QUndoStack* _undoStack;
     QUndoView* _undoView;
+
+    QToolBar* _moveToolBar;
 
 signals:
     void fileAlreadyExists(bool);

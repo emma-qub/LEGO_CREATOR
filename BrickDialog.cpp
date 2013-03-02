@@ -19,6 +19,7 @@ BrickDialog::BrickDialog(const BrickDialog& brickDialog) :
     _widthSpinBox = new QSpinBox(this);
     _widthSpinBox->setRange(1, 2);
     _widthSpinBox->setValue(2);
+    _widthSpinBox->setFixedWidth(50);
     QFormLayout* widthLayout = new QFormLayout;
     widthLayout->addRow("Width:", _widthSpinBox);
 
@@ -26,14 +27,19 @@ BrickDialog::BrickDialog(const BrickDialog& brickDialog) :
     _lengthSpinBox = new QSpinBox(this);
     _lengthSpinBox->setRange(1, 16);
     _lengthSpinBox->setValue(4);
+    _lengthSpinBox->setFixedWidth(50);
     QFormLayout* lengthLayout = new QFormLayout;
     lengthLayout->addRow("Length", _lengthSpinBox);
+
+    // Size layout
+    QHBoxLayout* sizeLayout = new QHBoxLayout;
+    sizeLayout->addLayout(widthLayout);
+    sizeLayout->addLayout(lengthLayout);
 
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(brickTypeLayout);
-    mainLayout->addLayout(widthLayout);
-    mainLayout->addLayout(lengthLayout);
+    mainLayout->addLayout(sizeLayout);
 
     // Connections
     connect(_widthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLego(int)));

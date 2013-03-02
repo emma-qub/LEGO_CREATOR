@@ -17,6 +17,7 @@
 #include "FromFileDialog.h"
 #include "WheelDialog.h"
 #include "TileDialog.h"
+#include "FrontShipDialog.h"
 
 #include "Traffic.h"
 
@@ -60,12 +61,14 @@ MainWindow::MainWindow(QWidget* parent) :
     createTrafficMenu();
     createHelpMenu();
 
+    // Create tool bar
+    createToolBar();
+
     // Create undo/redo window
     createUndoView();
 
     // Create right dock
     createParamsDock();
-    createMoveDock();
 
     // Create scene
     createScene();
@@ -75,6 +78,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Set tabs mode
     setCentralWidget(_sceneFrame);
+    _sceneFrame->setObjectName("CentralWidget");
 
     // Connections
     connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
@@ -83,28 +87,17 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
     connect(_createButton, SIGNAL(clicked()), this, SLOT(createLego()));
 
-    connect(_fitButton, SIGNAL(clicked()), this, SLOT(fitLego()));
-    connect(_deleteButton, SIGNAL(clicked()), this, SLOT(deleteLego()));
-    connect(_xTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
-    connect(_yTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
-    connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
-    connect(_leftRotateButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-    connect(_rightRotateButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
     connect(_undoAction, SIGNAL(triggered()), this, SLOT(freezeFit()));
     connect(_redoAction, SIGNAL(triggered()), this, SLOT(freezeCreate()));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
 
-    // Maximize window Commented because bugs occured
+    // Maximize window  // Commented because bugs occured
     //setWindowState(Qt::WindowMaximized);
 
     // Apply style sheet
     setStyle();
-
-    // Undo stack view always on top
-    _undoView->setWindowFlags(Qt::WindowStaysOnTopHint);
-    _undoView->show();
 }
 
 MainWindow::~MainWindow() {
@@ -152,6 +145,10 @@ MainWindow::~MainWindow() {
     LegoFactory<Tile, QString>::kill();
     LegoFactory<TileGeode, QString>::kill();
     LegoFactory<TileDialog, QString>::kill();
+
+    LegoFactory<FrontShip, QString>::kill();
+    LegoFactory<FrontShipGeode, QString>::kill();
+    LegoFactory<FrontShipDialog, QString>::kill();
 }
 
 void MainWindow::initFactories(void) {
@@ -224,6 +221,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<TileGeode, QString>::instance()->registerLego(QString("TileGeode"), new TileGeode);
     // Register TileDialog
     LegoFactory<TileDialog, QString>::instance()->registerLego(QString("TileDialog"), new TileDialog);
+
+    // Register FrontShip
+    LegoFactory<FrontShip, QString>::instance()->registerLego(QString("FrontShip"), new FrontShip);
+    // Register FrontShipGeode
+    LegoFactory<FrontShipGeode, QString>::instance()->registerLego(QString("FrontShipGeode"), new FrontShipGeode);
+    // Register FrontShipDialog
+    LegoFactory<FrontShipDialog, QString>::instance()->registerLego(QString("FrontShipDialog"), new FrontShipDialog);
 
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
@@ -307,6 +311,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create TileDialog in MainWindow::initDialogs";
 
+    // FrontShipDialog
+    if (FrontShipDialog* frontShipDialog = dynamic_cast<FrontShipDialog*>(LegoFactory<FrontShipDialog, QString>::instance()->create("FrontShipDialog")))
+        _legoDialog << frontShipDialog;
+    else
+        qDebug() << "Cannot create FrontShipDialog in MainWindow::initDialogs";
+
     for (int k = 1; k < _legoDialog.size(); k++) {
         _legoDialog.at(k)->setVisible(false);
     }
@@ -315,16 +325,17 @@ void MainWindow::initDialogs(void) {
 
 
 // ////////////////////////////////////
-// Create Right Dock
+// Create Param Dock Widget
 // ////////////////////////////////////
 void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "Tile";
+    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "Tile" << "FrontShip";
     _shapeComboBox->addItems(brickForms);
+    _shapeComboBox->setFixedWidth(100);
     QFormLayout* shapeLayout = new QFormLayout;
-    shapeLayout->addRow("LEGO shape:", _shapeComboBox);
+    shapeLayout->addRow("LEGO:", _shapeComboBox);
 
     // Brick Preview
     QFrame* previewFrame = new QFrame(this);
@@ -341,125 +352,79 @@ void MainWindow::createParamsDock(void) {
     previewFrame->setLayout(previewLayout);
 
     // Color Button
-    _colorButton = new QPushButton("Color", this);
-    _colorButton->setFixedWidth(100);
+    _colorButton = new QPushButton("", this);
+    _colorButton->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/color.png"));
+    _colorButton->setFixedWidth(40);
+    _colorButton->setFocusPolicy(Qt::NoFocus);
+    _colorButton->setObjectName("DockWidgetButton");
 
     // CreateButton
-    _createButton = new QPushButton("Create", this);
-    _createButton->setFixedWidth(100);
+    _createButton = new QPushButton("", this);
+    _createButton->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/createLego.png"));
+    _createButton->setFixedWidth(40);
+    _createButton->setFocusPolicy(Qt::NoFocus);
+    _createButton->setObjectName("DockWidgetButton");
 
     // Buttons Layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->addWidget(_colorButton);
     buttonsLayout->addWidget(_createButton);
 
+    // Global shape Layout
+    QHBoxLayout* globalShapeLayout = new QHBoxLayout;
+    globalShapeLayout->addLayout(shapeLayout);
+    globalShapeLayout->addLayout(buttonsLayout);
+
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(new QLabel("Preview", this));
+    //mainLayout->addWidget(new QLabel("Preview", this));
     mainLayout->addWidget(previewFrame);
-    mainLayout->addLayout(shapeLayout);
+    mainLayout->addLayout(globalShapeLayout);
+    //mainLayout->addLayout(shapeLayout);
     for (int k = 0; k < _legoDialog.size(); k++)
         mainLayout->addWidget(_legoDialog.at(k));
-    mainLayout->addLayout(buttonsLayout);
+    //mainLayout->addLayout(buttonsLayout);
     mainLayout->setAlignment(Qt::AlignTop);
 
-    // Right Dock's Widget
+    // Params Widget
     _paramsWidget = new QWidget(this);
     _paramsWidget->setLayout(mainLayout);
+    // Set object name to style it
+    _paramsWidget->setObjectName("ParamsWidget");
+
+    // Params Tab Widget
+    _paramsTabWidget = new QTabWidget(this);
+    _paramsTabWidget->addTab(_paramsWidget, "Bricks");
+    _paramsTabWidget->addTab(_undoView, "Commands");
+    // No focus on tab, it's ugly
+    _paramsTabWidget->setFocusPolicy(Qt::NoFocus);
 
     // Right Dock
     _paramsDock = new QDockWidget("Create your brick", this);
-    _paramsDock->setFixedSize(250, 500);
+    _paramsDock->setFixedSize(275, 500);
     addDockWidget(Qt::RightDockWidgetArea, _paramsDock);
-    _paramsDock->setWidget(_paramsWidget);
+    _paramsDock->setWidget(_paramsTabWidget);
     _paramsDock->setAllowedAreas(Qt::RightDockWidgetArea);
-}
-
-void MainWindow::createMoveDock(void) {
-    // Translation according to x
-    _xTransSpinBox = new QSpinBox;
-    _xTransSpinBox->setMinimum(World::minLength);
-    _xTransSpinBox->setMaximum(World::maxLength);
-    _xTransSpinBox->setValue(0);
-
-    // Translation according to y
-    _yTransSpinBox = new QSpinBox;
-    _yTransSpinBox->setMinimum(World::minWidth);
-    _yTransSpinBox->setMaximum(World::maxWidth);
-    _yTransSpinBox->setValue(0);
-
-    // Translation according to z
-    _zTransSpinBox = new QSpinBox;
-    _zTransSpinBox->setMinimum(World::minHeight);
-    _zTransSpinBox->setMaximum(World::maxHeight);
-    _zTransSpinBox->setValue(0);
-
-    QFormLayout* transLayout = new QFormLayout;
-    transLayout->addRow("According to x:", _xTransSpinBox);
-    transLayout->addRow("According to y:", _yTransSpinBox);
-    transLayout->addRow("According to z:", _zTransSpinBox);
-
-    QGroupBox* transGroupBox = new QGroupBox("Translation", this);
-    transGroupBox->setLayout(transLayout);
-
-    // Left Rotation Button
-    _leftRotateButton = new QPushButton("Left", this);
-    _leftRotateButton->setFixedWidth(100);
-
-    // Right Rotation Button
-    _rightRotateButton = new QPushButton("Right", this);
-    _rightRotateButton->setFixedWidth(100);
-
-    QHBoxLayout* rotationLayout = new QHBoxLayout;
-    rotationLayout->addWidget(_leftRotateButton);
-    rotationLayout->addWidget(_rightRotateButton);
-
-    QGroupBox* rotationGroupBox = new QGroupBox("Rotation", this);
-    rotationGroupBox->setLayout(rotationLayout);
-
-    // Fit Button
-    _fitButton = new QPushButton("Fit", this);
-    _fitButton->setFixedWidth(100);
-
-    // Delete Button
-    _deleteButton = new QPushButton("Delete", this);
-    _deleteButton->setFixedWidth(100);
-
-    QHBoxLayout* buttonsLayout = new QHBoxLayout;
-    buttonsLayout->addWidget(_fitButton);
-    buttonsLayout->addWidget(_deleteButton);
-
-    // Main Layout
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(transGroupBox);
-    mainLayout->addWidget(rotationGroupBox);
-    mainLayout->addLayout(buttonsLayout);
-    mainLayout->setAlignment(Qt::AlignTop);
-
-    // Right Dock's Widget
-    _moveWidget = new QWidget(this);
-    _moveWidget->setLayout(mainLayout);
-
-    // Right Dock
-    _moveDock = new QDockWidget("Move your brick", this);
-    //_moveDock->setFixedSize(250, 500);
-    addDockWidget(Qt::RightDockWidgetArea, _moveDock);
-    _moveDock->setWidget(_moveWidget);
-    _moveDock->setAllowedAreas(Qt::RightDockWidgetArea);
-    _moveDock->setEnabled(false);
+    _paramsDock->setFloating(true);
 }
 
 void MainWindow::createScene(void) {
     // Scene frame, contains LEGO bricks
     _sceneFrame = new QFrame(this);
-    _sceneFrame->setFixedSize(1150, 750);
+    _sceneFrame->setFixedSize(1440, 770);
+    //_sceneFrame->setFixedSize(650, 250);
 
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
     _sceneViewer->initManipulators();
-    _sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.1, 0.1, 100.0, 100.0));
+    _sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 100.0, 100.0));
+    //_sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(233.0/255.0, 233.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 100.0, 100.0));
     _sceneViewer->changeScene(_world.getScene().get());
+//    osg::Vec3 eye, center, up;
+//    _sceneViewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+//    for (int k = 0; k < 3; k++)
+//        std::cerr << eye[k] << " " << center[k] << " " << up[k] << std::endl;
     _sceneViewer->initWidget();
 
     // Layout
@@ -598,6 +563,17 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<TileGeode*>(LegoFactory<TileGeode, QString>::instance()->create("TileGeode"))))
             qDebug() << "Cannot cast in TileGeode* within MainWindow::chooseDialog";
         break;
+    // FrontShip dialog
+    case 9:
+        if ((_currLego = dynamic_cast<FrontShip*>(LegoFactory<FrontShip, QString>::instance()->create("FrontShip")))) {
+            FrontShip* lego = static_cast<FrontShip*>(_currLego.get());
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in FrontShip* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoGeode = dynamic_cast<FrontShipGeode*>(LegoFactory<FrontShipGeode, QString>::instance()->create("FrontShipGeode"))))
+            qDebug() << "Cannot cast in FrontShipGeode* within MainWindow::chooseDialog";
+        break;
     }
 
     // Set current objects
@@ -650,6 +626,8 @@ void MainWindow::createLego(void) {
 
     // The scene has changed
     _saved = false;
+
+    _sceneViewer->getCamera()->setViewMatrixAsLookAt(osg::Vec3(0.0f, -5.0f, 5.0f), osg::Vec3(), osg::Vec3(0.0f, 1.0f, 1.0f));
 }
 
 void MainWindow::fitLego(void) {
@@ -661,20 +639,26 @@ void MainWindow::fitLego(void) {
 }
 
 void MainWindow::deleteLego(void) {
-//    // Get current matrix index whithin world scene
-//    unsigned int matTransIndex = _world.getScene()->getChildIndex(_currMatTrans.get());
-//    qDebug() << matTransIndex;
+    // Get current matrix index whithin world scene
+    osg::Group* root = _world.getScene();
+    for (unsigned int k = 0; k < root->getNumChildren(); k++) {
+        qDebug() << QString::fromStdString(root->getChild(k)->getName());
+    }
+    qDebug() << QString::number(root->getChildIndex(_currMatTrans.get()));
+    //qDebug() << QString::fromStdString(root->getChild(root->getChildIndex(_currMatTrans.get()))->getName());
+    qDebug() << QString::fromStdString(_currMatTrans->getName());
+//    std::string matrixName = root->getChild(root->getChildIndex(_currMatTrans.get()))->getName();
+//    qDebug() << QString::fromStdString(matrixName);
 
 //    // Create DeleteCommand to handle undo/redo action
-//    QUndoCommand* delLegoCommand = new DeleteLegoCommand(&_world, _currLegoGeode, matTransIndex);
+//    QUndoCommand* delLegoCommand = new DeleteLegoCommand(&_world, _currLegoGeode, matrixName);
 //    _undoStack->push(delLegoCommand);
 
     // Delete brick
     _world.deleteLego();
 
     // Users can create another brick
-    _moveDock->setEnabled(false);
-    _paramsDock->setEnabled(true);
+    freezeFit();
 
     // The file has changed
     _saved = false;
@@ -963,8 +947,7 @@ void MainWindow::eraseScene(void) {
     _alreadySaved = false;
 
     // We can create LEGO pieces, and therefore not move/fit them
-    _paramsDock->setEnabled(true);
-    _moveDock->setEnabled(false);
+    freezeFit();
 
     // Traffic has been removed, we regenerate it
     _traffic->createTraffic();
@@ -1206,13 +1189,13 @@ void MainWindow::quitSoft(void) {
 }
 
 void MainWindow::freezeFit(void) {
-    _moveDock->setEnabled(false);
-    _paramsDock->setEnabled(true);
+    _moveToolBar->setEnabled(false);
+    _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(true);
 }
 
 void MainWindow::freezeCreate(void) {
-    _paramsDock->setEnabled(false);
-    _moveDock->setEnabled(true);
+    _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(false);
+    _moveToolBar->setEnabled(true);
 }
 
 
@@ -1227,6 +1210,8 @@ void MainWindow::createFileMenu(void) {
     // Add New sub menu
     _newAction = fileMenu->addAction("&New...");
     _newAction->setShortcut(QKeySequence::New);
+    // Set icon
+    _newAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/newFile.png"));
     // Connect action
     connect(_newAction, SIGNAL(triggered()), this, SLOT(newFile()));
 
@@ -1235,7 +1220,8 @@ void MainWindow::createFileMenu(void) {
 
     // Add Open sub menu
     _openAction = fileMenu->addAction("&Open...");
-    _openAction->setShortcut(QKeySequence::Open);
+    _openAction->setShortcut(QKeySequence::Open);// Set icon
+    _openAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/openFile.png"));
     // Connect action
     connect(_openAction, SIGNAL(triggered()), this, SLOT(openFile()));
 
@@ -1244,13 +1230,16 @@ void MainWindow::createFileMenu(void) {
 
     // Add Save sub menu
     _saveAction = fileMenu->addAction("&Save");
-    _saveAction->setShortcut(QKeySequence::Save);
+    _saveAction->setShortcut(QKeySequence::Save);// Set icon
+    _saveAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/saveFile.png"));
     // Connect action
     connect(_saveAction, SIGNAL(triggered()), this, SLOT(saveFile()));
 
     // Add Save as sub menu
     _saveAsAction = fileMenu->addAction("Save &as...");
     _saveAsAction->setShortcut(QKeySequence::SaveAs);
+    // Set icon
+    _saveAsAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/saveAsFile.png"));
     // Connect action
     connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAsFile()));
 
@@ -1272,12 +1261,15 @@ void MainWindow::createEditMenu(void) {
     _undoAction = _undoStack->createUndoAction(this, "&Undo");
     editMenu->addAction(_undoAction);
     _undoAction->setShortcut(QKeySequence::Undo);
+    // Set icon
+    _undoAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/undo.png"));
 
     // Add Redo action
     _redoAction = _undoStack->createRedoAction(this, "&Redo");
     editMenu->addAction(_redoAction);
     _redoAction->setShortcut(QKeySequence::Redo);
-
+    // Set icon
+    _redoAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/redo.png"));
 }
 
 void MainWindow::createGenerateMenu(void) {
@@ -1337,20 +1329,143 @@ void MainWindow::createHelpMenu(void) {
     _aboutAction->setShortcut(QKeySequence("Alt+F1"));
 }
 
+void MainWindow::createToolBar(void) {
+    // Create classic tool bar, with new, open, save...
+    QToolBar* toolBar = addToolBar("ToolBar");
+    toolBar->addAction(_newAction);
+    toolBar->addAction(_openAction);
+    toolBar->addAction(_saveAction);
+    toolBar->addAction(_saveAsAction);
+    toolBar->addSeparator();
+    toolBar->addAction(_undoAction);
+    toolBar->addAction(_redoAction);
+    // Set tool bar object name to enable access when set style
+    toolBar->setObjectName("ToolBar");
+    // This tool bar cannot be moved, resized and so on
+    toolBar->setMovable(false);
+
+    // Create Move tool bar
+    _moveToolBar = addToolBar("MoveToolBar");
+
+    // Set tool bar object name to enable access when set style
+    _moveToolBar->setObjectName("MoveToolBar");
+
+    // Create spacer widget to separate these two tool bars
+    QWidget* spacerWidget = new QWidget(this);
+    spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacerWidget->setVisible(true);
+    _moveToolBar->addWidget(spacerWidget);
+
+    // Translation according to x
+    _xTransSpinBox = new QSpinBox;
+    _xTransSpinBox->setMinimum(World::minLength);
+    _xTransSpinBox->setMaximum(World::maxLength);
+    _xTransSpinBox->setValue(0);
+    // Connect
+    connect(_xTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
+    // Add to tool bar
+    _moveToolBar->addWidget(new QLabel("X:", this));
+    _moveToolBar->addWidget(_xTransSpinBox);
+
+    // Translation according to y
+    _yTransSpinBox = new QSpinBox;
+    _yTransSpinBox->setMinimum(World::minWidth);
+    _yTransSpinBox->setMaximum(World::maxWidth);
+    _yTransSpinBox->setValue(0);
+    // Connect
+    connect(_yTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
+    // Add to tool bar
+    _moveToolBar->addWidget(new QLabel("Y:", this));
+    _moveToolBar->addWidget(_yTransSpinBox);
+
+    // Translation according to z
+    _zTransSpinBox = new QSpinBox;
+    _zTransSpinBox->setMinimum(World::minHeight);
+    _zTransSpinBox->setMaximum(World::maxHeight);
+    _zTransSpinBox->setValue(0);
+    // Connect
+    connect(_zTransSpinBox, SIGNAL(valueChanged(int)), this, SLOT(translate(int)));
+    // Add to tool bar
+    _moveToolBar->addWidget(new QLabel("Z:", this));
+    _moveToolBar->addWidget(_zTransSpinBox);
+
+    // Left Rotation Action
+    _leftRotateAction = new QAction(QIcon("../LEGO_CREATOR/IMG/icons/rotationLeft.png"), "", this);
+    // Add tool tip to explain
+    _leftRotateAction->setToolTip("Left rotation");
+    // Connect
+    connect(_leftRotateAction, SIGNAL(triggered()), this, SLOT(rotateLeft()));
+    // Add to tool bar
+    _moveToolBar->addAction(_leftRotateAction);
+
+    // Right Rotation Action
+    _rightRotateAction = new QAction(QIcon("../LEGO_CREATOR/IMG/icons/rotationRight.png"), "", this);
+    // Add tool tip to explain
+    _rightRotateAction->setToolTip("Right rotation");
+    // Connect
+    connect(_rightRotateAction, SIGNAL(triggered()), this, SLOT(rotateRight()));
+    // Add to tool bar
+    _moveToolBar->addAction(_rightRotateAction);
+
+    // Fit Action
+    _fitAction = new QAction(QIcon("../LEGO_CREATOR/IMG/icons/fitLego.png"), "", this);
+    // Add tool tip to explain
+    _fitAction->setToolTip("Fit the current brick");
+    // Connect
+    connect(_fitAction, SIGNAL(triggered()), this, SLOT(fitLego()));
+    // Add to tool bar
+    _moveToolBar->addAction(_fitAction);
+
+    // Delete Action
+    _deleteAction  = new QAction(QIcon("../LEGO_CREATOR/IMG/icons/deleteLego.png"), "", this);
+    // Add tool tip to explain
+    _deleteAction->setToolTip("Delete the current brick");
+    // Connect
+    connect(_deleteAction, SIGNAL(triggered()), this, SLOT(deleteLego()));
+    // Add to tool bar
+    _moveToolBar->addAction(_deleteAction);
+
+    // This tool bar cannot be moved, resized and so on
+    _moveToolBar->setMovable(false);
+
+    // At the beginning, there is no LEGO, so fit actions are disabled
+    _moveToolBar->setEnabled(false);
+}
+
 void MainWindow::createUndoView(void) {
+    // Create stack window
     _undoView = new QUndoView(_undoStack);
-    _undoView->setWindowTitle("Command list");
-    _undoView->show();
-    _undoView->setAttribute(Qt::WA_QuitOnClose, false);
-    //_undoView->setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    // Set object name to style it
+    _undoView->setObjectName("UndoView");
 }
 
 // ////////////////////////////////////
 // STYLE SHEETS
 // ////////////////////////////////////
 void MainWindow::setStyle(void) {
-    /*_paramsWidget->*/QString generalStyle = "";//"background-image: url(../LEGO_CREATOR/IMG/tileBrick.png);";
-    //_paramsWidget->setStyleSheet("background: yellow;");
+    QString moveToolBarStyle = "";
+    moveToolBarStyle += "#MoveToolBar {";
+    moveToolBarStyle += "   spacing: 10px;";
+    moveToolBarStyle += "}";
+
+    QString comboBoxStyle = "";
+    comboBoxStyle += "QComboBox {";
+    comboBoxStyle += "  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
+    comboBoxStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
+    comboBoxStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
+    comboBoxStyle += "  border: 1px solid #ac0";
+    comboBoxStyle += "}";
+    comboBoxStyle += "QComboBox::drop-down {";
+    comboBoxStyle += "  border: 1px solid #ac0";
+    comboBoxStyle += "}";
+
+    QString dockButtonStyle = "";
+    dockButtonStyle += "#DockWidgetButton {";
+    dockButtonStyle += "    background-color: #fff;";
+    dockButtonStyle += "    border: 1px solid #ac0;";
+    dockButtonStyle += "    border-radius: 3px;";
+    dockButtonStyle += "}";
 
     QString dockWidgetStyle = "";
     dockWidgetStyle += "QDockWidget { ";
@@ -1359,7 +1474,11 @@ void MainWindow::setStyle(void) {
     dockWidgetStyle += "    font-style: italic;";
     dockWidgetStyle += "    font-family: 'KG Lego House';";
     dockWidgetStyle += "    border: solid 3px black;";
-    dockWidgetStyle += "    color: #ffffff;";
+    dockWidgetStyle += "    color: #000;";
+    //dockWidgetStyle += "    background: #bbdd00;";
+    dockWidgetStyle += "    background-color: #fff;";
+    dockWidgetStyle += "    border: 2px solid #ac0;";
+    dockWidgetStyle += "    border-radius: 5px;";
     dockWidgetStyle += "}";
 
     QString dockWidgetTitleStyle;
@@ -1367,8 +1486,10 @@ void MainWindow::setStyle(void) {
     dockWidgetTitleStyle += "    text-align: center;";
     dockWidgetTitleStyle += "    padding: 3px;";
     dockWidgetTitleStyle += "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
-    dockWidgetTitleStyle += "                stop: 0 #6a6a6a, stop: 0.4 #444444,";
-    dockWidgetTitleStyle += "                stop: 0.5 #272727, stop: 1.0 #4a4a4a);";
+    dockWidgetTitleStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
+    dockWidgetTitleStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
+//    dockWidgetTitleStyle += "                stop: 0 #6a6a6a, stop: 0.4 #444444,";
+//    dockWidgetTitleStyle += "                stop: 0.5 #272727, stop: 1.0 #4a4a4a);";
     //dockWidgetTitleStyle += "    background: red;";
     dockWidgetTitleStyle += "}";
 
@@ -1384,6 +1505,38 @@ void MainWindow::setStyle(void) {
     dockWidgetButtonsStyle += "    padding: 1px -1px -1px 1px;";
     dockWidgetButtonsStyle += "}";
 
-    QString style = generalStyle + dockWidgetStyle + dockWidgetTitleStyle + dockWidgetButtonsStyle;
+    QString dockTabWidgetStyle = "";
+    dockTabWidgetStyle += "#ParamsWidget {";
+    dockTabWidgetStyle += "     background-color: #efa;";
+    dockTabWidgetStyle += "}";
+
+    QString tabBarStyle = "";
+    tabBarStyle += "QTabBar::tab {";
+    tabBarStyle += "    padding: 5px;";
+    tabBarStyle += "    width: 121px;";
+    tabBarStyle += "    border-top-left-radius: 4px;";
+    tabBarStyle += "    border-top-right-radius: 4px;";
+    tabBarStyle += "}";
+    tabBarStyle += "QTabBar::tab:selected {";
+    tabBarStyle += "    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
+    tabBarStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
+    tabBarStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
+    tabBarStyle += "    border: 2px solid #ac0;";
+    tabBarStyle += "}";
+    tabBarStyle += "QTabBar::tab:!selected {";
+    tabBarStyle += "    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
+    tabBarStyle += "                stop: 0 #fafafa, stop: 0.4 #f4f4f4,";
+    tabBarStyle += "                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);";
+    tabBarStyle += "    border: 2px solid #c4c4c4;";
+    tabBarStyle += "}";
+
+    QString style = moveToolBarStyle
+                  + dockButtonStyle
+                  + comboBoxStyle
+                  + dockWidgetStyle
+                  + dockWidgetTitleStyle
+                  + dockWidgetButtonsStyle
+                  + dockTabWidgetStyle
+                  + tabBarStyle;
     setStyleSheet(style);
 }

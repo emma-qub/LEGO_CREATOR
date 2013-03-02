@@ -19,6 +19,7 @@ TileDialog::TileDialog(const TileDialog& tileDialog) :
     _widthSpinBox = new QSpinBox(this);
     _widthSpinBox->setRange(1, 4);
     _widthSpinBox->setValue(3);
+    _widthSpinBox->setFixedWidth(50);
     QFormLayout* widthLayout = new QFormLayout;
     widthLayout->addRow("Width:", _widthSpinBox);
 
@@ -26,14 +27,19 @@ TileDialog::TileDialog(const TileDialog& tileDialog) :
     _lengthSpinBox = new QSpinBox(this);
     _lengthSpinBox->setRange(1, 6);
     _lengthSpinBox->setValue(2);
+    _lengthSpinBox->setFixedWidth(50);
     QFormLayout* lengthLayout = new QFormLayout;
     lengthLayout->addRow("Length", _lengthSpinBox);
+
+    // Size layout
+    QHBoxLayout* sizeLayout = new QHBoxLayout;
+    sizeLayout->addLayout(widthLayout);
+    sizeLayout->addLayout(lengthLayout);
 
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(tileTypeLayout);
-    mainLayout->addLayout(widthLayout);
-    mainLayout->addLayout(lengthLayout);
+    mainLayout->addLayout(sizeLayout);
 
     // Connections
     connect(_widthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLego(int)));

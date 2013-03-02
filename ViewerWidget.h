@@ -33,6 +33,8 @@ public:
 
     osg::Camera* createCamera(const osg::Vec4 &color, int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
 
+    osg::Camera* getCamera(void) const { return _camera.get(); }
+
     virtual void paintEvent(QPaintEvent*) { frame(); }
 
 public slots:

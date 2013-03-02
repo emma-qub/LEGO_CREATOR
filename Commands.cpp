@@ -10,7 +10,8 @@
 // /////////////////////////////////////////////////////////////////
 
 AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, QUndoCommand* parent) :
-    QUndoCommand(parent) {
+    QUndoCommand(parent),
+    _matrixName() {
 
     _world = world;
     _currLegoGeode = legoGeode->cloning();
@@ -21,11 +22,11 @@ AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, 
 }
 
 void AddLegoCommand::undo(void) {
-    _world->deleteLego(_matTransIndex);
+    _world->deleteLego(_matrixName);
 }
 
 void AddLegoCommand::redo(void) {
-    _matTransIndex = _world->addBrick(_currLegoGeode.get(), _currLego.get());
+    _matrixName = _world->addBrick(_currLegoGeode.get(), _currLego.get());
 }
 
 
@@ -33,9 +34,10 @@ void AddLegoCommand::redo(void) {
 // DeleteLegoCommand
 // /////////////////////////////////////////////////////////////////
 
-DeleteLegoCommand::DeleteLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, QUndoCommand* parent) :
+DeleteLegoCommand::DeleteLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode,
+                                     const std::string& matrixName, QUndoCommand* parent) :
     QUndoCommand(parent),
-    _matTransIndex(-1) {
+    _matrixName(matrixName) {
 
     _world = world;
     _currLegoGeode = legoGeode->cloning();
@@ -46,11 +48,11 @@ DeleteLegoCommand::DeleteLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoG
 }
 
 void DeleteLegoCommand::undo(void) {
-    _matTransIndex = _world->addBrick(_currLegoGeode.get(), _currLego.get());
+    _matrixName = _world->addBrick(_currLegoGeode.get(), _currLego.get());
 }
 
 void DeleteLegoCommand::redo(void) {
-    _world->deleteLego();
+    _world->deleteLego(_matrixName);
 }
 
 
@@ -74,7 +76,7 @@ MoveLegoCommand::MoveLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode
 }
 
 void MoveLegoCommand::undo(void) {
-    _matTransIndex = _world->addBrick(_currLegoGeode.get(), _currLego.get());
+    //_matTransIndex = _world->addBrick(_currLegoGeode.get(), _currLego.get());
 }
 
 void MoveLegoCommand::redo(void) {

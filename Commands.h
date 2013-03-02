@@ -16,25 +16,25 @@ public:
 
 private:
     World* _world;
-    osg::ref_ptr<osg::MatrixTransform> _matTrans;
+    //osg::ref_ptr<osg::MatrixTransform> _matTrans;
     osg::ref_ptr<LegoGeode> _currLegoGeode;
     osg::ref_ptr<Lego> _currLego;
-    unsigned int _matTransIndex;
+    std::string _matrixName;
 };
 
 class DeleteLegoCommand : public QUndoCommand {
 public:
-    DeleteLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, QUndoCommand* parent = NULL);
+    DeleteLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, const std::string& matrixName, QUndoCommand* parent = NULL);
 
     virtual void undo(void);
     virtual void redo(void);
 
 private:
     World* _world;
-    osg::ref_ptr<osg::MatrixTransform> _matTrans;
+    //osg::ref_ptr<osg::MatrixTransform> _matTrans;
     osg::ref_ptr<LegoGeode> _currLegoGeode;
     osg::ref_ptr<Lego> _currLego;
-    unsigned int _matTransIndex;
+    std::string _matrixName;
 };
 
 class MoveLegoCommand : public QUndoCommand {

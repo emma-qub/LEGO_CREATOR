@@ -41,7 +41,10 @@ SOURCES += \
     Inspector.cpp \
     Tile.cpp \
     TileGeode.cpp \
-    TileDialog.cpp
+    TileDialog.cpp \
+    FrontShip.cpp \
+    FrontShipGeode.cpp \
+    FrontShipDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -85,7 +88,10 @@ HEADERS += \
     Inspector.h \
     Tile.h \
     TileGeode.h \
-    TileDialog.h
+    TileDialog.h \
+    FrontShip.h \
+    FrontShipGeode.h \
+    FrontShipDialog.h
 
 LIBS += \
     -L$OSG/lib \
