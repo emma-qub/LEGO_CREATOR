@@ -10,7 +10,6 @@
 #include "BrickDialog.h"
 #include "CornerDialog.h"
 #include "RoadDialog.h"
-#include "SlopDialog.h"
 #include "CharacterDialog.h"
 #include "WindowDialog.h"
 #include "DoorDialog.h"
@@ -114,9 +113,9 @@ MainWindow::~MainWindow() {
     LegoFactory<RoadGeode, QString>::kill();
     LegoFactory<RoadDialog, QString>::kill();
 
-    LegoFactory<Slop, QString>::kill();
-    LegoFactory<SlopGeode, QString>::kill();
-    LegoFactory<SlopDialog, QString>::kill();
+    LegoFactory<Tile, QString>::kill();
+    LegoFactory<TileGeode, QString>::kill();
+    LegoFactory<TileDialog, QString>::kill();
 
     LegoFactory<Character, QString>::kill();
     LegoFactory<CharacterGeode, QString>::kill();
@@ -141,10 +140,6 @@ MainWindow::~MainWindow() {
     LegoFactory<Character, QString>::kill();
     LegoFactory<CharacterGeode, QString>::kill();
     LegoFactory<CharacterDialog, QString>::kill();
-
-    LegoFactory<Tile, QString>::kill();
-    LegoFactory<TileGeode, QString>::kill();
-    LegoFactory<TileDialog, QString>::kill();
 
     LegoFactory<FrontShip, QString>::kill();
     LegoFactory<FrontShipGeode, QString>::kill();
@@ -173,12 +168,12 @@ void MainWindow::initFactories(void) {
     // Register RoadDialog
     LegoFactory<RoadDialog, QString>::instance()->registerLego(QString("RoadDialog"), new RoadDialog);
 
-    // Register Slop
-    LegoFactory<Slop, QString>::instance()->registerLego(QString("Slop"), new Slop);
-    // Register SlopGeode
-    LegoFactory<SlopGeode, QString>::instance()->registerLego(QString("SlopGeode"), new SlopGeode);
-    // Register SlopDialog
-    LegoFactory<SlopDialog, QString>::instance()->registerLego(QString("SlopDialog"), new SlopDialog);
+    // Register Tile
+    LegoFactory<Tile, QString>::instance()->registerLego(QString("Tile"), new Tile);
+    // Register TileGeode
+    LegoFactory<TileGeode, QString>::instance()->registerLego(QString("TileGeode"), new TileGeode);
+    // Register TileDialog
+    LegoFactory<TileDialog, QString>::instance()->registerLego(QString("TileDialog"), new TileDialog);
 
     // Register Window
     LegoFactory<Window, QString>::instance()->registerLego(QString("Window"), new Window);
@@ -214,13 +209,6 @@ void MainWindow::initFactories(void) {
     LegoFactory<CharacterGeode, QString>::instance()->registerLego(QString("CharacterGeode"), new CharacterGeode);
     // Register CharacterDialog
     LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
-
-    // Register Tile
-    LegoFactory<Tile, QString>::instance()->registerLego(QString("Tile"), new Tile);
-    // Register TileGeode
-    LegoFactory<TileGeode, QString>::instance()->registerLego(QString("TileGeode"), new TileGeode);
-    // Register TileDialog
-    LegoFactory<TileDialog, QString>::instance()->registerLego(QString("TileDialog"), new TileDialog);
 
     // Register FrontShip
     LegoFactory<FrontShip, QString>::instance()->registerLego(QString("FrontShip"), new FrontShip);
@@ -269,11 +257,11 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create CornerDialog in MainWindow::initDialogs";
 
-    // SlopDialog
-    if (SlopDialog* slopDialog = dynamic_cast<SlopDialog*>(LegoFactory<SlopDialog, QString>::instance()->create("SlopDialog")))
-        _legoDialog << slopDialog;
+    // TileDialog
+    if (TileDialog* tileDialog = dynamic_cast<TileDialog*>(LegoFactory<TileDialog, QString>::instance()->create("TileDialog")))
+        _legoDialog << tileDialog;
     else
-        qDebug() << "Cannot create SlopDialog in MainWindow::initDialogs";
+        qDebug() << "Cannot create TileDialog in MainWindow::initDialogs";
 
     // RoadDialog
     if (RoadDialog* roadDialog = dynamic_cast<RoadDialog*>(LegoFactory<RoadDialog, QString>::instance()->create("RoadDialog")))
@@ -305,12 +293,6 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create CharacterDialog in MainWindow::initDialogs";
 
-    // TileDialog
-    if (TileDialog* tileDialog = dynamic_cast<TileDialog*>(LegoFactory<TileDialog, QString>::instance()->create("TileDialog")))
-        _legoDialog << tileDialog;
-    else
-        qDebug() << "Cannot create TileDialog in MainWindow::initDialogs";
-
     // FrontShipDialog
     if (FrontShipDialog* frontShipDialog = dynamic_cast<FrontShipDialog*>(LegoFactory<FrontShipDialog, QString>::instance()->create("FrontShipDialog")))
         _legoDialog << frontShipDialog;
@@ -331,7 +313,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Slop" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "Tile" << "FrontShip";
+    brickForms << "Brick" << "Corner" << "Tile" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "FrontShip";
     _shapeComboBox->addItems(brickForms);
     _shapeComboBox->setFixedWidth(100);
     QFormLayout* shapeLayout = new QFormLayout;
@@ -484,16 +466,19 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<CornerGeode*>(LegoFactory<CornerGeode, QString>::instance()->create("CornerGeode"))))
             qDebug() << "Cannot cast in CornerGeode* within MainWindow::chooseDialog";
         break;
-    // Slop dialog
+    // Tile dialog
     case 2:
-        if ((_currLego = dynamic_cast<Slop*>(LegoFactory<Slop, QString>::instance()->create("Slop")))) {
-            Slop* lego = static_cast<Slop*>(_currLego.get());
+        if ((_currLego = dynamic_cast<Tile*>(LegoFactory<Tile, QString>::instance()->create("Tile")))) {
+            TileDialog* dialog = static_cast<TileDialog*>(_legoDialog.at(dialogIndex));
+            Tile* lego = static_cast<Tile*>(_currLego.get());
             lego->setColor(_legoColor);
+            lego->setWidth(dialog->getWidth());
+            lego->setLength(dialog->getLength());
         } else {
-            qDebug() << "Cannot cast in Slop* within MainWindow::chooseDialog";
+            qDebug() << "Cannot cast in Tile* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<SlopGeode*>(LegoFactory<SlopGeode, QString>::instance()->create("SlopGeode"))))
-            qDebug() << "Cannot cast in SlopGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoGeode = dynamic_cast<TileGeode*>(LegoFactory<TileGeode, QString>::instance()->create("TileGeode"))))
+            qDebug() << "Cannot cast in TileGeode* within MainWindow::chooseDialog";
         break;
     // Road dialog
     case 3:
@@ -549,22 +534,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoGeode = dynamic_cast<CharacterGeode*>(LegoFactory<CharacterGeode, QString>::instance()->create("CharacterGeode"))))
             qDebug() << "Cannot cast in CharacterGeode* within MainWindow::chooseDialog";
         break;
-    // Tile dialog
-    case 8:
-        if ((_currLego = dynamic_cast<Tile*>(LegoFactory<Tile, QString>::instance()->create("Tile")))) {
-            TileDialog* dialog = static_cast<TileDialog*>(_legoDialog.at(dialogIndex));
-            Tile* lego = static_cast<Tile*>(_currLego.get());
-            lego->setColor(_legoColor);
-            lego->setWidth(dialog->getWidth());
-            lego->setLength(dialog->getLength());
-        } else {
-            qDebug() << "Cannot cast in Tile* within MainWindow::chooseDialog";
-        }
-        if (!(_currLegoGeode = dynamic_cast<TileGeode*>(LegoFactory<TileGeode, QString>::instance()->create("TileGeode"))))
-            qDebug() << "Cannot cast in TileGeode* within MainWindow::chooseDialog";
-        break;
     // FrontShip dialog
-    case 9:
+    case 8:
         if ((_currLego = dynamic_cast<FrontShip*>(LegoFactory<FrontShip, QString>::instance()->create("FrontShip")))) {
             FrontShip* lego = static_cast<FrontShip*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -988,6 +959,7 @@ void MainWindow::newFile(void) {
 }
 
 void MainWindow::openFile(void) {
+    // Create a poor dialog, because rendering in the main thread avoid fancy open dialog to be painted
     QDialog* dialog = new QDialog(this);
 
     // Get the open path
@@ -995,29 +967,37 @@ void MainWindow::openFile(void) {
     if (!openPath.endsWith('/'))
         openPath += "/";
 
+    // Get all file in directory
     QDir directory(openPath);
     QStringList allFiles = directory.entryList(QDir::Files | QDir::NoDotAndDotDot);
     QComboBox* filesComboBox = new QComboBox;
+    // Add file names to combo box
     filesComboBox->addItems(allFiles);
     QFormLayout* fileNameLayout = new QFormLayout;
     fileNameLayout->addRow("File name:", filesComboBox);
 
+    // Create cancel button
     QPushButton* cancelButton = new QPushButton("Cancel", dialog);
     connect(cancelButton, SIGNAL(clicked()), dialog, SLOT(reject()));
 
+    // Create save button
     QPushButton* saveButton = new QPushButton("Open", dialog);
     connect(saveButton, SIGNAL(clicked()), dialog, SLOT(accept()));
 
+    // Button layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->addWidget(cancelButton);
     buttonsLayout->addWidget(saveButton);
 
+    // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(fileNameLayout);
     mainLayout->addLayout(buttonsLayout);
 
+    // Set layout
     dialog->setLayout(mainLayout);
 
+    // Get data from dialog
     if (dialog->exec() == QDialog::Accepted) {
         QString fileName = filesComboBox->currentText();
         if (fileName.split(".").last() != "osg") {
@@ -1027,6 +1007,8 @@ void MainWindow::openFile(void) {
         }
     }
 
+    // Here is the old code that create a beautiful but unusable openFile pop up
+    // Maybe one day I'll be able to render OSG scene in another thread and use this snipet
 //    // Get open path
 //    QString openPath = _settings.value("SavePath").toString();
 
@@ -1077,49 +1059,63 @@ void MainWindow::saveFile(void) {
 }
 
 void MainWindow::checkExistence(QString fileName) {
+    //
     QString savePath = _settings.value("SavePath").toString();
     if (!savePath.endsWith('/'))
         savePath += "/";
 
-    // Current directory
+    // File path
     QFile file(savePath+fileName);
 
-    emit fileAlreadyExists(file.exists());
+    // If users have not put osg, we check that one too!
+    QFile fileWhisoutOSG(savePath+fileName+".osg");
+
+    // Emit signal exist
+    emit fileAlreadyExists(file.exists() || fileWhisoutOSG.exists());
 }
 
 void MainWindow::saveAsFile(void) {
-    // Get the current save path
+    // Create a poor dialog, because rendering in the main thread avoid fancy save dialog to be painted
     QDialog* dialog = new QDialog(this);
 
+    // Label to be displayed when users enter an already existing file name
     QLabel* warningFileAlreadyExists = new QLabel("Warning: the specified file already exists!");
     warningFileAlreadyExists->setStyleSheet("color: #FF7700");
     warningFileAlreadyExists->setVisible(false);
 
+    // Create a line edit for file name input
     QLineEdit* fileNameLineEdit = new QLineEdit(this);
     QFormLayout* fileNameLayout = new QFormLayout;
     fileNameLayout->addRow("File name:", fileNameLineEdit);
 
+    // Create cancel button
     QPushButton* cancelButton = new QPushButton("Cancel", dialog);
     connect(cancelButton, SIGNAL(clicked()), dialog, SLOT(reject()));
 
+    // Create save button
     QPushButton* saveButton = new QPushButton("Save", dialog);
     connect(saveButton, SIGNAL(clicked()), dialog, SLOT(accept()));
 
+    // Buttons layout
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->addWidget(cancelButton);
     buttonsLayout->addWidget(saveButton);
     buttonsLayout->setAlignment(Qt::AlignTop);
 
+    // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(warningFileAlreadyExists);
     mainLayout->addLayout(fileNameLayout);
     mainLayout->addLayout(buttonsLayout);
 
+    // Connections to handle warning message on already exist file name
     connect(fileNameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkExistence(QString)));
     connect(this, SIGNAL(fileAlreadyExists(bool)), warningFileAlreadyExists, SLOT(setVisible(bool)));
 
+    // Set main layout
     dialog->setLayout(mainLayout);
 
+    // Get data from dialog
     if (dialog->exec() == QDialog::Accepted) {
         // Get the file name entered by users
         QString fileName = fileNameLineEdit->text();
@@ -1143,6 +1139,8 @@ void MainWindow::saveAsFile(void) {
         _alreadySaved = false;
     }
 
+    // Same issue: rendering OSG in the main thread avoid to paint fancy saveFile dialog
+    // But I keep that code for the day I can fix it
 //    // Get the save path, according to last users directory visit
 //    QString savePath = _settings.value("SavePath").toString();
 
@@ -1189,11 +1187,13 @@ void MainWindow::quitSoft(void) {
 }
 
 void MainWindow::freezeFit(void) {
+    // Piece has been fit, users can create another one
     _moveToolBar->setEnabled(false);
     _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(true);
 }
 
 void MainWindow::freezeCreate(void) {
+    // Piece has been created, users can move/translate and then fit it
     _paramsTabWidget->find(_paramsWidget->winId())->setEnabled(false);
     _moveToolBar->setEnabled(true);
 }

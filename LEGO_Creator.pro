@@ -18,9 +18,6 @@ SOURCES += \
     World.cpp \
     BoundingBox.cpp \
     GenerateRoadWindow.cpp \
-    Slop.cpp \
-    SlopDialog.cpp \
-    SlopGeode.cpp \
     Character.cpp \
     CharacterDialog.cpp \
     CharacterGeode.cpp \
@@ -65,9 +62,6 @@ HEADERS += \
     World.h \
     BoundingBox.h \
     GenerateRoadWindow.h \
-    Slop.h \
-    SlopDialog.h \
-    SlopGeode.h \
     Character.h \
     CharacterDialog.h \
     CharacterGeode.h \
