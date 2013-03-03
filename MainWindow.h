@@ -4,6 +4,7 @@
 #include <QtGui>
 
 #include "ViewerWidget.h"
+#include "SettingsDialog.h"
 #include "LegoDialog.h"
 #include "World.h"
 
@@ -64,6 +65,10 @@ public slots:
     void saveAsFile(void);
     void quitSoft(void);
 
+    void openSettings(void);
+    void updateWorldGrid(void);
+    void viewerColorUpdate(QColor color);
+
     void checkExistence(QString fileName);
 
     void switchTraffic(bool b);
@@ -103,6 +108,7 @@ private:
 
     QAction* _undoAction;
     QAction* _redoAction;
+    QAction* _settingsAction;
 
     QAction* _generateRoadAction;
     QAction* _generateHouseAction;
@@ -128,6 +134,7 @@ private:
     QVector<QVector<QVector<bool> > > _roadPath;
 
     QSettings _settings;
+    SettingsDialog* _settingsDialog;
 
     bool _alreadySaved;
     bool _saved;

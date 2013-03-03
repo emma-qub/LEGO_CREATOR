@@ -3,8 +3,10 @@
 #include <time.h>
 
 #include "MainWindow.h"
+
 #include "GenerateRoadWindow.h"
 #include "Commands.h"
+#include "SettingsDialog.h"
 
 #include "LegoFactory.h"
 #include "BrickDialog.h"
@@ -38,6 +40,9 @@ MainWindow::MainWindow(QWidget* parent) :
     // Create undo stack to manage undo/redo actions
     _undoStack = new QUndoStack(this);
 
+    // Create the settings dialog
+    _settingsDialog = new SettingsDialog;
+
     // Settings to record save path and other
     _settings.setValue("SavePath", "../LEGO_CREATOR/OSG/");
     _settings.setValue("OpenPath", "../LEGO_CREATOR/OSG/");
@@ -45,6 +50,9 @@ MainWindow::MainWindow(QWidget* parent) :
     _settings.setValue("VehiculesPath", "../LEGO_CREATOR/OSG/Vehicules");
     _settings.setValue("RecordFileName", "traffic.path");
     _settings.setValue("FileName", "");
+    _settings.setValue("DefaultViewerColor", QColor(236.0, 236.0, 236.0));
+    _settings.setValue("DefaultViewerWidth", 20);
+    _settings.setValue("DefaultViewerLength", 30);
 
     // Register in factories
     initFactories();
@@ -88,6 +96,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(_undoAction, SIGNAL(triggered()), this, SLOT(freezeFit()));
     connect(_redoAction, SIGNAL(triggered()), this, SLOT(freezeCreate()));
+
+    connect(_settingsDialog, SIGNAL(gridSizeChanged()), this, SLOT(updateWorldGrid()));
+    connect(_settingsDialog, SIGNAL(viewerColorChanged(QColor)), this, SLOT(viewerColorUpdate(QColor)));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
@@ -394,11 +405,23 @@ void MainWindow::createScene(void) {
     _sceneFrame = new QFrame(this);
     _sceneFrame->setFixedSize(1440, 770);
 
+    // Get background color defined within settings
+    QColor color;
+    if (_settings.childKeys().contains("ViewerColor")) {
+        color = _settings.value("ViewerColor").value<QColor>();
+    } else {
+        color = _settings.value("DefaultViewerColor").value<QColor>();
+    }
+
+    double r = static_cast<double>(color.red());
+    double g = static_cast<double>(color.green());
+    double b = static_cast<double>(color.blue());
+
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
     _sceneViewer->initManipulators();
-    _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
+    _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
 
@@ -920,6 +943,9 @@ void MainWindow::eraseScene(void) {
     // To avoid any bug, traffic toggle action is set to off
     _viewTrafficAction->setChecked(false);
 
+    // Guide lines has been removed too, we recreate it
+    _world.createGuideLines();
+
     // Empty undo/redo stack, ofc
     _undoStack->clear();
 }
@@ -1179,6 +1205,23 @@ void MainWindow::quitSoft(void) {
     }
 }
 
+void MainWindow::openSettings(void) {
+    _settingsDialog->exec();
+}
+
+void MainWindow::updateWorldGrid(void) {
+    _world.createGuideLines();
+}
+
+void MainWindow::viewerColorUpdate(QColor color) {
+    double r = static_cast<double>(color.red());
+    double g = static_cast<double>(color.green());
+    double b = static_cast<double>(color.blue());
+
+    // Scene viewer
+    _sceneViewer->getCamera()->setClearColor(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.));
+}
+
 void MainWindow::freezeFit(void) {
     // Piece has been fit, users can create another one
     _moveToolBar->setEnabled(false);
@@ -1277,6 +1320,15 @@ void MainWindow::createEditMenu(void) {
     _redoAction->setShortcut(QKeySequence::Redo);
     // Set icon
     _redoAction->setIcon(QIcon("../LEGO_CREATOR/IMG/icons/redo.png"));
+
+    // Add separator
+    editMenu->addSeparator();
+
+    // Add Settings action
+    _settingsAction = editMenu->addAction("&Settings...");
+    _settingsAction->setShortcut(QKeySequence::Preferences);
+    // Connect action
+    connect(_settingsAction, SIGNAL(triggered()), this, SLOT(openSettings()));
 }
 
 void MainWindow::createGenerateMenu(void) {
@@ -1451,6 +1503,11 @@ void MainWindow::createUndoView(void) {
 // STYLE SHEETS
 // ////////////////////////////////////
 void MainWindow::setStyle(void) {
+    QString centralWidgetStyle = "";
+    centralWidgetStyle += "#CentralWidget {";
+    centralWidgetStyle += "     background-color: #fff;";
+    centralWidgetStyle += "}";
+
     QString moveToolBarStyle = "";
     moveToolBarStyle += "#MoveToolBar {";
     moveToolBarStyle += "   spacing: 10px;";
@@ -1488,13 +1545,11 @@ void MainWindow::setStyle(void) {
     dockWidgetStyle += "QDockWidget::title {";
     dockWidgetStyle += "    text-align: center;";
     dockWidgetStyle += "    padding: 10px;";
-    dockWidgetStyle += "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
-    dockWidgetStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
-    dockWidgetStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
+    dockWidgetStyle += "    background-color: #ac0;";
     dockWidgetStyle += "}";
     dockWidgetStyle += "QDockWidget {";
-    dockWidgetStyle += "    titlebar-close-icon: url(\"./icones/closeIcon.png\");";
-    dockWidgetStyle += "    titlebar-normal-icon: url(\"./icones/reduceIcon.png\");";
+    dockWidgetStyle += "    titlebar-close-icon: url(\"\");";
+    dockWidgetStyle += "    titlebar-normal-icon: url(\"\");";
     dockWidgetStyle += "}";
     dockWidgetStyle += "QDockWidget::close-button, QDockWidget::float-button {";
     dockWidgetStyle += "    padding: 0px;";
@@ -1528,7 +1583,8 @@ void MainWindow::setStyle(void) {
     tabBarStyle += "    border: 2px solid #c4c4c4;";
     tabBarStyle += "}";
 
-    QString style = moveToolBarStyle
+    QString style = centralWidgetStyle
+                  + moveToolBarStyle
                   + dockButtonStyle
                   + comboBoxStyle
                   + dockWidgetStyle

@@ -1,6 +1,7 @@
 #include "World.h"
 
 #include <QDebug>
+#include <QSettings>
 
 #include "LegoFactory.h"
 
@@ -34,16 +35,38 @@ World::~World(void) {
 }
 
 void World::createGuideLines(void) {
+    // Remove previous lines
+    for (unsigned int k = 0; k < _scene->getNumChildren(); k++) {
+        // If child is the previous guide lines, we remove it
+        if (_scene->getChild(k)->getName() == "GuideLines")
+            _scene->removeChild(k);
+    }
+
     // Create line geode
     osg::ref_ptr<osg::Geode> line = new osg::Geode;
 
-    for (int i = -20; i <= 20; i+=2) {
-        for (int j = -30; j <= 30; j+=2) {
+    int width = 0;
+    int length = 0;
+    // Get width and length defined within settings
+    QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
+    if (settings.childKeys().contains("ViewerWidth")) {
+        width = settings.value("ViewerWidth").toInt();
+    } else {
+        width = settings.value("DefaultViewerWidth").toInt();
+    }
+    if (settings.childKeys().contains("ViewerLength")) {
+        length = settings.value("ViewerLength").toInt();
+    } else {
+        length = settings.value("DefaultViewerLength").toInt();
+    }
+
+    for (int i = -width; i <= width; i+=2) {
+        for (int j = -length; j <= length; j+=2) {
             // Create four points
-            osg::Vec3 v0(i*Lego::length_unit, -30.0*Lego::length_unit, 0.0);
-            osg::Vec3 v1(i*Lego::length_unit, 30.0*Lego::length_unit, 0.0);
-            osg::Vec3 v2(-20*Lego::length_unit, j*Lego::length_unit, 0.0);
-            osg::Vec3 v3(20*Lego::length_unit, j*Lego::length_unit, 0.0);
+            osg::Vec3 v0(i*Lego::length_unit, -length*Lego::length_unit, 0.0);
+            osg::Vec3 v1(i*Lego::length_unit, length*Lego::length_unit, 0.0);
+            osg::Vec3 v2(-width*Lego::length_unit, j*Lego::length_unit, 0.0);
+            osg::Vec3 v3(width*Lego::length_unit, j*Lego::length_unit, 0.0);
 
             // Add points
             osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -73,6 +96,9 @@ void World::createGuideLines(void) {
             line->addDrawable(geometry);
         }
     }
+
+    // Give a name
+    line->setName("GuideLines");
 
     // Add line to scene
     _scene->addChild(line);

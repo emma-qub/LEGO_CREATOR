@@ -40,7 +40,9 @@ SOURCES += \
     TileDialog.cpp \
     FrontShip.cpp \
     FrontShipNode.cpp \
-    FrontShipDialog.cpp
+    FrontShipDialog.cpp \
+    SettingsDialog.cpp \
+    Pages.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -83,7 +85,9 @@ HEADERS += \
     TileDialog.h \
     FrontShip.h \
     FrontShipNode.h \
-    FrontShipDialog.h
+    FrontShipDialog.h \
+    SettingsDialog.h \
+    Pages.h
 
 LIBS += \
     -L$OSG/lib \
