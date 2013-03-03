@@ -1,14 +1,14 @@
-#ifndef WINDOWGEODE_H
-#define WINDOWGEODE_H
+#ifndef WindowNode_H
+#define WindowNode_H
 
-#include "LegoGeode.h"
+#include "LegoNode.h"
 #include "Window.h"
 
-class WindowGeode : public LegoGeode {
+class WindowNode : public LegoNode {
 public:
-    WindowGeode();
-    WindowGeode(osg::ref_ptr<Window> window);
-    WindowGeode(const WindowGeode& windowGeode);
+    WindowNode();
+    WindowNode(osg::ref_ptr<Window> window);
+    WindowNode(const WindowNode& windowNode);
 
     virtual void createGeode(void);
     void createWindow(void);
@@ -16,7 +16,7 @@ public:
     void createRectangle(const osg::Vec3& A, const osg::Vec3& B, const osg::Vec3& C,
                          const osg::Vec3& D, const osg::Vec3& normal, const QColor& color);
 
-    virtual WindowGeode* cloning(void) const;
+    virtual WindowNode* cloning(void) const;
 };
 
-#endif // WINDOWGEODE_H
+#endif // WindowNode_H

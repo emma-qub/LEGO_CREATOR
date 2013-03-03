@@ -56,16 +56,16 @@ void BrickDialog::reInitComboBox(void) {
 
 void BrickDialog::setLego(int) {
     if (Brick* brick = dynamic_cast<Brick*>(_lego)) {
-        if (BrickGeode* brickGeode = dynamic_cast<BrickGeode*>(_legoGeode)) {
+        if (BrickNode* brickNode = dynamic_cast<BrickNode*>(_legoNode)) {
             brick->setWidth(_widthSpinBox->text().toInt());
             brick->setLength(_lengthSpinBox->text().toInt());
             brick->setBrickType(_brickTypeComboBox->currentIndex());
 
-            brickGeode->createGeode();
+            brickNode->createGeode();
 
-            emit changedLego(brickGeode);
+            emit changedLego(brickNode);
         } else {
-            qDebug() << "Cannot cast in BrickGeode* BrickDialog::setLego";
+            qDebug() << "Cannot cast in BrickNode* BrickDialog::setLego";
         }
     } else {
         qDebug() << "Cannot cast in Brick* BrickDialog::setLego";

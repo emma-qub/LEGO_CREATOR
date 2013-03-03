@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include "Character.h"
 #include <QtGui>
-#include "CharacterGeode.h"
+#include "CharacterNode.h"
 
 class CharacterDialog : public LegoDialog
 {

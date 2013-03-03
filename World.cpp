@@ -82,11 +82,11 @@ void World::initBrick(void) {
     // LEGO parts in preview are centered in origin.
     // The goal here is to translate them to match there leftBottomFront corner with the origin.
 
-    // Get current LegoGeode
-    LegoGeode* currLegoGeode = static_cast<LegoGeode*>(_currMatrixTransform->getChild(0));
+    // Get current LegoNode
+    LegoNode* currLegoNode = static_cast<LegoNode*>(_currMatrixTransform->getChild(0));
 
     // Get the Bounding Box
-    BoundingBox box = currLegoGeode->getLego()->getBoundingBox();
+    BoundingBox box = currLegoNode->getLego()->getBoundingBox();
 
     // Calculate x, y and z translations
     _x = Lego::length_unit*box.getLength()/2.0;
@@ -127,15 +127,15 @@ void World::deleteLego(const std::string& matrixName) {
         qDebug() << "Cannot find the right child within World::deleteLego";
 }
 
-std::string World::addBrick(LegoGeode* legoGeode, Lego* lego) {
-    // ClonelegoGeode and Lego to create a new one in the scene
-    osg::ref_ptr<LegoGeode> newLegoGeode = legoGeode->cloning();
+std::string World::addBrick(LegoNode* legoNode, Lego* lego) {
+    // ClonelegoNode and Lego to create a new one in the scene
+    osg::ref_ptr<LegoNode> newLegoNode = legoNode->cloning();
     osg::ref_ptr<Lego> newLego = lego->cloning();
-    newLegoGeode->setLego(newLego.get());
+    newLegoNode->setLego(newLego.get());
 
     // Create a matrix transform parent
     _currMatrixTransform = new osg::MatrixTransform;
-    _currMatrixTransform->addChild(newLegoGeode.get());
+    _currMatrixTransform->addChild(newLegoNode.get());
     _scene->addChild(_currMatrixTransform.get());
 
     // Assign a brand new name to the previous matrix, in order to find it later

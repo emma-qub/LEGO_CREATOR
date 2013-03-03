@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "Lego.h"
-#include "LegoGeode.h"
+#include "LegoNode.h"
 
 class LegoDialog : public QWidget {
     Q_OBJECT
@@ -13,7 +13,7 @@ public:
     LegoDialog(const LegoDialog&);
 
     virtual void initLego(Lego* lego) { _lego = lego; }
-    virtual void initLegoGeode(LegoGeode* legoGeode) { _legoGeode = legoGeode; }
+    virtual void initLegoNode(LegoNode* legoNode) { _legoNode = legoNode; }
     virtual void reInitComboBox() {}
 
     virtual LegoDialog* cloning(void) const = 0;
@@ -23,10 +23,10 @@ public slots:
 
 protected:
     Lego* _lego;
-    LegoGeode* _legoGeode;
+    LegoNode* _legoNode;
 
 signals:
-    void changedLego(LegoGeode*);
+    void changedLego(LegoNode*);
 };
 
 #endif // LEGODIALOG_H

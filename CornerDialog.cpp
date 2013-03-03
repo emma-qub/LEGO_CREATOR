@@ -31,14 +31,14 @@ void CornerDialog::reInitComboBox() {
 
 void CornerDialog::setLego(int) {
     if (Corner* corner = dynamic_cast<Corner*>(_lego)) {
-        if (CornerGeode* cornerGeode = dynamic_cast<CornerGeode*>(_legoGeode)) {
+        if (CornerNode* cornerNode = dynamic_cast<CornerNode*>(_legoNode)) {
             corner->setCornerType(_cornerTypeComboBox->currentIndex());
 
-            cornerGeode->createGeode();
+            cornerNode->createGeode();
 
-            emit changedLego(cornerGeode);
+            emit changedLego(cornerNode);
         } else {
-            qDebug() << "Cannot cast in CornerGeode* CornerDialog::setLego";
+            qDebug() << "Cannot cast in CornerNode* CornerDialog::setLego";
         }
     } else {
         qDebug() << "Cannot cast in Corner* CornerDialog::setLego";

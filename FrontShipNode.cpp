@@ -1,25 +1,25 @@
-#include "FrontShipGeode.h"
+#include "FrontShipNode.h"
 
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
-FrontShipGeode::FrontShipGeode() {
-    LegoGeode();
+FrontShipNode::FrontShipNode() {
+    LegoNode();
 }
 
-FrontShipGeode::FrontShipGeode(osg::ref_ptr<FrontShip> frontShip) :
-    LegoGeode(frontShip) {
+FrontShipNode::FrontShipNode(osg::ref_ptr<FrontShip> frontShip) :
+    LegoNode(frontShip) {
 
     createGeode();
 }
 
-FrontShipGeode::FrontShipGeode(const FrontShipGeode& frontShipGeode) :
-    LegoGeode(frontShipGeode) {
+FrontShipNode::FrontShipNode(const FrontShipNode& frontShipNode) :
+    LegoNode(frontShipNode) {
 }
 
-void FrontShipGeode::createGeode(void) {
+void FrontShipNode::createGeode(void) {
     // Get integer sizes
     int width = 3;
     int length = 4;
@@ -56,7 +56,7 @@ void FrontShipGeode::createGeode(void) {
 }
 
 
-osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
+osg::ref_ptr<osg::Drawable> FrontShipNode::createClassic(void) const {
     // Get the frontShip
     FrontShip* frontShip = static_cast<FrontShip*>(_lego);
 
@@ -263,6 +263,6 @@ osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
 }
 
 
-FrontShipGeode* FrontShipGeode::cloning(void) const {
-    return new FrontShipGeode(*this);
+FrontShipNode* FrontShipNode::cloning(void) const {
+    return new FrontShipNode(*this);
 }

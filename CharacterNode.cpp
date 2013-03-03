@@ -1,24 +1,24 @@
-#include "CharacterGeode.h"
+#include "CharacterNode.h"
 #include "Character.h"
 
 #include <osg/MatrixTransform>
 #include <osg/Texture2D>
 
-CharacterGeode::CharacterGeode() :
-    LegoGeode() {
+CharacterNode::CharacterNode() :
+    LegoNode() {
 }
 
-CharacterGeode::CharacterGeode(osg::ref_ptr<Character> character) :
-    LegoGeode(character) {
+CharacterNode::CharacterNode(osg::ref_ptr<Character> character) :
+    LegoNode(character) {
 
     createGeode();
 }
 
-CharacterGeode::CharacterGeode(const CharacterGeode& characterGeode) :
-    LegoGeode(characterGeode) {
+CharacterNode::CharacterNode(const CharacterNode& characterNode) :
+    LegoNode(characterNode) {
 }
 
-void CharacterGeode::createGeode(void) {
+void CharacterNode::createGeode(void) {
     // Remove previous children
     removeChildren(0, getNumChildren());
 
@@ -41,6 +41,6 @@ void CharacterGeode::createGeode(void) {
     addChild(mt);
 }
 
-CharacterGeode* CharacterGeode::cloning(void) const {
-    return new CharacterGeode(*this);
+CharacterNode* CharacterNode::cloning(void) const {
+    return new CharacterNode(*this);
 }

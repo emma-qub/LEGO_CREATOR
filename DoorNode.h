@@ -1,14 +1,14 @@
-#ifndef DOORGEODE_H
-#define DOORGEODE_H
+#ifndef DoorNode_H
+#define DoorNode_H
 
-#include "LegoGeode.h"
+#include "LegoNode.h"
 #include "Door.h"
 
-class DoorGeode : public LegoGeode {
+class DoorNode : public LegoNode {
 public:
-    DoorGeode();
-    DoorGeode(osg::ref_ptr<Door> door);
-    DoorGeode(const DoorGeode& doorGeode);
+    DoorNode();
+    DoorNode(osg::ref_ptr<Door> door);
+    DoorNode(const DoorNode& doorNode);
 
     virtual void createGeode(void);
     void createDoor(void);
@@ -16,7 +16,7 @@ public:
     void createRectangle(const osg::Vec3& A, const osg::Vec3& B, const osg::Vec3& C, const osg::Vec3& D,
                          const osg::Vec3& normal, const QColor& color, bool useTex = false);
 
-    virtual DoorGeode* cloning(void) const;
+    virtual DoorNode* cloning(void) const;
 };
 
-#endif // DOORGEODE_H
+#endif // DoorNode_H

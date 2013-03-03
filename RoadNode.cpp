@@ -1,4 +1,4 @@
-#include "RoadGeode.h"
+#include "RoadNode.h"
 
 #include <osg/Geometry>
 #include <osgDB/ReadFile>
@@ -8,21 +8,21 @@
 #include <cmath>
 
 
-RoadGeode::RoadGeode() :
-    LegoGeode() {
+RoadNode::RoadNode() :
+    LegoNode() {
 }
 
-RoadGeode::RoadGeode(osg::ref_ptr<Road> road) :
-    LegoGeode(road) {
+RoadNode::RoadNode(osg::ref_ptr<Road> road) :
+    LegoNode(road) {
 
     createGeode();
 }
 
-RoadGeode::RoadGeode(const RoadGeode& roadGeode) :
-    LegoGeode(roadGeode) {
+RoadNode::RoadNode(const RoadNode& roadNode) :
+    LegoNode(roadNode) {
 }
 
-void RoadGeode::createGeode(void) {
+void RoadNode::createGeode(void) {
     // Remove previous children
     removeChildren(0, getNumChildren());
 
@@ -150,7 +150,7 @@ void RoadGeode::createGeode(void) {
     // ... and for down face
     downGeometry->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
-    // Set drawables to this (RoadGeode)
+    // Set drawables to this (RoadNode)
     geode->removeDrawables(0, geode->getDrawableList().size());
     geode->addDrawable(roadGeometry.get());
     geode->addDrawable(downGeometry.get());
@@ -159,7 +159,7 @@ void RoadGeode::createGeode(void) {
     calculatePlots();
 }
 
-void RoadGeode::calculatePlots(void) {
+void RoadNode::calculatePlots(void) {
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
 
@@ -237,6 +237,6 @@ void RoadGeode::calculatePlots(void) {
     }
 }
 
-RoadGeode* RoadGeode::cloning(void) const {
-    return new RoadGeode(*this);
+RoadNode* RoadNode::cloning(void) const {
+    return new RoadNode(*this);
 }

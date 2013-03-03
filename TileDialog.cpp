@@ -56,16 +56,16 @@ void TileDialog::reInitComboBox(void) {
 
 void TileDialog::setLego(int) {
     if (Tile* tile = dynamic_cast<Tile*>(_lego)) {
-        if (TileGeode* tileGeode = dynamic_cast<TileGeode*>(_legoGeode)) {
+        if (TileNode* tileNode = dynamic_cast<TileNode*>(_legoNode)) {
             tile->setWidth(_widthSpinBox->text().toInt());
             tile->setLength(_lengthSpinBox->text().toInt());
             tile->setTileType(_tileTypeComboBox->currentIndex());
 
-            tileGeode->createGeode();
+            tileNode->createGeode();
 
-            emit changedLego(tileGeode);
+            emit changedLego(tileNode);
         } else {
-            qDebug() << "Cannot cast in TileGeode* whithin TileDialog::setLego";
+            qDebug() << "Cannot cast in TileNode* whithin TileDialog::setLego";
         }
     } else {
         qDebug() << "Cannot cast in Tile* whithin TileDialog::setLego";

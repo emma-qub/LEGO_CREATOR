@@ -1,25 +1,25 @@
-#include "CornerGeode.h"
+#include "CornerNode.h"
 
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
-CornerGeode::CornerGeode() :
-    LegoGeode() {
+CornerNode::CornerNode() :
+    LegoNode() {
 }
 
-CornerGeode::CornerGeode(osg::ref_ptr<Corner> corner) :
-    LegoGeode(corner) {
+CornerNode::CornerNode(osg::ref_ptr<Corner> corner) :
+    LegoNode(corner) {
 
     createGeode();
 }
 
-CornerGeode::CornerGeode(const CornerGeode& cornerGeode) :
-    LegoGeode(cornerGeode) {
+CornerNode::CornerNode(const CornerNode& cornerNode) :
+    LegoNode(cornerNode) {
 }
 
-void CornerGeode::createGeode(void) {
+void CornerNode::createGeode(void) {
     // Add the corner basis
     removeChildren(0, getNumChildren());
 
@@ -47,7 +47,7 @@ void CornerGeode::createGeode(void) {
     geode->addDrawable(createCylinder(0, Lego::length_unit/2, height, true));
 }
 
-osg::ref_ptr<osg::Drawable> CornerGeode::createCorner(bool isLeftPart) const {
+osg::ref_ptr<osg::Drawable> CornerNode::createCorner(bool isLeftPart) const {
     // Get the corner
     Corner* corner = static_cast<Corner*>(_lego);
 
@@ -166,6 +166,6 @@ osg::ref_ptr<osg::Drawable> CornerGeode::createCorner(bool isLeftPart) const {
     return cornerGeometry.get();
 }
 
-CornerGeode* CornerGeode::cloning(void) const {
-    return new CornerGeode(*this);
+CornerNode* CornerNode::cloning(void) const {
+    return new CornerNode(*this);
 }

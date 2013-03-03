@@ -1,105 +1,132 @@
-#include "BrickGeode.h"
+#include "WheelNode.h"
 
+#include <osg/ShapeDrawable>
+#include <osg/MatrixTransform>
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
-BrickGeode::BrickGeode() :
-    LegoGeode() {
+WheelNode::WheelNode() :
+    LegoNode() {
 }
 
-BrickGeode::BrickGeode(osg::ref_ptr<Brick> brick) :
-    LegoGeode(brick) {
+WheelNode::WheelNode(osg::ref_ptr<Wheel> wheel) :
+    LegoNode(wheel) {
 
     createGeode();
 }
 
-BrickGeode::BrickGeode(const BrickGeode& brickGeode) :
-    LegoGeode(brickGeode) {
+WheelNode::WheelNode(const WheelNode& wheelNode) :
+    LegoNode(wheelNode) {
 }
 
-void BrickGeode::createGeode(void) {
+void WheelNode::createGeode(void) {
     // Remove children
     removeChildren(0, getNumChildren());
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
-    geode->addDrawable(createBrick());
+
+    // Create wheels
+    createWheel(true);
+    createWheel(false);
+
+    // Create plate
+    createPlate();
 
     // Distance between two plot center
     double distPlot = Lego::length_unit;
 
-    // Get the brick
-    Brick* brick = static_cast<Brick*>(_lego);
-
-    // Get brick type
-    Brick::BrickType brickType = brick->getBrickType();
-
     // Get integer sizes
-    int width = brick->getWidth();
-    int length = brick->getLength();
+    int width = 2;
+    int length = 2;
     int height = 1;
-    if (brickType == Brick::classic)
-        height = 3;
 
     // Calculate x max and y max for plots
     double xmin = -(length-1)*Lego::length_unit/2;
     double ymin = -(width-1)*Lego::length_unit/2;
 
-    // Calculate x max and y max for bottom cylinder
-    bool thinw = (brick->getWidth() == 1);
-    bool thinl = (brick->getLength() == 1);
-    bool thin = (thinw || thinl);
-    double xminb = xmin;
-    if (!thinl)
-        xminb = xmin+Lego::length_unit/2;
-    double yminb = ymin;
-    if (!thinw)
-        yminb = ymin+Lego::length_unit/2;
-
-    // Add plots iteratively if the brick type is not flat
-    if (brickType != Brick::flat) {
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < width; j++) {
-                double radiusX = xmin + i*distPlot;
-                double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlot(radiusX, radiusY, height));
-            }
+    // Add plots
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            double radiusX = xmin + i*distPlot;
+            double radiusY = ymin + j*distPlot;
+            geode->addDrawable(createPlot(radiusX, radiusY, height));
         }
     }
 
-    if (thinw && !thinl)
-        width = 2;
-    if (thinl && !thinw)
-        length = 2;
-
-    // Add bottom cylinders iteratively
-    for (int i = 0; i < length-1; i++) {
-        for (int j = 0; j < width-1; j++) {
-            double radiusX = xminb + i*distPlot;
-            double radiusY = yminb + j*distPlot;
-            geode->addDrawable(createCylinder(radiusX, radiusY, height, thin));
-        }
-    }
+    // Add bottom cylinder
+    geode->addDrawable(createCylinder(0, 0, height, false));
 }
 
-osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
-    // Get the brick
-    Brick* brick = static_cast<Brick*>(_lego);
+void WheelNode::createWheel(bool isLeftWheel) {
+    // Wheels are composed by two concentric cylinders, a black and a white center one
+    // Shift value, depending on the left or right side, enable to create right and left wheel in only one method
+    int leftShift = 1;
+    if (isLeftWheel)
+        leftShift = -1;
+
+    // Create matrix to handle transformation
+    osg::Matrix m;
+    // Create geode
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+
+    // Create wheel black cylinder
+    osg::ref_ptr<osg::ShapeDrawable> wheelPart = new osg::ShapeDrawable(
+                                                     new osg::Cylinder(
+                                                         osg::Vec3(0, 0, 0),
+                                                         Lego::length_unit,
+                                                         Lego::length_unit-2*EPS
+                                                )
+                                            );
+    // Paint it black
+    wheelPart->setColor(osg::Vec4(.0, .0, .0, 1.));
+
+    // Add drawable created to geode
+    geode->addDrawable(wheelPart.get());
+
+    // Create white center cylinder and shift it to be seen
+    osg::ref_ptr<osg::ShapeDrawable> wheelcenter = new osg::ShapeDrawable(
+                                                       new osg::Cylinder(
+                                                           osg::Vec3(0, 0, 0),
+                                                           Lego::length_unit/2,
+                                                           Lego::length_unit-EPS
+                                                  )
+                                              );
+    // Paint it white
+    wheelcenter->setColor(osg::Vec4(1., 1., 1., 1.));
+
+    // Add drawable created to geode
+    geode->addDrawable(wheelcenter.get());
+
+    // Create matrix transform
+    osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
+    mt->addChild(geode);
+
+    // Rotate the cylinder, because cylinder basis is on the floor
+    m.makeRotate(osg::Quat(M_PI/2, osg::Vec3(0, 1, 0)));
+    mt->setMatrix(m*mt->getMatrix());
+
+    // Translate according to side value
+    m.makeTranslate(leftShift*1.5*Lego::length_unit, 0, 0);
+    mt->setMatrix(mt->getMatrix()*m);
+
+    // Add wheel
+    addChild(mt);
+}
+
+void WheelNode::createPlate(void) {
+    // Get the wheel
+    Wheel* wheel = static_cast<Wheel*>(_lego);
 
     // Get brick color
-    QColor color = brick->getColor();
-
-    // Get brick type
-    Brick::BrickType brickType = brick->getBrickType();
+    QColor color = wheel->getColor();
 
     // Get integer sizes
-    int width = brick->getWidth();
-    int length = brick->getLength();
+    int width = 2;
+    int length = 2;
     int height = 1;
-    if (brickType == Brick::classic)
-        height = 3;
 
     // Get real position, according to brick size
     // d : down, u : up, l : left, r : right, f : front, b : back
@@ -198,10 +225,14 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     // Calculate smooth normals
     osgUtil::SmoothingVisitor::smooth(*brickGeometry);
 
-    // Return the brick whithout plot
-    return brickGeometry.get();
+    // Create geode
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    // Add drawable to geode
+    geode->addDrawable(brickGeometry);
+    // Add geode
+    addChild(geode);
 }
 
-BrickGeode* BrickGeode::cloning(void) const {
-    return new BrickGeode(*this);
+WheelNode* WheelNode::cloning(void) const {
+    return new WheelNode(*this);
 }

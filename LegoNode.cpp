@@ -1,20 +1,20 @@
-#include "LegoGeode.h"
+#include "LegoNode.h"
 
-LegoGeode::LegoGeode(osg::ref_ptr<Lego> lego) :
+LegoNode::LegoNode(osg::ref_ptr<Lego> lego) :
     osg::Group() {
     _lego = lego;
 }
 
-LegoGeode::LegoGeode(const LegoGeode& legoGeode) :
-    osg::Group(legoGeode) {
+LegoNode::LegoNode(const LegoNode& legoNode) :
+    osg::Group(legoNode) {
 
-    _lego = legoGeode._lego;
+    _lego = legoNode._lego;
 }
 
-LegoGeode::~LegoGeode() {
+LegoNode::~LegoNode() {
 }
 
-osg::ref_ptr<osg::Drawable> LegoGeode::createPlot(double radiusX, double radiusY, int height) const {
+osg::ref_ptr<osg::Drawable> LegoNode::createPlot(double radiusX, double radiusY, int height) const {
     // Get plate color
     QColor color = _lego->getColor();
 
@@ -35,7 +35,7 @@ osg::ref_ptr<osg::Drawable> LegoGeode::createPlot(double radiusX, double radiusY
 }
 
 
-osg::ref_ptr<osg::Drawable> LegoGeode::createCylinder(double radiusX, double radiusY, double height, bool thin, double center) const {
+osg::ref_ptr<osg::Drawable> LegoNode::createCylinder(double radiusX, double radiusY, double height, bool thin, double center) const {
     // Get plate color
     QColor color = _lego->getColor();
 

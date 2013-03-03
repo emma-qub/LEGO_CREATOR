@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include <QtGui>
 #include "Corner.h"
-#include "CornerGeode.h"
+#include "CornerNode.h"
 
 class CornerDialog :public LegoDialog {
     Q_OBJECT

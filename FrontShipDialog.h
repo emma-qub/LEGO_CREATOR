@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include <QtGui>
 #include "FrontShip.h"
-#include "FrontShipGeode.h"
+#include "FrontShipNode.h"
 
 class FrontShipDialog : public LegoDialog {
     Q_OBJECT

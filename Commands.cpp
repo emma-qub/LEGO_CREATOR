@@ -7,16 +7,16 @@
 // AddLegoCommand
 // /////////////////////////////////////////////////////////////////
 
-AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, QUndoCommand* parent) :
+AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<LegoNode> legoNode, QUndoCommand* parent) :
     QUndoCommand(parent),
     _matrixName() {
 
     _world = world;
-    _currLegoGeode = legoGeode->cloning();
-    _currLego = legoGeode->getLego()->cloning();
-    _currLegoGeode->setLego(_currLego);
+    _currLegoNode = legoNode->cloning();
+    _currLego = legoNode->getLego()->cloning();
+    _currLegoNode->setLego(_currLego);
 
-    setText("Add "+_currLegoGeode->getLego()->whoiam());
+    setText("Add "+_currLegoNode->getLego()->whoiam());
 }
 
 void AddLegoCommand::undo(void) {
@@ -24,7 +24,7 @@ void AddLegoCommand::undo(void) {
 }
 
 void AddLegoCommand::redo(void) {
-    _matrixName = _world->addBrick(_currLegoGeode.get(), _currLego.get());
+    _matrixName = _world->addBrick(_currLegoNode.get(), _currLego.get());
 }
 
 
@@ -32,21 +32,21 @@ void AddLegoCommand::redo(void) {
 // DeleteLegoCommand
 // /////////////////////////////////////////////////////////////////
 
-DeleteLegoCommand::DeleteLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode,
+DeleteLegoCommand::DeleteLegoCommand(World* world, osg::ref_ptr<LegoNode> legoNode,
                                      const std::string& matrixName, QUndoCommand* parent) :
     QUndoCommand(parent),
     _matrixName(matrixName) {
 
     _world = world;
-    _currLegoGeode = legoGeode->cloning();
-    _currLego = legoGeode->getLego()->cloning();
-    _currLegoGeode->setLego(_currLego);
+    _currLegoNode = legoNode->cloning();
+    _currLego = legoNode->getLego()->cloning();
+    _currLegoNode->setLego(_currLego);
 
-    setText("Del "+_currLegoGeode->getLego()->whoiam());
+    setText("Del "+_currLegoNode->getLego()->whoiam());
 }
 
 void DeleteLegoCommand::undo(void) {
-    _matrixName = _world->addBrick(_currLegoGeode.get(), _currLego.get());
+    _matrixName = _world->addBrick(_currLegoNode.get(), _currLego.get());
 }
 
 void DeleteLegoCommand::redo(void) {
@@ -58,7 +58,7 @@ void DeleteLegoCommand::redo(void) {
 // MoveLegoCommand
 // /////////////////////////////////////////////////////////////////
 
-MoveLegoCommand::MoveLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode, int x, int y, int z, QUndoCommand* parent) :
+MoveLegoCommand::MoveLegoCommand(World* world, osg::ref_ptr<LegoNode> legoNode, int x, int y, int z, QUndoCommand* parent) :
     QUndoCommand(parent),
 
     _x(x),
@@ -66,15 +66,15 @@ MoveLegoCommand::MoveLegoCommand(World* world, osg::ref_ptr<LegoGeode> legoGeode
     _z(z) {
 
     _world = world;
-    _currLegoGeode = legoGeode->cloning();
-    _currLego = legoGeode->getLego()->cloning();
-    _currLegoGeode->setLego(_currLego);
+    _currLegoNode = legoNode->cloning();
+    _currLego = legoNode->getLego()->cloning();
+    _currLegoNode->setLego(_currLego);
 
-    setText("Del "+_currLegoGeode->getLego()->whoiam());
+    setText("Del "+_currLegoNode->getLego()->whoiam());
 }
 
 void MoveLegoCommand::undo(void) {
-    //_matTransIndex = _world->addBrick(_currLegoGeode.get(), _currLego.get());
+    //_matTransIndex = _world->addBrick(_currLegoNode.get(), _currLego.get());
 }
 
 void MoveLegoCommand::redo(void) {

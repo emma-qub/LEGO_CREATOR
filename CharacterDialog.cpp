@@ -31,14 +31,14 @@ void CharacterDialog::reInitComboBox(void) {
 
 void CharacterDialog::setLego(int) {
     if (Character* character = dynamic_cast<Character*>(_lego)) {
-        if (CharacterGeode* characterGeode = dynamic_cast<CharacterGeode*>(_legoGeode)) {
+        if (CharacterNode* characterNode = dynamic_cast<CharacterNode*>(_legoNode)) {
             character->setCharacterType(_characterTypeComboBox->currentIndex());
 
-            characterGeode->createGeode();
+            characterNode->createGeode();
 
-            emit changedLego(characterGeode);
+            emit changedLego(characterNode);
         } else {
-            qDebug() << "Cannot cast in CharacterGeode* CharacterDialog::setLego";
+            qDebug() << "Cannot cast in CharacterNode* CharacterDialog::setLego";
         }
     } else {
         qDebug() << "Cannot cast in Character* CharacterDialog::setLego";

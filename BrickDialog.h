@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include <QtGui>
 #include "Brick.h"
-#include "BrickGeode.h"
+#include "BrickNode.h"
 
 class BrickDialog : public LegoDialog {
     Q_OBJECT

@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include <QtGui>
 #include "FromFile.h"
-#include "FromFileGeode.h"
+#include "FromFileNode.h"
 
 class FromFileDialog : public LegoDialog {
     Q_OBJECT

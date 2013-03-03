@@ -5,7 +5,7 @@
 #include <QMap>
 
 #include "BrickDialog.h"
-#include "WheelGeode.h"
+#include "WheelNode.h"
 
 
 template<class Object, class Key = QString> class LegoFactory {

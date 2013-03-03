@@ -31,14 +31,14 @@ void RoadDialog::reInitComboBox(void) {
 
 void RoadDialog::setLego(int) {
     if (Road* road = dynamic_cast<Road*>(_lego)) {
-        if (RoadGeode* roadGeode = dynamic_cast<RoadGeode*>(_legoGeode)) {
+        if (RoadNode* roadNode = dynamic_cast<RoadNode*>(_legoNode)) {
             road->setRoadType(_roadTypeComboBox->currentIndex());
 
-            roadGeode->createGeode();
+            roadNode->createGeode();
 
-            emit changedLego(roadGeode);
+            emit changedLego(roadNode);
         } else {
-            qDebug() << "Cannot cast in RoadGeode* RoadDialog::setLego";
+            qDebug() << "Cannot cast in RoadNode* RoadDialog::setLego";
         }
     } else {
         qDebug() << "Cannot cast in Road* RoadDialog::setLego";

@@ -1,31 +1,28 @@
-#include "DoorGeode.h"
+#include "WindowNode.h"
 
 #include <osg/Geometry>
-#include <osgDB/ReadFile>
-#include <osg/TextureRectangle>
-#include <osg/TexMat>
 
 
-DoorGeode::DoorGeode() :
-    LegoGeode() {
+WindowNode::WindowNode() :
+    LegoNode() {
 }
 
-DoorGeode::DoorGeode(osg::ref_ptr<Door> door) :
-    LegoGeode(door) {
+WindowNode::WindowNode(osg::ref_ptr<Window> window) :
+    LegoNode(window) {
 
     createGeode();
 }
 
-DoorGeode::DoorGeode(const DoorGeode& doorGeode) :
-    LegoGeode(doorGeode) {
+WindowNode::WindowNode(const WindowNode& windowNode) :
+    LegoNode(windowNode) {
 }
 
-void DoorGeode::createGeode(void) {
+void WindowNode::createGeode(void) {
     removeChildren(0, getNumChildren());
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
-    createDoor();
+    createWindow();
 
     // Distance between two plot center
     double distPlot = Lego::length_unit;
@@ -33,7 +30,7 @@ void DoorGeode::createGeode(void) {
     // Get integer sizes
     int width = 2;
     int length = 4;
-    int height = 18;
+    int height = 9;
 
     // Calculate x max and y max for plots
     double xmin = -(length-1)*Lego::length_unit/2;
@@ -49,17 +46,17 @@ void DoorGeode::createGeode(void) {
     }
 }
 
-void DoorGeode::createDoor(void) {
+void WindowNode::createWindow(void) {
     // Get the brick
-    Door* door = static_cast<Door*>(_lego);
+    Window* window = static_cast<Window*>(_lego);
 
     // Get brick color
-    QColor color = door->getColor();
+    QColor color = window->getColor();
 
     // Get integer sizes
     int width = 2;
     int length = 4;
-    int height = 18;
+    int height = 9;
 
     // Get real position, according to brick size
     // d : down, u : up, l : left, r : right, f : front, b : back
@@ -92,14 +89,11 @@ void DoorGeode::createDoor(void) {
     // Create down side
     createRectangle(rfd, lfd, lbd, rbd, osg::Vec3(0, 0, -1), color);
 
-    // A door has also a front part
-    double f2 = f + 1;
-
 // ///////////////
-// DOOR FRAME
+// WINDOW FRAME
 // ///////////////
 
-    // Door has a frame
+    // Window has a frame
     double d2 = d+2;
     double u2 = u-2;
 
@@ -142,27 +136,86 @@ void DoorGeode::createDoor(void) {
     // create down side frame
     createRectangle(lfd, rfd, rfd2, lfd2, osg::Vec3(0, -1, 0), color);
 
-// //////////////
-// FRONT PART
-// //////////////
+// ////////////////
+// CROSS PART
+// ////////////////
 
-    double u3 = u2 + 0.1;
-    double d3 = d2 - 0.1;
+    // A window has also a cross part...
+    double d4 = -2;
+    double u4 = 2;
 
-    double l3 = l2 - 0.1;
-    double r3 = r2 + 0.1;
+    double l4 = -2;
+    double r4 = 2;
 
-    // Front part
-    osg::Vec3 l3f2u3(l3, f2, u3);
-    osg::Vec3 r3f2u3(r3, f2, u3);
-    osg::Vec3 r3f2d3(r3, f2, d3);
-    osg::Vec3 l3f2d3(l3, f2, d3);
+    double f2 = f + 1;
 
-    // Create door front part
-    createRectangle(l3f2u3, r3f2u3, r3f2d3, l3f2d3, osg::Vec3(0, -1, 0), QColor(Qt::white), true);
+    // Horizontal cross part
+    osg::Vec3 lf2d4(l, f2, d4);
+    osg::Vec3 rf2d4(r, f2, d4);
+    osg::Vec3 rf2u4(r, f2, u4);
+    osg::Vec3 lf2u4(l, f2, u4);
+
+    // Create horizontal cross part
+    createRectangle(lf2d4, rf2d4, rf2u4, lf2u4, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // Vertical cross part
+    osg::Vec3 l4f2d(l4, f2, d);
+    osg::Vec3 r4f2d(r4, f2, d);
+    osg::Vec3 r4f2u(r4, f2, u);
+    osg::Vec3 l4f2u(l4, f2, u);
+
+    // Create vertical cross part
+    createRectangle(l4f2d, r4f2d, r4f2u, l4f2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+// ////////////////
+// CROSS FRAME
+// ////////////////
+
+    // ...and a frame
+    double l3 = l2 + 2;
+    double r3 = r2 - 2;
+
+    double u3 = u2 - 2;
+    double d3 = d2 + 2;
+
+    // left side frame
+    osg::Vec3 lf2d(l, f2, d);
+    osg::Vec3 l3f2d(l3, f2, d);
+    osg::Vec3 l3f2u(l3, f2, u);
+    osg::Vec3 lf2u(l, f2, u);
+
+    // create left side frame
+    createRectangle(lf2d, l3f2d, l3f2u, lf2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // right side frame
+    osg::Vec3 rf2d(r, f2, d);
+    osg::Vec3 r3f2d(r3, f2, d);
+    osg::Vec3 r3f2u(r3, f2, u);
+    osg::Vec3 rf2u(r, f2, u);
+
+    // create right side frame
+    createRectangle(rf2d, r3f2d, r3f2u, rf2u, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // up side frame
+    //osg::Vec3 lf2u(l, f2, u);
+    //osg::Vec3 rf2u(r, f2, u);
+    osg::Vec3 rf2u3(r, f2, u3);
+    osg::Vec3 lf2u3(l, f2, u3);
+
+    // create up side frame
+    createRectangle(lf2u, rf2u, rf2u3, lf2u3, osg::Vec3(0, -1, 0), QColor(Qt::white));
+
+    // down side frame
+    //osg::Vec3 lf2d(l, f2, d);
+    //osg::Vec3 rf2d(r, f2, d);
+    osg::Vec3 rf2d3(r, f2, d3);
+    osg::Vec3 lf2d3(l, f2, d3);
+
+    // create down side frame
+    createRectangle(lf2d, rf2d, rf2d3, lf2d3, osg::Vec3(0, -1, 0), QColor(Qt::white));
 }
 
-void DoorGeode::setColorAndNormal(const osg::Vec3& normal, osg::Geometry* geometry, const QColor& color) {
+void WindowNode::setColorAndNormal(const osg::Vec3& normal, osg::Geometry* geometry, const QColor& color) {
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
     normals->push_back(normal);
     geometry->setNormalArray(normals);
@@ -175,8 +228,8 @@ void DoorGeode::setColorAndNormal(const osg::Vec3& normal, osg::Geometry* geomet
     geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 }
 
-void DoorGeode::createRectangle(const osg::Vec3& A, const osg::Vec3& B, const osg::Vec3& C, const osg::Vec3& D,
-                                const osg::Vec3& normal, const QColor& color, bool useTex) {
+void WindowNode::createRectangle(const osg::Vec3& A, const osg::Vec3& B, const osg::Vec3& C,
+                                  const osg::Vec3& D, const osg::Vec3& normal, const QColor& color) {
 
     osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -197,38 +250,6 @@ void DoorGeode::createRectangle(const osg::Vec3& A, const osg::Vec3& B, const os
     // Assign color and normal to rectangle
     setColorAndNormal(normal, geometry.get(), color);
 
-    if (useTex) {
-        // Create texture coords for door
-        osg::ref_ptr<osg::Vec2Array> texCoords = new osg::Vec2Array;
-        texCoords->push_back(osg::Vec2(0.0f, 0.0f));
-        texCoords->push_back(osg::Vec2(1.0f, 0.0f));
-        texCoords->push_back(osg::Vec2(1.0f, 1.0f));
-        texCoords->push_back(osg::Vec2(0.0f, 1.0f));
-        geometry->setTexCoordArray(0, texCoords);
-
-        // Disable display list to show up the texture
-        geometry->setUseDisplayList(false);
-
-        // Create image
-        osg::ref_ptr<osg::Image> img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Door.png");
-
-        // Get state
-        osg::ref_ptr<osg::StateSet> state = geometry->getOrCreateStateSet();
-
-        // Set texture
-        osg::ref_ptr<osg::TextureRectangle> tex = new osg::TextureRectangle(img);
-
-        osg::ref_ptr<osg::TexMat> texMat = new osg::TexMat;
-        texMat->setScaleByTextureRectangleSize(true);
-
-        // Set state
-        state->setTextureAttributeAndModes(0, tex, osg::StateAttribute::ON);
-        state->setTextureAttributeAndModes(0, texMat, osg::StateAttribute::ON);
-
-        // Turn off light for up face...
-        state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    }
-
     // Add drawable
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
@@ -236,6 +257,6 @@ void DoorGeode::createRectangle(const osg::Vec3& A, const osg::Vec3& B, const os
     geode->addDrawable(geometry);
 }
 
-DoorGeode* DoorGeode::cloning(void) const {
-    return new DoorGeode(*this);
+WindowNode* WindowNode::cloning(void) const {
+    return new WindowNode(*this);
 }

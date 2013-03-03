@@ -4,42 +4,42 @@ SOURCES += \
     ViewerWidget.cpp \
     Lego.cpp \
     LegoDialog.cpp \
+    LegoNode.cpp \
     Brick.cpp \
-    LegoGeode.cpp \
-    BrickGeode.cpp \
+    BrickNode.cpp \
     BrickDialog.cpp \
     LegoFactory.cpp \
     Corner.cpp \
-    CornerGeode.cpp \
+    CornerNode.cpp \
     CornerDialog.cpp \
     Road.cpp \
-    RoadGeode.cpp \
+    RoadNode.cpp \
     RoadDialog.cpp \
     World.cpp \
     BoundingBox.cpp \
     GenerateRoadWindow.cpp \
     Character.cpp \
     CharacterDialog.cpp \
-    CharacterGeode.cpp \
+    CharacterNode.cpp \
     Window.cpp \
-    WindowGeode.cpp \
+    WindowNode.cpp \
     WindowDialog.cpp \
     Door.cpp \
-    DoorGeode.cpp \
+    DoorNode.cpp \
     DoorDialog.cpp \
     FromFile.cpp \
-    FromFileGeode.cpp \
+    FromFileNode.cpp \
     FromFileDialog.cpp \
     Traffic.cpp \
     Wheel.cpp \
-    WheelGeode.cpp \
+    WheelNode.cpp \
     WheelDialog.cpp \
     Commands.cpp \
     Tile.cpp \
-    TileGeode.cpp \
+    TileNode.cpp \
     TileDialog.cpp \
     FrontShip.cpp \
-    FrontShipGeode.cpp \
+    FrontShipNode.cpp \
     FrontShipDialog.cpp
 
 HEADERS += \
@@ -47,42 +47,42 @@ HEADERS += \
     ViewerWidget.h \
     Lego.h \
     LegoDialog.h \
+    LegoNode.h \
     Brick.h \
-    LegoGeode.h \
-    BrickGeode.h \
+    BrickNode.h \
     BrickDialog.h \
     LegoFactory.h \
     Corner.h \
-    CornerGeode.h \
+    CornerNode.h \
     CornerDialog.h \
     Road.h \
-    RoadGeode.h \
+    RoadNode.h \
     RoadDialog.h \
     World.h \
     BoundingBox.h \
     GenerateRoadWindow.h \
     Character.h \
     CharacterDialog.h \
-    CharacterGeode.h \
+    CharacterNode.h \
     Window.h \
-    WindowGeode.h \
+    WindowNode.h \
     WindowDialog.h \
     Door.h \
-    DoorGeode.h \
+    DoorNode.h \
     DoorDialog.h \
     FromFile.h \
-    FromFileGeode.h \
+    FromFileNode.h \
     FromFileDialog.h \
     Traffic.h \
     Wheel.h \
-    WheelGeode.h \
+    WheelNode.h \
     WheelDialog.h \
     Commands.h \
     Tile.h \
-    TileGeode.h \
+    TileNode.h \
     TileDialog.h \
     FrontShip.h \
-    FrontShipGeode.h \
+    FrontShipNode.h \
     FrontShipDialog.h
 
 LIBS += \

@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget* parent) :
     // Connections
     connect(_shapeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(chooseDialog(int)));
     for (int k = 0; k < _shapeComboBox->count(); k++)
-        connect(_legoDialog.at(k), SIGNAL(changedLego(LegoGeode*)), this, SLOT(legoUpdated(LegoGeode*)));
+        connect(_legoDialog.at(k), SIGNAL(changedLego(LegoNode*)), this, SLOT(legoUpdated(LegoNode*)));
     connect(_colorButton, SIGNAL(clicked()), this, SLOT(browseColor()));
     connect(_createButton, SIGNAL(clicked()), this, SLOT(createLego()));
 
@@ -102,118 +102,118 @@ MainWindow::MainWindow(QWidget* parent) :
 MainWindow::~MainWindow() {
     // Delete all factories
     LegoFactory<Brick, QString>::kill();
-    LegoFactory<BrickGeode, QString>::kill();
+    LegoFactory<BrickNode, QString>::kill();
     LegoFactory<BrickDialog, QString>::kill();
 
     LegoFactory<Corner, QString>::kill();
-    LegoFactory<CornerGeode, QString>::kill();
+    LegoFactory<CornerNode, QString>::kill();
     LegoFactory<CornerDialog, QString>::kill();
 
     LegoFactory<Road, QString>::kill();
-    LegoFactory<RoadGeode, QString>::kill();
+    LegoFactory<RoadNode, QString>::kill();
     LegoFactory<RoadDialog, QString>::kill();
 
     LegoFactory<Tile, QString>::kill();
-    LegoFactory<TileGeode, QString>::kill();
+    LegoFactory<TileNode, QString>::kill();
     LegoFactory<TileDialog, QString>::kill();
 
     LegoFactory<Character, QString>::kill();
-    LegoFactory<CharacterGeode, QString>::kill();
+    LegoFactory<CharacterNode, QString>::kill();
     LegoFactory<CharacterDialog, QString>::kill();
 
     LegoFactory<Window, QString>::kill();
-    LegoFactory<WindowGeode, QString>::kill();
+    LegoFactory<WindowNode, QString>::kill();
     LegoFactory<WindowDialog, QString>::kill();
 
     LegoFactory<Door, QString>::kill();
-    LegoFactory<DoorGeode, QString>::kill();
+    LegoFactory<DoorNode, QString>::kill();
     LegoFactory<DoorDialog, QString>::kill();
 
     LegoFactory<FromFile, QString>::kill();
-    LegoFactory<FromFileGeode, QString>::kill();
+    LegoFactory<FromFileNode, QString>::kill();
     LegoFactory<FromFileDialog, QString>::kill();
 
     LegoFactory<Wheel, QString>::kill();
-    LegoFactory<WheelGeode, QString>::kill();
+    LegoFactory<WheelNode, QString>::kill();
     LegoFactory<WheelDialog, QString>::kill();
 
     LegoFactory<Character, QString>::kill();
-    LegoFactory<CharacterGeode, QString>::kill();
+    LegoFactory<CharacterNode, QString>::kill();
     LegoFactory<CharacterDialog, QString>::kill();
 
     LegoFactory<FrontShip, QString>::kill();
-    LegoFactory<FrontShipGeode, QString>::kill();
+    LegoFactory<FrontShipNode, QString>::kill();
     LegoFactory<FrontShipDialog, QString>::kill();
 }
 
 void MainWindow::initFactories(void) {
     // Register Brick
     LegoFactory<Brick, QString>::instance()->registerLego(QString("Brick"), new Brick);
-    // Register BrickGeode
-    LegoFactory<BrickGeode, QString>::instance()->registerLego(QString("BrickGeode"), new BrickGeode);
+    // Register BrickNode
+    LegoFactory<BrickNode, QString>::instance()->registerLego(QString("BrickNode"), new BrickNode);
     // Register BrickDialog
     LegoFactory<BrickDialog, QString>::instance()->registerLego(QString("BrickDialog"), new BrickDialog);
 
     // Register Corner
     LegoFactory<Corner, QString>::instance()->registerLego(QString("Corner"), new Corner);
-    // Register CornerGeode
-    LegoFactory<CornerGeode, QString>::instance()->registerLego(QString("CornerGeode"), new CornerGeode);
+    // Register CornerNode
+    LegoFactory<CornerNode, QString>::instance()->registerLego(QString("CornerNode"), new CornerNode);
     // Register CornerDialog
     LegoFactory<CornerDialog, QString>::instance()->registerLego(QString("CornerDialog"), new CornerDialog);
 
     // Register Road
     LegoFactory<Road, QString>::instance()->registerLego(QString("Road"), new Road);
-    // Register RoadGeode
-    LegoFactory<RoadGeode, QString>::instance()->registerLego(QString("RoadGeode"), new RoadGeode);
+    // Register RoadNode
+    LegoFactory<RoadNode, QString>::instance()->registerLego(QString("RoadNode"), new RoadNode);
     // Register RoadDialog
     LegoFactory<RoadDialog, QString>::instance()->registerLego(QString("RoadDialog"), new RoadDialog);
 
     // Register Tile
     LegoFactory<Tile, QString>::instance()->registerLego(QString("Tile"), new Tile);
-    // Register TileGeode
-    LegoFactory<TileGeode, QString>::instance()->registerLego(QString("TileGeode"), new TileGeode);
+    // Register TileNode
+    LegoFactory<TileNode, QString>::instance()->registerLego(QString("TileNode"), new TileNode);
     // Register TileDialog
     LegoFactory<TileDialog, QString>::instance()->registerLego(QString("TileDialog"), new TileDialog);
 
     // Register Window
     LegoFactory<Window, QString>::instance()->registerLego(QString("Window"), new Window);
-    // Register WindowGeode
-    LegoFactory<WindowGeode, QString>::instance()->registerLego(QString("WindowGeode"), new WindowGeode);
+    // Register WindowNode
+    LegoFactory<WindowNode, QString>::instance()->registerLego(QString("WindowNode"), new WindowNode);
     // Register WindowDialog
     LegoFactory<WindowDialog, QString>::instance()->registerLego(QString("WindowDialog"), new WindowDialog);
 
     // Register Door
     LegoFactory<Door, QString>::instance()->registerLego(QString("Door"), new Door);
-    // Register DoorGeode
-    LegoFactory<DoorGeode, QString>::instance()->registerLego(QString("DoorGeode"), new DoorGeode);
+    // Register DoorNode
+    LegoFactory<DoorNode, QString>::instance()->registerLego(QString("DoorNode"), new DoorNode);
     // Register DoorDialog
     LegoFactory<DoorDialog, QString>::instance()->registerLego(QString("DoorDialog"), new DoorDialog);
 
     // Register FromFile
     LegoFactory<FromFile, QString>::instance()->registerLego(QString("FromFile"), new FromFile);
-    // Register FromFileGeode
-    LegoFactory<FromFileGeode, QString>::instance()->registerLego(QString("FromFileGeode"), new FromFileGeode);
+    // Register FromFileNode
+    LegoFactory<FromFileNode, QString>::instance()->registerLego(QString("FromFileNode"), new FromFileNode);
     // Register FromFileDialog
     LegoFactory<FromFileDialog, QString>::instance()->registerLego(QString("FromFileDialog"), new FromFileDialog);
 
     // Register Wheel
     LegoFactory<Wheel, QString>::instance()->registerLego(QString("Wheel"), new Wheel);
-    // Register WheelGeode
-    LegoFactory<WheelGeode, QString>::instance()->registerLego(QString("WheelGeode"), new WheelGeode);
+    // Register WheelNode
+    LegoFactory<WheelNode, QString>::instance()->registerLego(QString("WheelNode"), new WheelNode);
     // Register WheelDialog
     LegoFactory<WheelDialog, QString>::instance()->registerLego(QString("WheelDialog"), new WheelDialog);
 
     // Register Character
     LegoFactory<Character, QString>::instance()->registerLego(QString("Character"), new Character);
-    // Register CharacterGeode
-    LegoFactory<CharacterGeode, QString>::instance()->registerLego(QString("CharacterGeode"), new CharacterGeode);
+    // Register CharacterNode
+    LegoFactory<CharacterNode, QString>::instance()->registerLego(QString("CharacterNode"), new CharacterNode);
     // Register CharacterDialog
     LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
 
     // Register FrontShip
     LegoFactory<FrontShip, QString>::instance()->registerLego(QString("FrontShip"), new FrontShip);
-    // Register FrontShipGeode
-    LegoFactory<FrontShipGeode, QString>::instance()->registerLego(QString("FrontShipGeode"), new FrontShipGeode);
+    // Register FrontShipNode
+    LegoFactory<FrontShipNode, QString>::instance()->registerLego(QString("FrontShipNode"), new FrontShipNode);
     // Register FrontShipDialog
     LegoFactory<FrontShipDialog, QString>::instance()->registerLego(QString("FrontShipDialog"), new FrontShipDialog);
 
@@ -231,11 +231,11 @@ void MainWindow::initPreview(void) {
     static_cast<Brick*>(_currLego.get())->setLength(4);
 
     // Create associated brick geode
-    _currLegoGeode = LegoFactory<BrickGeode, QString>::instance()->create("BrickGeode");
-    _currLegoGeode->setLego(_currLego);
-    _currLegoGeode->createGeode();
+    _currLegoNode = LegoFactory<BrickNode, QString>::instance()->create("BrickNode");
+    _currLegoNode->setLego(_currLego);
+    _currLegoNode->createGeode();
 
-    _currMatTrans->addChild(_currLegoGeode);
+    _currMatTrans->addChild(_currLegoNode);
 
     // Create root node and add brick geode
     _scene = new osg::Group;
@@ -246,7 +246,7 @@ void MainWindow::initDialogs(void) {
     // BrickDialog
     if (BrickDialog* brickDialog = dynamic_cast<BrickDialog*>(LegoFactory<BrickDialog, QString>::instance()->create("BrickDialog"))) {
         brickDialog->initLego(_currLego);
-        brickDialog->initLegoGeode(_currLegoGeode);
+        brickDialog->initLegoNode(_currLegoNode);
         _legoDialog << brickDialog;
     } else
         qDebug() << "Cannot create BrickDialog in MainWindow::initDialogs";
@@ -420,7 +420,7 @@ void MainWindow::initTraffic(void) {
 void MainWindow::browseColor() {
     _legoColor = QColorDialog::getColor(Qt::red, this);
     _currLego->setColor(_legoColor);
-    _currLegoGeode->createGeode();
+    _currLegoNode->createGeode();
 }
 
 void MainWindow::chooseDialog(int dialogIndex) {
@@ -445,8 +445,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Brick* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<BrickGeode*>(LegoFactory<BrickGeode, QString>::instance()->create("BrickGeode"))))
-            qDebug() << "Cannot cast in BrickGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<BrickNode*>(LegoFactory<BrickNode, QString>::instance()->create("BrickNode"))))
+            qDebug() << "Cannot cast in BrickNode* within MainWindow::chooseDialog";
         break;
     // Corner dialog
     case 1:
@@ -456,8 +456,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Corner* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<CornerGeode*>(LegoFactory<CornerGeode, QString>::instance()->create("CornerGeode"))))
-            qDebug() << "Cannot cast in CornerGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<CornerNode*>(LegoFactory<CornerNode, QString>::instance()->create("CornerNode"))))
+            qDebug() << "Cannot cast in CornerNode* within MainWindow::chooseDialog";
         break;
     // Tile dialog
     case 2:
@@ -470,8 +470,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Tile* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<TileGeode*>(LegoFactory<TileGeode, QString>::instance()->create("TileGeode"))))
-            qDebug() << "Cannot cast in TileGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<TileNode*>(LegoFactory<TileNode, QString>::instance()->create("TileNode"))))
+            qDebug() << "Cannot cast in TileNode* within MainWindow::chooseDialog";
         break;
     // Road dialog
     case 3:
@@ -481,8 +481,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Road* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<RoadGeode*>(LegoFactory<RoadGeode, QString>::instance()->create("RoadGeode"))))
-            qDebug() << "Cannot cast in RoadGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<RoadNode*>(LegoFactory<RoadNode, QString>::instance()->create("RoadNode"))))
+            qDebug() << "Cannot cast in RoadNode* within MainWindow::chooseDialog";
         break;
     // Window dialog
     case 4:
@@ -492,8 +492,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Window* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<WindowGeode*>(LegoFactory<WindowGeode, QString>::instance()->create("WindowGeode"))))
-            qDebug() << "Cannot cast in WindowGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<WindowNode*>(LegoFactory<WindowNode, QString>::instance()->create("WindowNode"))))
+            qDebug() << "Cannot cast in WindowNode* within MainWindow::chooseDialog";
         break;
     case 5:
         if ((_currLego = dynamic_cast<Door*>(LegoFactory<Door, QString>::instance()->create("Door")))) {
@@ -502,8 +502,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Door* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<DoorGeode*>(LegoFactory<DoorGeode, QString>::instance()->create("DoorGeode"))))
-            qDebug() << "Cannot cast in DoorGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<DoorNode*>(LegoFactory<DoorNode, QString>::instance()->create("DoorNode"))))
+            qDebug() << "Cannot cast in DoorNode* within MainWindow::chooseDialog";
         break;
     case 6:
         if ((_currLego = dynamic_cast<Wheel*>(LegoFactory<Wheel, QString>::instance()->create("Wheel")))) {
@@ -512,8 +512,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Wheel* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<WheelGeode*>(LegoFactory<WheelGeode, QString>::instance()->create("WheelGeode"))))
-            qDebug() << "Cannot cast in WheelGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<WheelNode*>(LegoFactory<WheelNode, QString>::instance()->create("WheelNode"))))
+            qDebug() << "Cannot cast in WheelNode* within MainWindow::chooseDialog";
 
         break;
     // Character dialog
@@ -524,8 +524,8 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in Character* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<CharacterGeode*>(LegoFactory<CharacterGeode, QString>::instance()->create("CharacterGeode"))))
-            qDebug() << "Cannot cast in CharacterGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<CharacterNode*>(LegoFactory<CharacterNode, QString>::instance()->create("CharacterNode"))))
+            qDebug() << "Cannot cast in CharacterNode* within MainWindow::chooseDialog";
         break;
     // FrontShip dialog
     case 8:
@@ -535,28 +535,28 @@ void MainWindow::chooseDialog(int dialogIndex) {
         } else {
             qDebug() << "Cannot cast in FrontShip* within MainWindow::chooseDialog";
         }
-        if (!(_currLegoGeode = dynamic_cast<FrontShipGeode*>(LegoFactory<FrontShipGeode, QString>::instance()->create("FrontShipGeode"))))
-            qDebug() << "Cannot cast in FrontShipGeode* within MainWindow::chooseDialog";
+        if (!(_currLegoNode = dynamic_cast<FrontShipNode*>(LegoFactory<FrontShipNode, QString>::instance()->create("FrontShipNode"))))
+            qDebug() << "Cannot cast in FrontShipNode* within MainWindow::chooseDialog";
         break;
     }
 
     // Set current objects
     _currMatTrans = new osg::MatrixTransform;
-    _currLegoGeode->setLego(_currLego);
-    _currLegoGeode->createGeode();
-    _currMatTrans->addChild(_currLegoGeode);
+    _currLegoNode->setLego(_currLego);
+    _currLegoNode->createGeode();
+    _currMatTrans->addChild(_currLegoNode);
     _scene->setChild(0, _currMatTrans.get());
 
     // Initialize current objects
     _legoDialog.at(dialogIndex)->initLego(_currLego);
-    _legoDialog.at(dialogIndex)->initLegoGeode(_currLegoGeode.get());
+    _legoDialog.at(dialogIndex)->initLegoNode(_currLegoNode.get());
     _legoDialog.at(dialogIndex)->reInitComboBox();
 }
 
-void MainWindow::legoUpdated(LegoGeode* legoGeode) {
+void MainWindow::legoUpdated(LegoNode* legoNode) {
     // Setting new current objects
-    _currLegoGeode = legoGeode;
-    _currLego = _currLegoGeode->getLego();
+    _currLegoNode = legoNode;
+    _currLego = _currLegoNode->getLego();
 
     // The file has changed
     _saved = false;
@@ -571,10 +571,10 @@ void MainWindow::createLego(void) {
 
     // Create current Matrix Transform
     _currMatTrans = new osg::MatrixTransform;
-    _currMatTrans->addChild(_currLegoGeode);
+    _currMatTrans->addChild(_currLegoNode);
 
     // Create AddCommand to handle undo/redo action
-    QUndoCommand* addLegoCommand = new AddLegoCommand(&_world, _currLegoGeode);
+    QUndoCommand* addLegoCommand = new AddLegoCommand(&_world, _currLegoNode);
     _undoStack->push(addLegoCommand);
 
     // Reinit dialog, because a new brick is always put at the origin of the scene
@@ -615,7 +615,7 @@ void MainWindow::deleteLego(void) {
 //    qDebug() << QString::fromStdString(matrixName);
 
 //    // Create DeleteCommand to handle undo/redo action
-//    QUndoCommand* delLegoCommand = new DeleteLegoCommand(&_world, _currLegoGeode, matrixName);
+//    QUndoCommand* delLegoCommand = new DeleteLegoCommand(&_world, _currLegoNode, matrixName);
 //    _undoStack->push(delLegoCommand);
 
     // Delete brick
@@ -662,15 +662,15 @@ void MainWindow::writeFile(const QString& fileName) {
 
 void MainWindow::openFromFile(const QString& fileName) {
     if ((_currLego = dynamic_cast<FromFile*>(LegoFactory<FromFile, QString>::instance()->create("FromFile")))) {
-        if (_currLegoGeode = dynamic_cast<FromFileGeode*>(LegoFactory<FromFileGeode, QString>::instance()->create("FromFileGeode"))) {
-            _currLegoGeode->setLego(_currLego);
+        if (_currLegoNode = dynamic_cast<FromFileNode*>(LegoFactory<FromFileNode, QString>::instance()->create("FromFileNode"))) {
+            _currLegoNode->setLego(_currLego);
             FromFile* fromFile = static_cast<FromFile*>(_currLego.get());
             fromFile->setFileName(fileName);
-            _currLegoGeode->createGeode();
+            _currLegoNode->createGeode();
 
             createLego();
         } else
-            qDebug() << "Cannot cast in FromFileGeode* within MainWindow::openFromFile";
+            qDebug() << "Cannot cast in FromFileNode* within MainWindow::openFromFile";
     } else
         qDebug() << "Cannot cast in FromFile* within MainWindow::openFromFile";
 
@@ -811,15 +811,15 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
     }
 
     // Create the road geode thanks to the brand new road
-    osg::ref_ptr<RoadGeode> roadGeode = new RoadGeode(road);
+    osg::ref_ptr<RoadNode> roadNode = new RoadNode(road);
 
     // Create matrix transform
     osg::ref_ptr<osg::MatrixTransform> matTrans = new osg::MatrixTransform;
     // Add road geode
-    matTrans->addChild(roadGeode);
+    matTrans->addChild(roadNode);
 
     // Add brick to the world
-    _world.addBrick(roadGeode.get(), road.get());
+    _world.addBrick(roadNode.get(), road.get());
     // Translate the road
     _world.translation(-32*floor(length/2)-16 + 32*i, -32*floor(width/2)+16 + 32*j, World::minHeight);
     // Apply rotation

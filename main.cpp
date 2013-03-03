@@ -6,8 +6,8 @@
 #include <osg/Group>
 #include <osgViewer/Viewer>
 #include <osg/MatrixTransform>
-#include <TileGeode.h>
-#include <CornerGeode.h>
+#include <TileNode.h>
+#include <CornerNode.h>
 #include <iostream>
 
 #else
@@ -28,24 +28,24 @@ int main(int argc, char** argv) {
     {
         osg::ref_ptr<Tile> lego1 = new Tile;
 
-        osg::ref_ptr<TileGeode> legoGeode1 = new TileGeode(lego1);
-        legoGeode1->setName("tileGeode1");
-        legoGeode1->addDescription("First geode");
+        osg::ref_ptr<TileNode> legoNode1 = new TileNode(lego1);
+        legoNode1->setName("tileNode1");
+        legoNode1->addDescription("First geode");
 
         osg::ref_ptr<osg::MatrixTransform> mt1 = new osg::MatrixTransform;
         mt1->setName("MatrixTransform1");
-        mt1->addChild(legoGeode1);
+        mt1->addChild(legoNode1);
 
 
         osg::ref_ptr<Corner> lego2 = new Corner;
 
-        osg::ref_ptr<CornerGeode> legoGeode2 = new CornerGeode(lego2);
-        legoGeode2->setName("cornerGeode2");
-        legoGeode2->addDescription("Second geode");
+        osg::ref_ptr<CornerNode> legoNode2 = new CornerNode(lego2);
+        legoNode2->setName("cornerNode2");
+        legoNode2->addDescription("Second geode");
 
         osg::ref_ptr<osg::MatrixTransform> mt2 = new osg::MatrixTransform;
         mt2->setName("MatrixTransform2");
-        mt2->addChild(legoGeode2);
+        mt2->addChild(legoNode2);
 
 
         root->addChild(mt1.release());
@@ -58,15 +58,15 @@ int main(int argc, char** argv) {
             std::cerr << mtCurr->getName() << std::endl;
             std::cerr << mtCurr->getChild(0)->getName() << std::endl;
             std::cerr << mtCurr->getChild(0)->getDescription(0) << std::endl;
-//            LegoGeode* legoGeode = dynamic_cast<LegoGeode*>(mtCurr->getChild(0)->asGroup());
-//            if (legoGeode) {
-//                std::cerr << legoGeode->getLego()->whoiam().toStdString() << std::endl;
+//            LegoNode* legoNode = dynamic_cast<LegoNode*>(mtCurr->getChild(0)->asGroup());
+//            if (legoNode) {
+//                std::cerr << legoNode->getLego()->whoiam().toStdString() << std::endl;
 //            } else {
 //                std::cerr << "Cannot cast..." << std::endl;
 //            }
 
-//            LegoGeode* legoGeode = static_cast<LegoGeode*>(mtCurr->getChild(0));
-//            std::cerr << legoGeode->getLego()->whoiam().toStdString() << std::endl;
+//            LegoNode* legoNode = static_cast<LegoNode*>(mtCurr->getChild(0));
+//            std::cerr << legoNode->getLego()->whoiam().toStdString() << std::endl;
         }
     }
 

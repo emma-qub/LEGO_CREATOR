@@ -1,25 +1,25 @@
-#include "TileGeode.h"
+#include "TileNode.h"
 
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
-TileGeode::TileGeode() {
-    LegoGeode();
+TileNode::TileNode() {
+    LegoNode();
 }
 
-TileGeode::TileGeode(osg::ref_ptr<Tile> tile) :
-    LegoGeode(tile) {
+TileNode::TileNode(osg::ref_ptr<Tile> tile) :
+    LegoNode(tile) {
 
     createGeode();
 }
 
-TileGeode::TileGeode(const TileGeode& tileGeode) :
-    LegoGeode(tileGeode) {
+TileNode::TileNode(const TileNode& tileNode) :
+    LegoNode(tileNode) {
 }
 
-void TileGeode::createGeode(void) {
+void TileNode::createGeode(void) {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -83,7 +83,7 @@ void TileGeode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> TileGeode::createTinyClassic(void) const {
+osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -195,7 +195,7 @@ osg::ref_ptr<osg::Drawable> TileGeode::createTinyClassic(void) const {
     return tileGeometry.get();
 }
 
-osg::ref_ptr<osg::Drawable> TileGeode::createClassic(void) const {
+osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -371,7 +371,7 @@ osg::ref_ptr<osg::Drawable> TileGeode::createClassic(void) const {
     return tileGeometry.get();
 }
 
-osg::ref_ptr<osg::Drawable> TileGeode::createRoof(void) const {
+osg::ref_ptr<osg::Drawable> TileNode::createRoof(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -539,6 +539,6 @@ osg::ref_ptr<osg::Drawable> TileGeode::createRoof(void) const {
     return tileGeometry.get();
 }
 
-TileGeode* TileGeode::cloning(void) const {
-    return new TileGeode(*this);
+TileNode* TileNode::cloning(void) const {
+    return new TileNode(*this);
 }

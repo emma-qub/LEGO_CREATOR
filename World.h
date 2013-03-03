@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "LegoGeode.h"
+#include "LegoNode.h"
 
 class World {
 
@@ -25,7 +25,7 @@ public:
     void fitBrick(void);
     void deleteLego(void);
     void deleteLego(const std::string& matrixName);
-    std::string addBrick(LegoGeode* legoGeode, Lego* lego);
+    std::string addBrick(LegoNode* legoNode, Lego* lego);
     bool canBeFit(void) const;
     void rotation(bool counterClockWise = false);
     void translation(double x, double y, double z);

@@ -42,7 +42,7 @@ public:
 public slots:
     void browseColor(void);
     void chooseDialog(int dialogIndex);
-    void legoUpdated(LegoGeode* legoGeode);
+    void legoUpdated(LegoNode* legoNode);
 
     void createLego(void);
     void fitLego(void);
@@ -118,7 +118,7 @@ private:
 
     osg::ref_ptr<osg::Group> _scene;
     osg::ref_ptr<osg::MatrixTransform> _currMatTrans;
-    osg::ref_ptr<LegoGeode> _currLegoGeode;
+    osg::ref_ptr<LegoNode> _currLegoNode;
     osg::ref_ptr<Lego> _currLego;
 
     QVector<LegoDialog*> _legoDialog;

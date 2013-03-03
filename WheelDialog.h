@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include <QtGui>
 #include "Wheel.h"
-#include "WheelGeode.h"
+#include "WheelNode.h"
 
 class WheelDialog : public LegoDialog {
     Q_OBJECT

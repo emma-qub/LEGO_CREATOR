@@ -4,7 +4,7 @@
 #include "LegoDialog.h"
 #include <QtGui>
 #include "Window.h"
-#include "WindowGeode.h"
+#include "WindowNode.h"
 
 class WindowDialog : public LegoDialog {
     Q_OBJECT
