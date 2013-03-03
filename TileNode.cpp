@@ -20,6 +20,9 @@ TileNode::TileNode(const TileNode& tileNode) :
 }
 
 void TileNode::createGeode(void) {
+    // Remove children
+    removeChildren(0, getNumChildren());
+
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -33,9 +36,6 @@ void TileNode::createGeode(void) {
     if (tileType == Tile::roof || (tileType == Tile::classic && width == 1))
         height = 2;
 
-    // Remove children
-    removeChildren(0, getNumChildren());
-
     // Distance between two plot center
     double distPlot = Lego::length_unit;
 
@@ -46,6 +46,8 @@ void TileNode::createGeode(void) {
     // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
+
+    // Create shape according to tile type
     switch (tileType) {
     case Tile::classic:
         // If tile has plots (width > 1)
@@ -105,12 +107,12 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
 
     // Create 14 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-    osg::Vec3 v0(mw, ml, mh);
-    osg::Vec3 v1(mw, pl, mh);
-    osg::Vec3 v2(pw, pl, mh);
-    osg::Vec3 v3(pw, ml, mh);
-    osg::Vec3 v4(mw, pl, ph);
-    osg::Vec3 v5(mw, ml, ph);
+    osg::Vec3 v0(ml, mw, mh);
+    osg::Vec3 v1(pl, mw, mh);
+    osg::Vec3 v2(pl, pw, mh);
+    osg::Vec3 v3(ml, pw, mh);
+    osg::Vec3 v4(pl, mw, ph);
+    osg::Vec3 v5(ml, mw, ph);
 
     // Create 8 faces, 6 faces are quads splitted in two triangles
     // Down face t1

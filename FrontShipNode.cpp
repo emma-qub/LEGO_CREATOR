@@ -242,10 +242,10 @@ osg::ref_ptr<osg::Drawable> FrontShipNode::createClassic(void) const {
     osg::Vec4 transparent(.0f, .0f, .0f, .0f);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Add transparent color
-    for (int k = 0; k < 3; k++)
+    for (int k = 1; k < 5; k++)
         colors->push_back(transparent);
     // Add color to 18 other faces
-    for (int k = 3; k < 24; k++)
+    for (int k = 5; k <= 24; k++)
         colors->push_back(colorVec);
 
     // Match color

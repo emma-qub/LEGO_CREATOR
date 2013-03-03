@@ -212,7 +212,7 @@ void WheelNode::createPlate(void) {
     // Add transparent color
     colors->push_back(transparent);
     // Add color to 5 other faces
-    for (int k = 1; k < 6; k++)
+    for (int k = 2; k <= 6; k++)
         colors->push_back(colorVec);
 
     // Match color
