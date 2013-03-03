@@ -31,7 +31,7 @@ public:
     ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel = osgViewer::CompositeViewer::SingleThreaded);
     virtual ~ViewerWidget();
 
-    osg::Camera* createCamera(const osg::Vec4 &color, int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false);
+    static osg::Camera* createCamera(const osg::Vec4 &color, int x, int y, int w, int h);
 
     osg::Camera* getCamera(void) const { return _camera.get(); }
 

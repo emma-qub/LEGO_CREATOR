@@ -1,7 +1,5 @@
 #include "CharacterDialog.h"
 
-#include <QDebug>
-
 CharacterDialog::CharacterDialog(QWidget* parent) :
     LegoDialog(parent) {
 }

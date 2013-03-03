@@ -3,6 +3,7 @@
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
+#include <osgUtil/SmoothingVisitor>
 
 CornerGeode::CornerGeode() :
     LegoGeode() {
@@ -22,8 +23,11 @@ void CornerGeode::createGeode(void) {
     // Add the corner basis
     removeChildren(0, getNumChildren());
 
+    // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    // Add geode
     addChild(geode);
+    // Create two drawable boxes
     geode->addDrawable(createCorner(true));
     geode->addDrawable(createCorner(false));
 
@@ -33,10 +37,12 @@ void CornerGeode::createGeode(void) {
     // Calculate height according to corner type
     int height = corner->calculateHeight();
 
+    // Create plots
     geode->addDrawable(createPlot(-Lego::length_unit/2, -Lego::length_unit/2, height));
     geode->addDrawable(createPlot(-Lego::length_unit/2, Lego::length_unit/2, height));
     geode->addDrawable(createPlot(Lego::length_unit/2, Lego::length_unit/2, height));
 
+    // Create bottom cylinders
     geode->addDrawable(createCylinder(-Lego::length_unit/2, 0, height, true));
     geode->addDrawable(createCylinder(0, Lego::length_unit/2, height, true));
 }
@@ -150,23 +156,11 @@ osg::ref_ptr<osg::Drawable> CornerGeode::createCorner(bool isLeftPart) const {
     cornerGeometry->setColorArray(colors);
     cornerGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Create normals
-    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-
-    // Add normals (mind the insert order!)
-    normals->push_back(osg::Vec3(0, 0, -1));
-    normals->push_back(osg::Vec3(0, 0, 1));
-    normals->push_back(osg::Vec3(0, -1, 0));
-    normals->push_back(osg::Vec3(0, 1, 0));
-    normals->push_back(osg::Vec3(-1, 0, 0));
-    normals->push_back(osg::Vec3(1, 0, 0));
-
-    // Match normals
-    cornerGeometry->setNormalArray(normals);
-    cornerGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
     // Define corner GL_QUADS with 24 vertices
-    cornerGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 24));
+    cornerGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 6*4));
+
+    // Calculate smooth normals
+    osgUtil::SmoothingVisitor::smooth(*cornerGeometry);
 
     // Return the corner whithout plot
     return cornerGeometry.get();

@@ -1,12 +1,11 @@
 #include "WheelGeode.h"
 
-#include <QDebug>
-
 #include <osg/ShapeDrawable>
 #include <osg/MatrixTransform>
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
+#include <osgUtil/SmoothingVisitor>
 
 WheelGeode::WheelGeode() :
     LegoGeode() {
@@ -62,13 +61,18 @@ void WheelGeode::createGeode(void) {
 }
 
 void WheelGeode::createWheel(bool isLeftWheel) {
+    // Wheels are composed by two concentric cylinders, a black and a white center one
+    // Shift value, depending on the left or right side, enable to create right and left wheel in only one method
     int leftShift = 1;
     if (isLeftWheel)
         leftShift = -1;
 
+    // Create matrix to handle transformation
     osg::Matrix m;
+    // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 
+    // Create wheel black cylinder
     osg::ref_ptr<osg::ShapeDrawable> wheelPart = new osg::ShapeDrawable(
                                                      new osg::Cylinder(
                                                          osg::Vec3(0, 0, 0),
@@ -76,11 +80,13 @@ void WheelGeode::createWheel(bool isLeftWheel) {
                                                          Lego::length_unit-2*EPS
                                                 )
                                             );
-
+    // Paint it black
     wheelPart->setColor(osg::Vec4(.0, .0, .0, 1.));
 
+    // Add drawable created to geode
     geode->addDrawable(wheelPart.get());
 
+    // Create white center cylinder and shift it to be seen
     osg::ref_ptr<osg::ShapeDrawable> wheelcenter = new osg::ShapeDrawable(
                                                        new osg::Cylinder(
                                                            osg::Vec3(0, 0, 0),
@@ -88,20 +94,25 @@ void WheelGeode::createWheel(bool isLeftWheel) {
                                                            Lego::length_unit-EPS
                                                   )
                                               );
-
+    // Paint it white
     wheelcenter->setColor(osg::Vec4(1., 1., 1., 1.));
 
+    // Add drawable created to geode
     geode->addDrawable(wheelcenter.get());
 
+    // Create matrix transform
     osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
     mt->addChild(geode);
 
+    // Rotate the cylinder, because cylinder basis is on the floor
     m.makeRotate(osg::Quat(M_PI/2, osg::Vec3(0, 1, 0)));
     mt->setMatrix(m*mt->getMatrix());
 
+    // Translate according to side value
     m.makeTranslate(leftShift*1.5*Lego::length_unit, 0, 0);
     mt->setMatrix(mt->getMatrix()*m);
 
+    // Add wheel
     addChild(mt);
 }
 
@@ -208,26 +219,17 @@ void WheelGeode::createPlate(void) {
     brickGeometry->setColorArray(colors);
     brickGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Create normals
-    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-
-    // Add normals (mind the insert order!)
-    normals->push_back(osg::Vec3(0, 0, -1));
-    normals->push_back(osg::Vec3(0, 0, 1));
-    normals->push_back(osg::Vec3(0, -1, 0));
-    normals->push_back(osg::Vec3(0, 1, 0));
-    normals->push_back(osg::Vec3(-1, 0, 0));
-    normals->push_back(osg::Vec3(1, 0, 0));
-
-    // Match normals
-    brickGeometry->setNormalArray(normals);
-    brickGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
     // Define brick GL_QUADS with 24 vertices
-    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 24));
+    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 6*4));
 
+    // Calculate smooth normals
+    osgUtil::SmoothingVisitor::smooth(*brickGeometry);
+
+    // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    // Add drawable to geode
     geode->addDrawable(brickGeometry);
+    // Add geode
     addChild(geode);
 }
 

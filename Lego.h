@@ -21,7 +21,6 @@ public:
     virtual void calculateBoundingBox(void) = 0;
 
     BoundingBox getBoundingBox(void) const { return _boundingBox; }
-    void translateBoundingBox(double x, double y, double z);
 
     virtual Lego* cloning(void) const = 0;
 

@@ -23,9 +23,12 @@ RoadGeode::RoadGeode(const RoadGeode& roadGeode) :
 }
 
 void RoadGeode::createGeode(void) {
+    // Remove previous children
     removeChildren(0, getNumChildren());
 
+    // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    // add geode
     addChild(geode);
 
     // Get the brick
@@ -109,19 +112,19 @@ void RoadGeode::createGeode(void) {
     // Create image
     osg::ref_ptr<osg::Image> img = NULL;
     switch (roadType) {
-    case 0:
+    case Road::straight:
         img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Straightb.png");
         break;
-    case 1:
+    case Road::curve:
         img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Curveb.png");
         break;
-    case 2:
+    case Road::intersection:
         img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Intersectionb.png");
         break;
-    case 3:
+    case Road::cross:
         img = osgDB::readImageFile("../LEGO_CREATOR/IMG/Crossb.png");
         break;
-    case 4:
+    case Road::none:
         img = NULL;
         break;
     }
@@ -166,11 +169,12 @@ void RoadGeode::calculatePlots(void) {
     // Get brick type
     Road::RoadType roadType = road->getRoadType();
 
+    // Distance between two plots equal to Lego length unit
     double distPlot = Lego::length_unit;
 
     // The road has no height, but plots ave to be risen by an EPS to avoid graphical default
     switch (roadType) {
-    case 0:
+    case Road::straight:
         // Straight road
         for (int i = 0; i < 7; i++) {
             // There are two regions to add plots: the four corners
@@ -182,7 +186,7 @@ void RoadGeode::calculatePlots(void) {
             }
         }
         break;
-    case 1:
+    case Road::curve:
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 32; j++) {
                 // Above the curve OR Under the curve
@@ -191,7 +195,7 @@ void RoadGeode::calculatePlots(void) {
             }
         }
         break;
-    case 2:
+    case Road::intersection:
         // Intersection road
         for (int i = 0; i < 7; i++) {
             // There are three regions to add plots: the four corners
@@ -207,7 +211,7 @@ void RoadGeode::calculatePlots(void) {
             }
         }
         break;
-    case 3:
+    case Road::cross:
         // Cross road
         for (int i = 0; i < 7; i++) {
             // There are four regions to add plots: the four corners
@@ -223,7 +227,7 @@ void RoadGeode::calculatePlots(void) {
             }
         }
         break;
-    case 4:
+    case Road::none:
         // No road
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 32; j++) {

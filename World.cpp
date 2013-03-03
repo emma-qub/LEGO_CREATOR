@@ -102,7 +102,9 @@ void World::initBrick(void) {
 }
 
 void World::deleteLego(void) {
+    // Remove last Lego inserted
     _scene->removeChild(_matTransIndexes.last());
+    // Pop the stack
     _matTransIndexes.pop_back();
 }
 
@@ -181,16 +183,21 @@ void World::rotation(bool counterClockWise) {
 }
 
 void World::translationXYZ(double x, double y, double z) {
+    // Multiply by Lego units
     x *= Lego::length_unit;
     y *= Lego::length_unit;
     z *= Lego::height_unit;
 
+    // Create translation matrix
     osg::Matrix mat = _currMatrixTransform->getMatrix();
     osg::Vec3d trans = mat.getTrans();
     mat.makeTranslate(-trans[0]+x+_x, -trans[1]+y+_y, -trans[2]+z+_z);
 
+    // Post mult
     _currMatrixTransform->postMult(mat);
 
+    // Watch out the oddwise: pieces with different oddwise between length and width values
+    // have to be shifted of 1/2 on both length and width to match Lego plots
     if (_isTurned) {
         osg::Matrix mat = _currMatrixTransform->getMatrix();
         mat.makeTranslate(Lego::length_unit/2, -Lego::length_unit*1/2, 0);
@@ -199,10 +206,12 @@ void World::translationXYZ(double x, double y, double z) {
 }
 
 void World::translation(double x, double y, double z) {
+    // Multiply by Lego units
     x *= Lego::length_unit;
     y *= Lego::length_unit;
     z *= Lego::height_unit;
 
+    // Create translation matrix
     osg::Matrix mat = _currMatrixTransform->getMatrix();
     mat.makeTranslate(x, y, z);
     _currMatrixTransform->setMatrix(mat);

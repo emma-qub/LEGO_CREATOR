@@ -3,8 +3,7 @@
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/BlendFunc>
-
-#include <QDebug>
+#include <osgUtil/SmoothingVisitor>
 
 BrickGeode::BrickGeode() :
     LegoGeode() {
@@ -193,23 +192,11 @@ osg::ref_ptr<osg::Drawable> BrickGeode::createBrick(void) const {
     brickGeometry->setColorArray(colors);
     brickGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Create normals
-    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-
-    // Add normals (mind the insert order!)
-    normals->push_back(osg::Vec3(0, 0, -1));
-    normals->push_back(osg::Vec3(0, 0, 1));
-    normals->push_back(osg::Vec3(0, -1, 0));
-    normals->push_back(osg::Vec3(0, 1, 0));
-    normals->push_back(osg::Vec3(-1, 0, 0));
-    normals->push_back(osg::Vec3(1, 0, 0));
-
-    // Match normals
-    brickGeometry->setNormalArray(normals);
-    brickGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
     // Define brick GL_QUADS with 24 vertices
-    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 24));
+    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 6*4));
+
+    // Calculate smooth normals
+    osgUtil::SmoothingVisitor::smooth(*brickGeometry);
 
     // Return the brick whithout plot
     return brickGeometry.get();

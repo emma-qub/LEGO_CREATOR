@@ -5,8 +5,6 @@
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
-#include <QDebug>
-
 TileGeode::TileGeode() {
     LegoGeode();
 }

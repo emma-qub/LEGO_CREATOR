@@ -1,3 +1,4 @@
+// Enable to switch between real application, and test code
 #define TEST 0
 
 #if TEST

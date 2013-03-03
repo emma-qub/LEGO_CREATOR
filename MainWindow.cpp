@@ -326,7 +326,7 @@ void MainWindow::createParamsDock(void) {
     _brickViewer = new ViewerWidget;
     _brickViewer->initView();
     _brickViewer->initManipulators();
-    _brickViewer->changeCamera(_brickViewer->createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
+    _brickViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
     _brickViewer->changeScene(_scene.get());
 
     _brickViewer->initWidget();
@@ -360,13 +360,10 @@ void MainWindow::createParamsDock(void) {
 
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    //mainLayout->addWidget(new QLabel("Preview", this));
     mainLayout->addWidget(previewFrame);
     mainLayout->addLayout(globalShapeLayout);
-    //mainLayout->addLayout(shapeLayout);
     for (int k = 0; k < _legoDialog.size(); k++)
         mainLayout->addWidget(_legoDialog.at(k));
-    //mainLayout->addLayout(buttonsLayout);
     mainLayout->setAlignment(Qt::AlignTop);
 
     // Params Widget
@@ -396,19 +393,13 @@ void MainWindow::createScene(void) {
     // Scene frame, contains LEGO bricks
     _sceneFrame = new QFrame(this);
     _sceneFrame->setFixedSize(1440, 770);
-    //_sceneFrame->setFixedSize(650, 250);
 
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
     _sceneViewer->initManipulators();
-    _sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
-    //_sceneViewer->changeCamera(_sceneViewer->createCamera(osg::Vec4(233.0/255.0, 233.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 100.0, 100.0));
+    _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(77.0/255.0, 188.0/255.0, 233.0/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     _sceneViewer->changeScene(_world.getScene().get());
-//    osg::Vec3 eye, center, up;
-//    _sceneViewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
-//    for (int k = 0; k < 3; k++)
-//        std::cerr << eye[k] << " " << center[k] << " " << up[k] << std::endl;
     _sceneViewer->initWidget();
 
     // Layout
@@ -612,14 +603,14 @@ void MainWindow::fitLego(void) {
 }
 
 void MainWindow::deleteLego(void) {
-    // Get current matrix index whithin world scene
-    osg::Group* root = _world.getScene();
-    for (unsigned int k = 0; k < root->getNumChildren(); k++) {
-        qDebug() << QString::fromStdString(root->getChild(k)->getName());
-    }
-    qDebug() << QString::number(root->getChildIndex(_currMatTrans.get()));
-    //qDebug() << QString::fromStdString(root->getChild(root->getChildIndex(_currMatTrans.get()))->getName());
-    qDebug() << QString::fromStdString(_currMatTrans->getName());
+//    // Get current matrix index whithin world scene
+//    osg::Group* root = _world.getScene();
+//    for (unsigned int k = 0; k < root->getNumChildren(); k++) {
+//        qDebug() << QString::fromStdString(root->getChild(k)->getName());
+//    }
+//    qDebug() << QString::number(root->getChildIndex(_currMatTrans.get()));
+//    //qDebug() << QString::fromStdString(root->getChild(root->getChildIndex(_currMatTrans.get()))->getName());
+//    qDebug() << QString::fromStdString(_currMatTrans->getName());
 //    std::string matrixName = root->getChild(root->getChildIndex(_currMatTrans.get()))->getName();
 //    qDebug() << QString::fromStdString(matrixName);
 
@@ -661,12 +652,10 @@ void MainWindow::rotateRight(void) {
 void MainWindow::writeFile(const QString& fileName) {
     // Try to write the scene in fileName file
     if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
-        //QMessageBox::information(this, "The document has been saved", "Your construction is safe!");
         _saved = true;
         _alreadySaved = true;
-    // Fail! Users can retry or not
+    // Fail to write
     } else {
-        qDebug() << "On n'a pas reussi a ecrire dans le fichier ><";
         QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
     }
 }
@@ -824,7 +813,9 @@ void MainWindow::chooseRoad(int i, int j, int width, int length, bool roadTop, b
     // Create the road geode thanks to the brand new road
     osg::ref_ptr<RoadGeode> roadGeode = new RoadGeode(road);
 
+    // Create matrix transform
     osg::ref_ptr<osg::MatrixTransform> matTrans = new osg::MatrixTransform;
+    // Add road geode
     matTrans->addChild(roadGeode);
 
     // Add brick to the world
@@ -1061,7 +1052,7 @@ void MainWindow::saveFile(void) {
 }
 
 void MainWindow::checkExistence(QString fileName) {
-    //
+    // Get save path
     QString savePath = _settings.value("SavePath").toString();
     if (!savePath.endsWith('/'))
         savePath += "/";
@@ -1491,35 +1482,26 @@ void MainWindow::setStyle(void) {
     dockWidgetStyle += "    font-family: 'KG Lego House';";
     dockWidgetStyle += "    border: solid 3px black;";
     dockWidgetStyle += "    color: #000;";
-    //dockWidgetStyle += "    background: #bbdd00;";
     dockWidgetStyle += "    background-color: #fff;";
     dockWidgetStyle += "    border: 2px solid #ac0;";
-    //dockWidgetStyle += "    border-radius: 5px;";
     dockWidgetStyle += "}";
-
-    QString dockWidgetTitleStyle;
-    dockWidgetTitleStyle += "QDockWidget::title {";
-    dockWidgetTitleStyle += "    text-align: center;";
-    dockWidgetTitleStyle += "    padding: 10px;";
-    dockWidgetTitleStyle += "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
-    dockWidgetTitleStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
-    dockWidgetTitleStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
-//    dockWidgetTitleStyle += "                stop: 0 #6a6a6a, stop: 0.4 #444444,";
-//    dockWidgetTitleStyle += "                stop: 0.5 #272727, stop: 1.0 #4a4a4a);";
-    //dockWidgetTitleStyle += "    background: red;";
-    dockWidgetTitleStyle += "}";
-
-    QString dockWidgetButtonsStyle;
-    dockWidgetButtonsStyle += "QDockWidget {";
-    dockWidgetButtonsStyle += "    titlebar-close-icon: url(\"./icones/closeIcon.png\");";
-    dockWidgetButtonsStyle += "    titlebar-normal-icon: url(\"./icones/reduceIcon.png\");";
-    dockWidgetButtonsStyle += "}";
-    dockWidgetButtonsStyle += "QDockWidget::close-button, QDockWidget::float-button {";
-    dockWidgetButtonsStyle += "    padding: 0px;";
-    dockWidgetButtonsStyle += "}";
-    dockWidgetButtonsStyle += "QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {";
-    dockWidgetButtonsStyle += "    padding: 1px -1px -1px 1px;";
-    dockWidgetButtonsStyle += "}";
+    dockWidgetStyle += "QDockWidget::title {";
+    dockWidgetStyle += "    text-align: center;";
+    dockWidgetStyle += "    padding: 10px;";
+    dockWidgetStyle += "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,";
+    dockWidgetStyle += "                stop: 0 #df0, stop: 0.4 #ac0,";
+    dockWidgetStyle += "                stop: 0.5 #9b0, stop: 1.0 #ac0);";
+    dockWidgetStyle += "}";
+    dockWidgetStyle += "QDockWidget {";
+    dockWidgetStyle += "    titlebar-close-icon: url(\"./icones/closeIcon.png\");";
+    dockWidgetStyle += "    titlebar-normal-icon: url(\"./icones/reduceIcon.png\");";
+    dockWidgetStyle += "}";
+    dockWidgetStyle += "QDockWidget::close-button, QDockWidget::float-button {";
+    dockWidgetStyle += "    padding: 0px;";
+    dockWidgetStyle += "}";
+    dockWidgetStyle += "QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {";
+    dockWidgetStyle += "    padding: 1px -1px -1px 1px;";
+    dockWidgetStyle += "}";
 
     QString dockTabWidgetStyle = "";
     dockTabWidgetStyle += "#ParamsWidget {";
@@ -1550,8 +1532,6 @@ void MainWindow::setStyle(void) {
                   + dockButtonStyle
                   + comboBoxStyle
                   + dockWidgetStyle
-                  + dockWidgetTitleStyle
-                  + dockWidgetButtonsStyle
                   + dockTabWidgetStyle
                   + tabBarStyle;
     setStyleSheet(style);

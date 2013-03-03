@@ -1,8 +1,5 @@
 #include "LegoGeode.h"
 
-#include <QDebug>
-
-
 LegoGeode::LegoGeode(osg::ref_ptr<Lego> lego) :
     osg::Group() {
     _lego = lego;
@@ -42,6 +39,9 @@ osg::ref_ptr<osg::Drawable> LegoGeode::createCylinder(double radiusX, double rad
     // Get plate color
     QColor color = _lego->getColor();
 
+    // Create bottom cylinder radius according to oddwise width
+    // Lego bricks with a width = 1 have thin bottom cylinders
+    // Lego bricks with a width > 1 have wide bottom cylinders
     double radius;
     if (thin)
         radius = Lego::plot_bottom_thin_radius;

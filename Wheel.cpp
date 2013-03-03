@@ -1,7 +1,5 @@
 #include "Wheel.h"
 
-#include <QDebug>
-
 Wheel::Wheel(const QColor& color) :
     Lego(color) {
 

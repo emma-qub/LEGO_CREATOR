@@ -35,7 +35,6 @@ SOURCES += \
     WheelGeode.cpp \
     WheelDialog.cpp \
     Commands.cpp \
-    Inspector.cpp \
     Tile.cpp \
     TileGeode.cpp \
     TileDialog.cpp \
@@ -79,7 +78,6 @@ HEADERS += \
     WheelGeode.h \
     WheelDialog.h \
     Commands.h \
-    Inspector.h \
     Tile.h \
     TileGeode.h \
     TileDialog.h \

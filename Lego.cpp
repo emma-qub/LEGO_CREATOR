@@ -1,6 +1,7 @@
 #include "Lego.h"
 #include <cmath>
 
+// Define Lego units
 double Lego::height_unit = 3.2;
 double Lego::length_unit = 8;
 double Lego::plot_top_radius = 2.5;
@@ -19,11 +20,6 @@ Lego::Lego(const Lego& lego) :
     osg::Referenced() {
 
     _color = lego._color;
-}
-
-void Lego::translateBoundingBox(double x, double y, double z) {
-    _boundingBox.translateLeftBottomFrontCorner(x, y, z);
-    _boundingBox.translateRightTopBackCorner(x, y, z);
 }
 
 QString Lego::whoiam(void) const {

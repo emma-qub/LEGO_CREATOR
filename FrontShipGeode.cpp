@@ -5,8 +5,6 @@
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
-#include <QDebug>
-
 FrontShipGeode::FrontShipGeode() {
     LegoGeode();
 }
@@ -22,12 +20,6 @@ FrontShipGeode::FrontShipGeode(const FrontShipGeode& frontShipGeode) :
 }
 
 void FrontShipGeode::createGeode(void) {
-    // Get the frontShip
-    FrontShip* frontShip = static_cast<FrontShip*>(_lego);
-
-    // Get frontShip type
-//    FrontShip::FrontShipType frontShipType = frontShip->getFrontShipType();
-
     // Get integer sizes
     int width = 3;
     int length = 4;
@@ -90,8 +82,9 @@ osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
     double d = (-height)*Lego::height_unit/2; // d
     double u = (height)*Lego::height_unit/2; // u
 
-    // Create 14 vertices
+    // Create 16 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    // Up vertices
     osg::Vec3 v0(b, lx, u);
     osg::Vec3 v1(f, l, u);
     osg::Vec3 v2(f, r, u);
@@ -100,7 +93,7 @@ osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
     osg::Vec3 v5(m, r, u);
     osg::Vec3 v6(m, l, u);
     osg::Vec3 v7(b, l, u);
-
+    // Down vertices
     osg::Vec3 v0d(b, lx, d);
     osg::Vec3 v1d(f, l, d);
     osg::Vec3 v2d(f, r, d);
@@ -122,35 +115,35 @@ osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
     vertices->push_back(v1d);
     vertices->push_back(v2d);
 
-    // Down face t1
+    // Down face t3
     vertices->push_back(v6d);
     vertices->push_back(v2d);
     vertices->push_back(v5d);
-    // Down face t2
+    // Down face t4
     vertices->push_back(v4d);
     vertices->push_back(v2d);
     vertices->push_back(v3d);
 
     // UP
-    // Down face t1
+    // Up face t1
     vertices->push_back(v0);
     vertices->push_back(v1);
     vertices->push_back(v7);
-    // Down face t2
+    // Up face t2
     vertices->push_back(v6);
     vertices->push_back(v1);
     vertices->push_back(v2);
 
-    // Down face t1
+    // Up face t3
     vertices->push_back(v6);
     vertices->push_back(v2);
     vertices->push_back(v5);
-    // Down face t2
+    // Up face t4
     vertices->push_back(v4);
     vertices->push_back(v2);
     vertices->push_back(v3);
 
-    // COTE
+    // Sides
     // 2
     vertices->push_back(v1);
     vertices->push_back(v1d);
@@ -249,10 +242,8 @@ osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
     osg::Vec4 transparent(.0f, .0f, .0f, .0f);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Add transparent color
-    colors->push_back(transparent);
-    colors->push_back(transparent);
-    colors->push_back(transparent);
-//    colors->push_back(transparent);
+    for (int k = 0; k < 3; k++)
+        colors->push_back(transparent);
     // Add color to 18 other faces
     for (int k = 3; k < 24; k++)
         colors->push_back(colorVec);
@@ -261,7 +252,7 @@ osg::ref_ptr<osg::Drawable> FrontShipGeode::createClassic(void) const {
     frontShipGeometry->setColorArray(colors);
     frontShipGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Define frontShip 20 GL_TRIANGLES with 20*3 vertices
+    // Define frontShip 24 GL_TRIANGLES with 24*3 vertices
     frontShipGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 24*3));
 
     // Calculate smooth normals

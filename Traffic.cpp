@@ -1,6 +1,5 @@
 #include "Traffic.h"
 
-#include <QDebug>
 #include <QSettings>
 #include <QDir>
 
@@ -90,6 +89,7 @@ void Traffic::createTraffic(void) {
 }
 
 void Traffic::switchTraffic(bool b) {
+    // Show or hide traffic, according to b value, thanks to switch node function
     for (unsigned int k = 0; k < _root->getNumChildren(); k++)
         _root->setValue(k, b);
 }
