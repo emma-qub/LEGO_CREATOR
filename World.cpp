@@ -63,10 +63,10 @@ void World::createGuideLines(void) {
     for (int i = -width; i <= width; i+=2) {
         for (int j = -length; j <= length; j+=2) {
             // Create four points
-            osg::Vec3 v0(i*Lego::length_unit, -length*Lego::length_unit, 0.0);
-            osg::Vec3 v1(i*Lego::length_unit, length*Lego::length_unit, 0.0);
-            osg::Vec3 v2(-width*Lego::length_unit, j*Lego::length_unit, 0.0);
-            osg::Vec3 v3(width*Lego::length_unit, j*Lego::length_unit, 0.0);
+            osg::Vec3 v0(i*Lego::length_unit, -length*Lego::length_unit, -0.1);
+            osg::Vec3 v1(i*Lego::length_unit, length*Lego::length_unit, -0.1);
+            osg::Vec3 v2(-width*Lego::length_unit, j*Lego::length_unit, -0.1);
+            osg::Vec3 v3(width*Lego::length_unit, j*Lego::length_unit, -0.1);
 
             // Add points
             osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;

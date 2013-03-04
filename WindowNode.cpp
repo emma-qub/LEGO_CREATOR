@@ -21,7 +21,7 @@ WindowNode::WindowNode(const WindowNode& windowNode) :
 }
 
 void WindowNode::createGeode(void) {
-    // Remove children
+    // Remove children if any
     removeChildren(0, getNumChildren());
 
     // Create geode
@@ -90,116 +90,108 @@ osg::ref_ptr<osg::Drawable> WindowNode::createWindow(void) const {
     double plm = (length-1)*Lego::length_unit/2;
     double mh = (-height)*Lego::height_unit/2;
     double ph = (height)*Lego::height_unit/2;
-    double mhm = (-height+1)*Lego::height_unit/2;
-    double phm = (height-1)*Lego::height_unit/2;
+    double mhm = (-height+2)*Lego::height_unit/2;
+    double phm = (height-2)*Lego::height_unit/2;
 
     // Create 24 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-    osg::Vec3 v0(mlm, pw, ph);
-    osg::Vec3 v1(plm, pw, ph);
-    osg::Vec3 v2(plm, pw, mh);
-    osg::Vec3 v3(mlm, pw, mh);
-    osg::Vec3 v4(ml, pw, ph);
-    osg::Vec3 v5(pl, pw, ph);
-    osg::Vec3 v6(pl, pw, mh);
-    osg::Vec3 v7(ml, pw, mh);
-    osg::Vec3 v8(mlm, pw, phm);
-    osg::Vec3 v9(plm, pw, phm);
-    osg::Vec3 v10(plm, pw, mhm);
-    osg::Vec3 v11(mlm, pw, mhm);
-    osg::Vec3 v12(ml, mw, ph);
-    osg::Vec3 v13(pl, mw, ph);
-    osg::Vec3 v14(pl, mw, mh);
-    osg::Vec3 v15(ml, mw, mh);
-    osg::Vec3 v16(mlm, mw, ph);
-    osg::Vec3 v17(plm, mw, ph);
-    osg::Vec3 v18(plm, mw, mh);
-    osg::Vec3 v19(mlm, mw, mh);
+    osg::Vec3 v0(ml, pw, phm);
+    osg::Vec3 v1(pl, pw, phm);
+    osg::Vec3 v2(pl, pw, mhm);
+    osg::Vec3 v3(ml, pw, mhm);
+    osg::Vec3 v4(mlm, pw, phm);
+    osg::Vec3 v5(plm, pw, phm);
+    osg::Vec3 v6(plm, pw, mhm);
+    osg::Vec3 v7(mlm, pw, mhm);
+    osg::Vec3 v8(pl, pw, mh);
+    osg::Vec3 v9(ml, pw, mh);
+    osg::Vec3 v10(ml, mw, mh);
+    osg::Vec3 v11(pl, mw, mh);
+    osg::Vec3 v12(pl, mw, mhm);
+    osg::Vec3 v13(ml, mw, mhm);
+    osg::Vec3 v14(ml, pw, ph);
+    osg::Vec3 v15(pl, pw, ph);
+    osg::Vec3 v16(pl, mw, ph);
+    osg::Vec3 v17(ml, mw, ph);
+    osg::Vec3 v18(ml, mw, phm);
+    osg::Vec3 v19(pl, mw, phm);
     osg::Vec3 v20(mlm, mw, phm);
     osg::Vec3 v21(plm, mw, phm);
-    osg::Vec3 v22(plm, mw, mhm);
-    osg::Vec3 v23(mlm, mw, mhm);
+    osg::Vec3 v22(plm, mw, phm);
+    osg::Vec3 v23(mlm, mw, phm);
 
     // Create 16 faces with 24 vertices
     // Down part
-    vertices->push_back(v3);    // transparent
-    vertices->push_back(v2);    // transparent
-    vertices->push_back(v18);   // transparent
-    vertices->push_back(v19);   // transparent
+    vertices->push_back(v8);    // transparent
+    vertices->push_back(v9);    // transparent
+    vertices->push_back(v10);   // transparent
+    vertices->push_back(v11);   // transparent
     vertices->push_back(v11);
     vertices->push_back(v10);
+    vertices->push_back(v13);
+    vertices->push_back(v12);
+    vertices->push_back(v12);
+    vertices->push_back(v13);
+    vertices->push_back(v3);
+    vertices->push_back(v2);
     vertices->push_back(v2);
     vertices->push_back(v3);
-    vertices->push_back(v19);
-    vertices->push_back(v18);
-    vertices->push_back(v22);
-    vertices->push_back(v23);
-//    vertices->push_back(v23);
-//    vertices->push_back(v22);
-//    vertices->push_back(v10);
-//    vertices->push_back(v11);
-    vertices->push_back(v7);
-    vertices->push_back(v6);
-    vertices->push_back(v14);
-    vertices->push_back(v15);
+    vertices->push_back(v9);
+    vertices->push_back(v8);
 
     // Left part
-    vertices->push_back(v0);
-    vertices->push_back(v3);
+    vertices->push_back(v9);
+    vertices->push_back(v14);
+    vertices->push_back(v17);
+    vertices->push_back(v10);
+    vertices->push_back(v13);
+    vertices->push_back(v18);
+    vertices->push_back(v20);
+    vertices->push_back(v23);
+    vertices->push_back(v23);
+    vertices->push_back(v20);
+    vertices->push_back(v4);
+    vertices->push_back(v7);
     vertices->push_back(v7);
     vertices->push_back(v4);
-    vertices->push_back(v4);
-    vertices->push_back(v7);
-    vertices->push_back(v15);
-    vertices->push_back(v12);
-    vertices->push_back(v12);
-    vertices->push_back(v15);
-    vertices->push_back(v19);
-    vertices->push_back(v16);
-    vertices->push_back(v16);
-    vertices->push_back(v19);
-    vertices->push_back(v3);
     vertices->push_back(v0);
+    vertices->push_back(v3);
 
     // Right part
-    vertices->push_back(v1);
+    vertices->push_back(v15);
+    vertices->push_back(v8);
+    vertices->push_back(v11);
+    vertices->push_back(v16);
+    vertices->push_back(v19);
+    vertices->push_back(v12);
+    vertices->push_back(v22);
+    vertices->push_back(v21);
+    vertices->push_back(v21);
+    vertices->push_back(v22);
+    vertices->push_back(v6);
+    vertices->push_back(v5);
     vertices->push_back(v5);
     vertices->push_back(v6);
     vertices->push_back(v2);
-    vertices->push_back(v5);
-    vertices->push_back(v13);
-    vertices->push_back(v14);
-    vertices->push_back(v6);
-    vertices->push_back(v13);
-    vertices->push_back(v17);
-    vertices->push_back(v18);
-    vertices->push_back(v14);
-    vertices->push_back(v17);
     vertices->push_back(v1);
-    vertices->push_back(v2);
-    vertices->push_back(v18);
 
     // Top part
-    vertices->push_back(v0);
-    vertices->push_back(v1);
-    vertices->push_back(v9);
-    vertices->push_back(v8);
-//    vertices->push_back(v16);
-//    vertices->push_back(v17);
-//    vertices->push_back(v1);
-//    vertices->push_back(v0);
-    vertices->push_back(v12);
-    vertices->push_back(v13);
-    vertices->push_back(v5);
-    vertices->push_back(v4);
-    vertices->push_back(v20);
-    vertices->push_back(v21);
+    vertices->push_back(v14);
+    vertices->push_back(v15);
+    vertices->push_back(v16);
+    vertices->push_back(v17);
     vertices->push_back(v17);
     vertices->push_back(v16);
-    vertices->push_back(v8);
-    vertices->push_back(v9);
-    vertices->push_back(v21);
-    vertices->push_back(v20);
+    vertices->push_back(v19);
+    vertices->push_back(v18);
+    vertices->push_back(v18);
+    vertices->push_back(v19);
+    vertices->push_back(v1);
+    vertices->push_back(v0);
+    vertices->push_back(v0);
+    vertices->push_back(v1);
+    vertices->push_back(v15);
+    vertices->push_back(v14);
 
     // Create tile geometry
     osg::ref_ptr<osg::Geometry> windowGeometry = new osg::Geometry;
@@ -236,8 +228,11 @@ osg::ref_ptr<osg::Drawable> WindowNode::createWindow(void) const {
     windowGeometry->setColorArray(colors);
     windowGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Define tile 16 GL_QUADS with 16*4 vertices
+    // Define 16 GL_QUADS with 16*4 vertices
     windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 16*4));
+
+//    // Define 64 GL_LINES with 16*4 vertices
+//    windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 32*2));
 
     // Calculate smooth normals
     osgUtil::SmoothingVisitor::smooth(*windowGeometry);

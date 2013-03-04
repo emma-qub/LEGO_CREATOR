@@ -13,7 +13,7 @@ Door::Door(const Door& door) :
 }
 
 void Door::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, 4, 2, 18);
+    _boundingBox = BoundingBox(0, 0, 0, 4, 1, 15);
 }
 
 Door* Door::cloning(void) const {
