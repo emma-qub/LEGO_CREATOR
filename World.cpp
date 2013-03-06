@@ -36,11 +36,7 @@ World::~World(void) {
 
 void World::createGuideLines(void) {
     // Remove previous lines
-    for (unsigned int k = 0; k < _scene->getNumChildren(); k++) {
-        // If child is the previous guide lines, we remove it
-        if (_scene->getChild(k)->getName() == "GuideLines")
-            _scene->removeChild(k);
-    }
+    removeGuideLines();
 
     // Create line geode
     osg::ref_ptr<osg::Geode> line = new osg::Geode;
@@ -102,6 +98,14 @@ void World::createGuideLines(void) {
 
     // Add line to scene
     _scene->addChild(line);
+}
+
+void World::removeGuideLines(void) {
+    for (unsigned int k = 0; k < _scene->getNumChildren(); k++) {
+        // If child is the previous guide lines, we remove it
+        if (_scene->getChild(k)->getName() == "GuideLines")
+            _scene->removeChild(k);
+    }
 }
 
 void World::initBrick(void) {

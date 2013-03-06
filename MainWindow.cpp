@@ -1070,8 +1070,14 @@ void MainWindow::saveFile(void) {
             // Get the current file name, recorded whithin QSettings
             QString fileName = _settings.value("FileName").toString();
 
+            // We don't want to save the grid...
+            _world.removeGuideLines();
+
             // Time to really save the OSG file
             writeFile(savePath+fileName);
+
+            // We draw back the grid
+            _world.createGuideLines();
         }
     }
 }
@@ -1149,8 +1155,14 @@ void MainWindow::saveAsFile(void) {
         // Set current file name
         _settings.setValue("FileName", fileName);
 
+        // We don't want to save the grid...
+        _world.removeGuideLines();
+
         // Write scene into OSG file
         writeFile(savePath+fileName);
+
+        // We draw back the grid
+        _world.createGuideLines();
     // If users canceled,
     } else {
         _saved = false;

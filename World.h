@@ -21,6 +21,7 @@ public:
     osg::ref_ptr<osg::Group> getScene(void) const { return _scene.get(); }
 
     void createGuideLines(void);
+    void removeGuideLines(void);
     void initBrick(void);
     void fitBrick(void);
     void deleteLego(void);
