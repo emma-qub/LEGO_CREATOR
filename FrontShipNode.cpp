@@ -5,6 +5,8 @@
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
+#include <cmath>
+
 FrontShipNode::FrontShipNode() {
     LegoNode();
 }
@@ -105,24 +107,7 @@ osg::ref_ptr<osg::Drawable> FrontShipNode::createClassic(void) const {
 
 
     // Create 10 faces, 8 faces are quads splitted in two triangles
-    // DOWN
-    // Down face t1
-    vertices->push_back(v0d);
-    vertices->push_back(v1d);
-    vertices->push_back(v7d);
-    // Down face t2
-    vertices->push_back(v6d);
-    vertices->push_back(v1d);
-    vertices->push_back(v2d);
-
-    // Down face t3
-    vertices->push_back(v6d);
-    vertices->push_back(v2d);
-    vertices->push_back(v5d);
-    // Down face t4
-    vertices->push_back(v4d);
-    vertices->push_back(v2d);
-    vertices->push_back(v3d);
+    // NB: Down face is transparent, we don't even create it
 
     // UP
     // Up face t1
@@ -216,47 +201,51 @@ osg::ref_ptr<osg::Drawable> FrontShipNode::createClassic(void) const {
     vertices->push_back(v1d);
     vertices->push_back(v1);
 
-
     // Create frontShip geometry
     osg::ref_ptr<osg::Geometry> frontShipGeometry = new osg::Geometry;
-
-    // Handle transparency
-    double alpha = 0.1;
-    osg::StateSet* state = frontShipGeometry->getOrCreateStateSet();
-    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
-    osg::Material* mat = new osg::Material;
-    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
-    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    state->setAttributeAndModes(bf);
-    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    frontShipGeometry->setStateSet(state);
 
     // Match vertices
     frontShipGeometry->setVertexArray(vertices);
 
     // Add color (each rectangle has the same color except for the down one which is transparent)
     osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
-    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-    // Add transparent color
-    for (int k = 1; k < 5; k++)
-        colors->push_back(transparent);
-    // Add color to 18 other faces
-    for (int k = 5; k <= 24; k++)
-        colors->push_back(colorVec);
+    // Every face has the same color, so there is only one color
+    colors->push_back(colorVec);
 
     // Match color
     frontShipGeometry->setColorArray(colors);
-    frontShipGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    frontShipGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    // Define frontShip 24 GL_TRIANGLES with 24*3 vertices
-    frontShipGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 24*3));
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1/std::sqrt(10), 3/std::sqrt(10), 0));
+    normals->push_back(osg::Vec3(1/std::sqrt(10), 3/std::sqrt(10), 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1/std::sqrt(10), -3/std::sqrt(10), 0));
+    normals->push_back(osg::Vec3(1/std::sqrt(10), -3/std::sqrt(10), 0));
 
-    // Calculate smooth normals
-    osgUtil::SmoothingVisitor::smooth(*frontShipGeometry);
+    // Match normals
+    frontShipGeometry->setNormalArray(normals);
+    frontShipGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define frontShip 20 GL_TRIANGLES with 20*3 vertices
+    frontShipGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 20*3));
 
     // Return the frontShip whithout plot
     return frontShipGeometry.get();
