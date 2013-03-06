@@ -5,6 +5,8 @@
 #include <osg/BlendFunc>
 #include <osgUtil/SmoothingVisitor>
 
+#include <cmath>
+
 TileNode::TileNode() {
     LegoNode();
 }
@@ -107,91 +109,75 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
 
     // Create 6 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-    osg::Vec3 v0(ml, mw, mh);
-    osg::Vec3 v1(pl, mw, mh);
-    osg::Vec3 v2(pl, pw, mh);
-    osg::Vec3 v3(ml, pw, mh);
-    osg::Vec3 v4(pl, mw, ph);
-    osg::Vec3 v5(ml, mw, ph);
+    osg::Vec3 v0(mw, ml, mh);
+    osg::Vec3 v1(mw, pl, mh);
+    osg::Vec3 v2(pw, pl, mh);
+    osg::Vec3 v3(pw, ml, mh);
+    osg::Vec3 v4(mw, ml, ph);
+    osg::Vec3 v5(mw, pl, ph);
 
-    // Create 8 faces, 6 faces are quads splitted in two triangles
-    // Down face t1
-    vertices->push_back(v0);
-    vertices->push_back(v1);
-    vertices->push_back(v2);
-    // Down face t2
-    vertices->push_back(v0);
-    vertices->push_back(v2);
-    vertices->push_back(v3);
+    // Create 4 faces, 2 faces are quads splitted into two triangles
+    // NB: Down face is transparent, we don't even create it
 
     // Back face t1
     vertices->push_back(v5);
     vertices->push_back(v4);
     vertices->push_back(v1);
     // Back face t2
-    vertices->push_back(v5);
+    vertices->push_back(v4);
     vertices->push_back(v1);
     vertices->push_back(v0);
 
     // Slop face t1
-    vertices->push_back(v4);
-    vertices->push_back(v3);
-    vertices->push_back(v2);
-    // Slop face t2
     vertices->push_back(v3);
     vertices->push_back(v4);
     vertices->push_back(v5);
-
-    // Right triangle face
-    vertices->push_back(v4);
+    // Slop face t2
     vertices->push_back(v2);
-    vertices->push_back(v1);
+    vertices->push_back(v3);
+    vertices->push_back(v5);
 
     // Left triangle face
-    vertices->push_back(v5);
+    vertices->push_back(v4);
     vertices->push_back(v3);
     vertices->push_back(v0);
+
+    // Right triangle face
+    vertices->push_back(v1);
+    vertices->push_back(v2);
+    vertices->push_back(v5);
 
     // Create tile geometry
     osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
 
-    // Handle transparency
-    double alpha = 0.1;
-    osg::StateSet* state = tileGeometry->getOrCreateStateSet();
-    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
-    osg::Material* mat = new osg::Material;
-    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
-    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    state->setAttributeAndModes(bf);
-    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    tileGeometry->setStateSet(state);
-
     // Match vertices
     tileGeometry->setVertexArray(vertices);
 
-    // Add color (each rectangle has the same color except for the down one which is transparent)
-    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
-    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
+    // Create colors
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-    // Add transparent color
-    colors->push_back(transparent);
-    colors->push_back(transparent);
-    // Add color to 6 other faces
-    for (int k = 2; k < 8; k++)
-        colors->push_back(colorVec);
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
 
     // Match color
     tileGeometry->setColorArray(colors);
-    tileGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    // Define tile 8 GL_TRIANGLES with 8*3 vertices
-    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 8*3));
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1/std::sqrt(2), 0, 1/std::sqrt(2)));
+    normals->push_back(osg::Vec3(1/std::sqrt(2), 0, 1/std::sqrt(2)));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
 
-    // Calculate smooth normals
-    osgUtil::SmoothingVisitor::smooth(*tileGeometry);
+    // Match normals
+    tileGeometry->setNormalArray(normals);
+    tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Create 6 GL_TRIANGLES, i.e. 6*3 vertices
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 6*3));
 
     // Return the tile whithout plot
     return tileGeometry.get();
@@ -237,14 +223,7 @@ osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     osg::Vec3 v13(mw, ml, mhp);
 
     // Create 10 faces, 8 faces are quads splitted in two triangles
-    // Down face t1
-    vertices->push_back(v0);
-    vertices->push_back(v1);
-    vertices->push_back(v2);
-    // Down face t2
-    vertices->push_back(v0);
-    vertices->push_back(v2);
-    vertices->push_back(v3);
+    // NB: Down face is transparent, we don't even create it
 
     // Front face t1
     vertices->push_back(v2);
@@ -331,43 +310,47 @@ osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     // Create tile geometry
     osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
 
-    // Handle transparency
-    double alpha = 0.1;
-    osg::StateSet* state = tileGeometry->getOrCreateStateSet();
-    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
-    osg::Material* mat = new osg::Material;
-    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
-    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    state->setAttributeAndModes(bf);
-    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    tileGeometry->setStateSet(state);
-
     // Match vertices
     tileGeometry->setVertexArray(vertices);
 
     // Add color (each rectangle has the same color except for the down one which is transparent)
-    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
-    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-    // Add transparent color
-    colors->push_back(transparent);
-    colors->push_back(transparent);
-    // Add color to 18 other faces
-    for (int k = 2; k < 20; k++)
-        colors->push_back(colorVec);
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
 
     // Match color
     tileGeometry->setColorArray(colors);
-    tileGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    // Define tile 20 GL_TRIANGLES with 20*3 vertices
-    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 20*3));
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    double norm = std::sqrt((width-1)*(width-1) + height*height);
+    normals->push_back(osg::Vec3((width-1)/norm, 0, height/norm));
+    normals->push_back(osg::Vec3((width-1)/norm, 0, height/norm));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
 
-    // Calculate smooth normals
-    osgUtil::SmoothingVisitor::smooth(*tileGeometry);
+    // Match normals
+    tileGeometry->setNormalArray(normals);
+    tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define tile 18 GL_TRIANGLES with 20*3 vertices
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 18*3));
 
     // Return the tile whithout plot
     return tileGeometry.get();
@@ -414,15 +397,8 @@ osg::ref_ptr<osg::Drawable> TileNode::createRoof(void) const {
     osg::Vec3 v10(0, ml, mhp);
     osg::Vec3 v11(0, pl, mhp);
 
-    // Create 10 faces, 8 faces are quads splitted in two triangles
-    // Down face t1
-    vertices->push_back(v0);
-    vertices->push_back(v1);
-    vertices->push_back(v2);
-    // Down face t2
-    vertices->push_back(v0);
-    vertices->push_back(v2);
-    vertices->push_back(v3);
+    // Create 6, with 16 triangles
+    // NB: Down face is transparent, we don't even create it
 
     // Front face t1
     vertices->push_back(v3);
@@ -499,43 +475,45 @@ osg::ref_ptr<osg::Drawable> TileNode::createRoof(void) const {
     // Create tile geometry
     osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
 
-    // Handle transparency
-    double alpha = 0.1;
-    osg::StateSet* state = tileGeometry->getOrCreateStateSet();
-    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
-    osg::Material* mat = new osg::Material;
-    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
-    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    state->setAttributeAndModes(bf);
-    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    tileGeometry->setStateSet(state);
-
     // Match vertices
     tileGeometry->setVertexArray(vertices);
 
     // Add color (each rectangle has the same color except for the down one which is transparent)
     osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
-    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-    // Add transparent color
-    colors->push_back(transparent);
-    colors->push_back(transparent);
-    // Add color to 16 other faces
-    for (int k = 2; k < 18; k++)
-        colors->push_back(colorVec);
+    // Every face has the same color, so there is only one color
+    colors->push_back(colorVec);
 
     // Match color
     tileGeometry->setColorArray(colors);
-    tileGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    // Define tile 18 GL_TRIANGLES with 18*3 vertices
-    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 18*3));
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    double norm = std::sqrt((width/2)*(width/2) + height*height);
+    normals->push_back(osg::Vec3(width/(2*norm), 0, height/norm));
+    normals->push_back(osg::Vec3(width/(2*norm), 0, height/norm));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-width/(2*norm), 0, height/norm));
+    normals->push_back(osg::Vec3(-width/(2*norm), 0, height/norm));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
 
-    // Calculate smooth normals
-    osgUtil::SmoothingVisitor::smooth(*tileGeometry);
+    // Match normals
+    tileGeometry->setNormalArray(normals);
+    tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define tile 16 GL_TRIANGLES with 18*3 vertices
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 16*3));
 
     // Return the tile whithout plot
     return tileGeometry.get();

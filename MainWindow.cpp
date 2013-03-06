@@ -1467,6 +1467,8 @@ void MainWindow::createToolBar(void) {
 
     // Fit Action
     _fitAction = new QAction(QIcon("../LEGO_CREATOR/IMG/icons/fitLego.png"), "", this);
+    // Set shortcut
+    _fitAction->setShortcut(QKeySequence("CTRL+DOWN"));
     // Add tool tip to explain
     _fitAction->setToolTip("Fit the current brick");
     // Connect

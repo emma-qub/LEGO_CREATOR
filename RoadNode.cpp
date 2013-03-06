@@ -31,10 +31,10 @@ void RoadNode::createGeode(void) {
     // add geode
     addChild(geode);
 
-    // Get the brick
+    // Get the road
     Road* road = static_cast<Road*>(_lego);
 
-    // Get brick type
+    // Get road type
     Road::RoadType roadType = road->getRoadType();
 
     // Get integer sizes
