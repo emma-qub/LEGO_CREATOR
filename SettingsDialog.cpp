@@ -93,6 +93,10 @@ void SettingsDialog::cancelAction(void) {
         settings.setValue("ViewerLength", currPage->getPreviousLength());
         settings.setValue("ViewerColor", currPage->getPreviousColor());
 
+        currPage->resetWidth();
+        currPage->resetLength();
+        currPage->resetColor();
+
         // Get dialog values
         emit gridSizeChanged();
         emit viewerColorChanged(currPage->getPreviousColor());

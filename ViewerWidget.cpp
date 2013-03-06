@@ -1,5 +1,7 @@
 #include "ViewerWidget.h"
 
+#include <osg/MatrixTransform>
+
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
@@ -46,6 +48,21 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
 
     // Return camera
     return camera.release();
+}
+
+osg::MatrixTransform* ViewerWidget::createLigthSourceMat(unsigned int num, const osg::Vec3& trans, const osg::Vec4& color) {
+    osg::ref_ptr<osg::Light> light = new osg::Light;
+    light->setLightNum(num);
+    light->setDiffuse(color);
+    light->setPosition(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+    osg::ref_ptr<osg::LightSource> ligthSource = new osg::LightSource;
+    ligthSource->setLight(light);
+    osg::ref_ptr<osg::MatrixTransform> sourceTrans = new osg::MatrixTransform;
+    sourceTrans->setMatrix(osg::Matrix::translate(trans));
+    sourceTrans->addChild(ligthSource.get());
+
+    return sourceTrans.release();
 }
 
 void ViewerWidget::initView(void) {

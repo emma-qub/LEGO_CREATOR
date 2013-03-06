@@ -83,6 +83,14 @@ ViewerPage::ViewerPage(QWidget* parent) :
     setLayout(mainLayout);
 }
 
+
+void ViewerPage::resetColor(void) {
+    QPixmap pixmap;
+    pixmap.fill(_previousColor);
+    _colorLabel->setPixmap(pixmap);
+    setColor(_previousColor);
+}
+
 void ViewerPage::setColor(const QColor& color) {
     _color = color;
 

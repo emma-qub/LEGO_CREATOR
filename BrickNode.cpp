@@ -23,6 +23,7 @@ void BrickNode::createGeode(void) {
     // Remove children
     removeChildren(0, getNumChildren());
 
+    // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
     geode->addDrawable(createBrick());
@@ -122,11 +123,7 @@ osg::ref_ptr<osg::Drawable> BrickNode::createBrick(void) const {
     osg::Vec3 lbu(l, b, u);
 
     // Create faces
-    // Down face
-    vertices->push_back(rfd);
-    vertices->push_back(rbd);
-    vertices->push_back(lbd);
-    vertices->push_back(lfd);
+    // NB: Down face is transparent, we don't even create it
 
     // Up face
     vertices->push_back(rfu);
@@ -161,44 +158,35 @@ osg::ref_ptr<osg::Drawable> BrickNode::createBrick(void) const {
     // Create brick geometry
     osg::ref_ptr<osg::Geometry> brickGeometry = new osg::Geometry;
 
-    // Handle transparency
-    double alpha = 0.1;
-    osg::StateSet* state = brickGeometry->getOrCreateStateSet();
-    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
-    osg::Material* mat = new osg::Material;
-    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
-    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    state->setAttributeAndModes(bf);
-    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    brickGeometry->setStateSet(state);
-
     // Match vertices
     brickGeometry->setVertexArray(vertices);
 
-    // Add color (each rectangle has the same color except for the down one which is transparent)
-    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
-    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
+    // Create colors
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-    // Add transparent color
-    colors->push_back(transparent);
-    // Add color to 5 other faces
-    for (int k = 2; k <= 6; k++)
-        colors->push_back(colorVec);
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
 
-    // Match color
+    // Match colors
     brickGeometry->setColorArray(colors);
-    brickGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    brickGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    // Define brick GL_QUADS with 24 vertices
-    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 6*4));
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
 
-    // Calculate smooth normals
-    osgUtil::SmoothingVisitor::smooth(*brickGeometry);
+    // Match normals
+    brickGeometry->setNormalArray(normals);
+    brickGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Return the brick whithout plot
+    // Create 5 GL_QUADS, i.e. 5*4 vertices
+    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 5*4));
+
+    // return brick geometry
     return brickGeometry.get();
 }
 

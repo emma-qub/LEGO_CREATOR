@@ -339,7 +339,6 @@ void MainWindow::createParamsDock(void) {
     _brickViewer->initManipulators();
     _brickViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
     _brickViewer->changeScene(_scene.get());
-
     _brickViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
     previewLayout->addWidget(_brickViewer);

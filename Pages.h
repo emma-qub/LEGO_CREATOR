@@ -13,6 +13,10 @@ public:
     void setLength(int length) { _lengthSpinBox->setValue(length); }
     void setColor(const QColor& color);
 
+    void resetWidth(void) { _widthSpinBox->setValue(_previousWidth); }
+    void resetLength(void) { _lengthSpinBox->setValue(_previousLength); }
+    void resetColor(void);
+
     int getWidth(void) const { return _widthSpinBox->value(); }
     int getPreviousWidth(void) const { return _previousWidth; }
     int getLength(void) const { return _lengthSpinBox->value(); }

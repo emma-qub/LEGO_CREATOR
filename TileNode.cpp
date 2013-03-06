@@ -105,7 +105,7 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     double mh = (-height)*Lego::height_unit/2;
     double ph = (height)*Lego::height_unit/2;
 
-    // Create 14 vertices
+    // Create 6 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
     osg::Vec3 v0(ml, mw, mh);
     osg::Vec3 v1(pl, mw, mh);

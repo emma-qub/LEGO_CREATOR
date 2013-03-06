@@ -12,7 +12,7 @@ public:
     CornerNode(const CornerNode& cornerNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createCorner(bool isLeftPart) const;
+    osg::ref_ptr<osg::Drawable> createCorner() const;
 
     virtual CornerNode* cloning(void) const;
 };
