@@ -51,6 +51,14 @@ void DoorNode::createGeode(void) {
             geode->addDrawable(createPlot(radiusX, radiusY, height));
         }
     }
+
+    double xminb = xmin+Lego::length_unit/2;
+    // Add bottom cylinders iteratively
+    for (int i = 0; i < length-1; i++) {
+        double radiusX = xminb + i*distPlot;
+        double radiusY = ymin;
+        geode->addDrawable(createCylinder(radiusX, radiusY, 0.5, true, (-height+0.5)*Lego::height_unit/2));
+    }
 }
 
 osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
@@ -65,9 +73,9 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
     int length = 4;
     int height = 15;
 
-// ///////////////
-// DOOR FRAME
-// ///////////////
+    // ///////////////
+    // DOOR FRAME
+    // ///////////////
 
     // Get real position, according to tile size
     double mw = (-width)*Lego::length_unit/2;
@@ -83,144 +91,165 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
 
     // Create 24 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-    osg::Vec3 v0(ml, pw, phm);
-    osg::Vec3 v1(pl, pw, phm);
-    osg::Vec3 v2(pl, pw, mhm);
-    osg::Vec3 v3(ml, pw, mhm);
+    osg::Vec3 v0(ml, pw, ph);
+    osg::Vec3 v1(pl, pw, ph);
+    osg::Vec3 v2(pl, pw, mh);
+    osg::Vec3 v3(ml, pw, mh);
+
     osg::Vec3 v4(mlm, pw, phm);
     osg::Vec3 v5(plm, pw, phm);
     osg::Vec3 v6(plm, pw, mhm);
     osg::Vec3 v7(mlm, pw, mhm);
-    osg::Vec3 v8(pl, pw, mh);
-    osg::Vec3 v9(ml, pw, mh);
-    osg::Vec3 v10(ml, mw, mh);
-    osg::Vec3 v11(pl, mw, mh);
-    osg::Vec3 v12(pl, mw, mhm);
-    osg::Vec3 v13(ml, mw, mhm);
-    osg::Vec3 v14(ml, pw, ph);
-    osg::Vec3 v15(pl, pw, ph);
-    osg::Vec3 v16(pl, mw, ph);
-    osg::Vec3 v17(ml, mw, ph);
-    osg::Vec3 v18(ml, mw, phm);
-    osg::Vec3 v19(pl, mw, phm);
-    osg::Vec3 v20(mlm, mw, phm);
-    osg::Vec3 v21(plm, mw, phm);
-    osg::Vec3 v22(plm, mw, phm);
-    osg::Vec3 v23(mlm, mw, phm);
 
-    // Create 16 faces with 24 vertices
-    // Down part
-    vertices->push_back(v8);    // transparent
-    vertices->push_back(v9);    // transparent
-    vertices->push_back(v10);   // transparent
-    vertices->push_back(v11);   // transparent
-    vertices->push_back(v11);
-    vertices->push_back(v10);
-    vertices->push_back(v13);
-    vertices->push_back(v12);
-    vertices->push_back(v12);
-    vertices->push_back(v13);
-    vertices->push_back(v3);
-    vertices->push_back(v2);
-    vertices->push_back(v2);
-    vertices->push_back(v3);
+    osg::Vec3 v8(ml, pw, phm);
+    osg::Vec3 v9(pl, pw, phm);
+    osg::Vec3 v10(pl, pw, mhm);
+    osg::Vec3 v11(ml, pw, mhm);
+
+    osg::Vec3 v20(ml, mw, ph);
+    osg::Vec3 v21(pl, mw, ph);
+    osg::Vec3 v22(pl, mw, mh);
+    osg::Vec3 v23(ml, mw, mh);
+
+    osg::Vec3 v24(mlm, mw, phm);
+    osg::Vec3 v25(plm, mw, phm);
+    osg::Vec3 v26(plm, mw, mhm);
+    osg::Vec3 v27(mlm, mw, mhm);
+
+    osg::Vec3 v28(ml, mw, phm);
+    osg::Vec3 v29(pl, mw, phm);
+    osg::Vec3 v30(pl, mw, mhm);
+    osg::Vec3 v31(ml, mw, mhm);
+
+    // Create 15 faces with 24 vertices
+    // NB: Down face is transparent, we don't even create it
+
+    // Front part
+    vertices->push_back(v0);
+    vertices->push_back(v1);
     vertices->push_back(v9);
     vertices->push_back(v8);
+
+    vertices->push_back(v8);
+    vertices->push_back(v4);
+    vertices->push_back(v7);
+    vertices->push_back(v11);
+
+    vertices->push_back(v5);
+    vertices->push_back(v9);
+    vertices->push_back(v10);
+    vertices->push_back(v6);
+
+    vertices->push_back(v11);
+    vertices->push_back(v10);
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+
+    // Back part
+    vertices->push_back(v20);
+    vertices->push_back(v21);
+    vertices->push_back(v29);
+    vertices->push_back(v28);
+
+    vertices->push_back(v28);
+    vertices->push_back(v24);
+    vertices->push_back(v27);
+    vertices->push_back(v31);
+
+    vertices->push_back(v25);
+    vertices->push_back(v29);
+    vertices->push_back(v30);
+    vertices->push_back(v26);
+
+    vertices->push_back(v31);
+    vertices->push_back(v30);
+    vertices->push_back(v22);
+    vertices->push_back(v23);
 
     // Left part
-    vertices->push_back(v9);
-    vertices->push_back(v14);
-    vertices->push_back(v17);
-    vertices->push_back(v10);
-    vertices->push_back(v13);
-    vertices->push_back(v18);
-    vertices->push_back(v20);
-    vertices->push_back(v23);
-    vertices->push_back(v23);
-    vertices->push_back(v20);
-    vertices->push_back(v4);
-    vertices->push_back(v7);
-    vertices->push_back(v7);
-    vertices->push_back(v4);
     vertices->push_back(v0);
     vertices->push_back(v3);
+    vertices->push_back(v23);
+    vertices->push_back(v20);
+
+    vertices->push_back(v24);
+    vertices->push_back(v27);
+    vertices->push_back(v7);
+    vertices->push_back(v4);
 
     // Right part
-    vertices->push_back(v15);
-    vertices->push_back(v8);
-    vertices->push_back(v11);
-    vertices->push_back(v16);
-    vertices->push_back(v19);
-    vertices->push_back(v12);
-    vertices->push_back(v22);
-    vertices->push_back(v21);
-    vertices->push_back(v21);
-    vertices->push_back(v22);
-    vertices->push_back(v6);
-    vertices->push_back(v5);
-    vertices->push_back(v5);
-    vertices->push_back(v6);
-    vertices->push_back(v2);
     vertices->push_back(v1);
+    vertices->push_back(v2);
+    vertices->push_back(v22);
+    vertices->push_back(v21);
+
+    vertices->push_back(v25);
+    vertices->push_back(v26);
+    vertices->push_back(v6);
+    vertices->push_back(v5);
 
     // Top part
-    vertices->push_back(v14);
-    vertices->push_back(v15);
-    vertices->push_back(v16);
-    vertices->push_back(v17);
-    vertices->push_back(v17);
-    vertices->push_back(v16);
-    vertices->push_back(v19);
-    vertices->push_back(v18);
-    vertices->push_back(v18);
-    vertices->push_back(v19);
-    vertices->push_back(v1);
-    vertices->push_back(v0);
     vertices->push_back(v0);
     vertices->push_back(v1);
-    vertices->push_back(v15);
-    vertices->push_back(v14);
+    vertices->push_back(v21);
+    vertices->push_back(v20);
+
+    vertices->push_back(v28);
+    vertices->push_back(v29);
+    vertices->push_back(v9);
+    vertices->push_back(v8);
+
+    // Bottom part
+    vertices->push_back(v10);
+    vertices->push_back(v11);
+    vertices->push_back(v31);
+    vertices->push_back(v30);
 
     // Create tile geometry
     osg::ref_ptr<osg::Geometry> doorGeometry = new osg::Geometry;
 
-    // Handle transparency
-    double alpha = 0.1;
-    osg::StateSet* state = doorGeometry->getOrCreateStateSet();
-    state->setMode(GL_BLEND,osg::StateAttribute::ON|osg::StateAttribute::OVERRIDE);
-    osg::Material* mat = new osg::Material;
-    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-    state->setAttributeAndModes(mat,osg::StateAttribute::ON |
-    osg::StateAttribute::OVERRIDE);
-    osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    state->setAttributeAndModes(bf);
-    state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    state->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-    doorGeometry->setStateSet(state);
-
     // Match vertices
     doorGeometry->setVertexArray(vertices);
 
-    // Add color (each rectangle has the same color except for the down one which is transparent)
-    osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
-    osg::Vec4 transparent(.0f, .0f, .0f, .0f);
+    // Create color
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-    // Add transparent color
-    for (int k = 1; k < 2; k++)
-        colors->push_back(transparent);
-    // Add color to 15 other faces
-    for (int k = 2; k <= 16; k++)
-        colors->push_back(colorVec);
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
 
     // Match color
     doorGeometry->setColorArray(colors);
-    doorGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+    doorGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    // Define tile 16 GL_QUADS with 16*4 vertices
-    doorGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 16*4));
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
 
-    // Calculate smooth normals
-    osgUtil::SmoothingVisitor::smooth(*doorGeometry);
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, -1));
+
+    normals->push_back(osg::Vec3(0, 0, 1));
+
+    // Match normals
+    doorGeometry->setNormalArray(normals);
+    doorGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define 15 GL_QUADS with 15*4 vertices
+    doorGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 15*4));
 
     // Return the tile whithout plot
     return doorGeometry.get();

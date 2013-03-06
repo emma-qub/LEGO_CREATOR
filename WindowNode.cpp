@@ -121,7 +121,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createWindow(void) const {
     osg::Vec3 v30(pl, mw, mhm);
     osg::Vec3 v31(ml, mw, mhm);
 
-    // Create 16 faces with 24 vertices
+    // Create 15 faces with 24 vertices
     // NB: Down face is transparent, we don't even create it
 
     // Front part
@@ -253,10 +253,6 @@ osg::ref_ptr<osg::Drawable> WindowNode::createWindow(void) const {
 
     // Return the tile whithout plot
     return windowGeometry.get();
-// ////////////////
-// WINDOW PART
-// ////////////////
-
 }
 
 WindowNode* WindowNode::cloning(void) const {
