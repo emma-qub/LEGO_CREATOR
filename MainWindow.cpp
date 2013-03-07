@@ -423,6 +423,8 @@ void MainWindow::createScene(void) {
     _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
+    _world.getScene()->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
+    _world.getScene()->addChild(ViewerWidget::createLigthSourceMat(0, osg::Vec3(-1000.0, -1000.0, 1000.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f)));
 
     // Layout
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -599,10 +601,10 @@ void MainWindow::createLego(void) {
     QUndoCommand* addLegoCommand = new AddLegoCommand(&_world, _currLegoNode);
     _undoStack->push(addLegoCommand);
 
-    // Reinit dialog, because a new brick is always put at the origin of the scene
-    _xTransSpinBox->setValue(0);
-    _yTransSpinBox->setValue(0);
-    _zTransSpinBox->setValue(0);
+//    // Reinit dialog, because a new brick is always put at the origin of the scene
+//    _xTransSpinBox->setValue(0);
+//    _yTransSpinBox->setValue(0);
+//    _zTransSpinBox->setValue(0);
 
     // Check whether the LEGO is a road, and disable z spin box after having set it at minHeight world specification
     if (dynamic_cast<Road*>(_currLego.get())) {

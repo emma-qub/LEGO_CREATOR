@@ -51,17 +51,29 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
 }
 
 osg::MatrixTransform* ViewerWidget::createLigthSourceMat(unsigned int num, const osg::Vec3& trans, const osg::Vec4& color) {
+    // Create a ligth
     osg::ref_ptr<osg::Light> light = new osg::Light;
+    // Assign a number
     light->setLightNum(num);
+    // Assign color
     light->setDiffuse(color);
+    // Put light at inifinite
     light->setPosition(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    // Set constant attenuation to get good light rendering
+    light->setConstantAttenuation(0.75f);
 
+    // Create light source
     osg::ref_ptr<osg::LightSource> ligthSource = new osg::LightSource;
+    // Assign light
     ligthSource->setLight(light);
+    // Create matrix transfomr to move light
     osg::ref_ptr<osg::MatrixTransform> sourceTrans = new osg::MatrixTransform;
+    // Move light to trans users values
     sourceTrans->setMatrix(osg::Matrix::translate(trans));
+    // Add light to matrix transform
     sourceTrans->addChild(ligthSource.get());
 
+    // Return matrix transform
     return sourceTrans.release();
 }
 
