@@ -34,6 +34,7 @@ public:
     void createParamsDock(void);
     void createScene(void);
     void initTraffic(void);
+    void removeTraffic(void);
 
     void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 

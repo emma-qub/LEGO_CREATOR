@@ -458,6 +458,15 @@ void MainWindow::initTraffic(void) {
     _world.getScene()->addChild(_traffic->getRoot());
 }
 
+void MainWindow::removeTraffic(void) {
+    for (unsigned int k = 0; k < _world.getScene()->getNumChildren(); k++) {
+        if (_world.getScene()->getChild(k)->getName() == "TrafficNode") {
+            _world.getScene()->removeChild(k);
+            return;
+        }
+    }
+}
+
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
     _legoColor = QColorDialog::getColor(Qt::red, this);
@@ -702,17 +711,6 @@ void MainWindow::rotateLeft(void) {
 void MainWindow::rotateRight(void) {
     // Rotate counter clock wise
     _world.rotation(false);
-}
-
-void MainWindow::writeFile(const QString& fileName) {
-    // Try to write the scene in fileName file
-    if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
-        _saved = true;
-        _alreadySaved = true;
-    // Fail to write
-    } else {
-        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
-    }
 }
 
 void MainWindow::openFromFile(const QString& fileName) {
@@ -1087,6 +1085,29 @@ void MainWindow::openFile(void) {
 //    }
 }
 
+void MainWindow::writeFile(const QString& fileName) {
+    // We don't want to save the grid...
+    _world.removeGuideLines();
+
+    // We don't want to save the traffic...
+    removeTraffic();
+
+    // Try to write the scene in fileName file
+    if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
+        _saved = true;
+        _alreadySaved = true;
+    // Fail to write
+    } else {
+        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
+    }
+
+    // We draw back the grid
+    _world.createGuideLines();
+
+    // We recreate traffic
+    initTraffic();
+}
+
 void MainWindow::saveFile(void) {
     // File modified?
     if (!_saved) {
@@ -1103,14 +1124,8 @@ void MainWindow::saveFile(void) {
             // Get the current file name, recorded whithin QSettings
             QString fileName = _settings.value("FileName").toString();
 
-            // We don't want to save the grid...
-            _world.removeGuideLines();
-
             // Time to really save the OSG file
             writeFile(savePath+fileName);
-
-            // We draw back the grid
-            _world.createGuideLines();
         }
     }
 }

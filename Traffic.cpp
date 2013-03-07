@@ -2,6 +2,7 @@
 
 #include <QSettings>
 #include <QDir>
+#include <QDebug>
 
 Traffic::Traffic() {
     // Add all vehicules
@@ -48,12 +49,17 @@ void Traffic::addVehicules(void) {
     if (file) {
         _trafficPath->read(file);
         file.close();
+    } else {
+        qDebug() << "Cannot open record path within Traffic::addVehicules.";
     }
 }
 
 void Traffic::createTraffic(void) {
     // Create switch node
     _root = new osg::Switch;
+
+    // Give a name to traffic to erase it when saving file
+    _root->setName("TrafficNode");
 
     // By default, when adding a child, it has to be hidden
     _root->setNewChildDefaultValue(false);
