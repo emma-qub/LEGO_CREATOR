@@ -59,9 +59,9 @@ void TileNode::createGeode(void) {
 
             // Add plots iteratively
             for (int j = 0; j < length; j++) {
-                    double radiusX = xmin;
-                    double radiusY = ymin + j*distPlot;
-                    geode->addDrawable(createPlot(radiusX, radiusY, height));
+                double radiusX = xmin;
+                double radiusY = ymin + j*distPlot;
+                geode->addDrawable(createPlot(radiusX, radiusY, height));
             }
         } else {
             geode->addDrawable(createTinyClassic());

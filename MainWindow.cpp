@@ -19,6 +19,7 @@
 #include "WheelDialog.h"
 #include "TileDialog.h"
 #include "FrontShipDialog.h"
+#include "ReverseTileDialog.h"
 
 #include "Traffic.h"
 
@@ -128,6 +129,10 @@ MainWindow::~MainWindow() {
     LegoFactory<TileNode, QString>::kill();
     LegoFactory<TileDialog, QString>::kill();
 
+    LegoFactory<ReverseTile, QString>::kill();
+    LegoFactory<ReverseTileNode, QString>::kill();
+    LegoFactory<ReverseTileDialog, QString>::kill();
+
     LegoFactory<Character, QString>::kill();
     LegoFactory<CharacterNode, QString>::kill();
     LegoFactory<CharacterDialog, QString>::kill();
@@ -185,6 +190,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<TileNode, QString>::instance()->registerLego(QString("TileNode"), new TileNode);
     // Register TileDialog
     LegoFactory<TileDialog, QString>::instance()->registerLego(QString("TileDialog"), new TileDialog);
+
+    // Register ReverseTile
+    LegoFactory<ReverseTile, QString>::instance()->registerLego(QString("ReverseTile"), new ReverseTile);
+    // Register ReverseTileNode
+    LegoFactory<ReverseTileNode, QString>::instance()->registerLego(QString("ReverseTileNode"), new ReverseTileNode);
+    // Register ReverseTileDialog
+    LegoFactory<ReverseTileDialog, QString>::instance()->registerLego(QString("ReverseTileDialog"), new ReverseTileDialog);
 
     // Register Window
     LegoFactory<Window, QString>::instance()->registerLego(QString("Window"), new Window);
@@ -274,6 +286,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create TileDialog in MainWindow::initDialogs";
 
+    // ReverseTileDialog
+    if (ReverseTileDialog* reversetileDialog = dynamic_cast<ReverseTileDialog*>(LegoFactory<ReverseTileDialog, QString>::instance()->create("ReverseTileDialog")))
+        _legoDialog << reversetileDialog;
+    else
+        qDebug() << "Cannot create ReverseTileDialog in MainWindow::initDialogs";
+
     // RoadDialog
     if (RoadDialog* roadDialog = dynamic_cast<RoadDialog*>(LegoFactory<RoadDialog, QString>::instance()->create("RoadDialog")))
         _legoDialog << roadDialog;
@@ -324,7 +342,7 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Tile" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "FrontShip";
+    brickForms << "Brick" << "Corner" << "Tile" << "ReverseTile" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "FrontShip";
     _shapeComboBox->addItems(brickForms);
     _shapeComboBox->setFixedWidth(100);
     QFormLayout* shapeLayout = new QFormLayout;
@@ -496,9 +514,22 @@ void MainWindow::chooseDialog(int dialogIndex) {
         }
         if (!(_currLegoNode = dynamic_cast<TileNode*>(LegoFactory<TileNode, QString>::instance()->create("TileNode"))))
             qDebug() << "Cannot cast in TileNode* within MainWindow::chooseDialog";
+        break;// Tile dialog
+    case 3:
+        if ((_currLego = dynamic_cast<ReverseTile*>(LegoFactory<ReverseTile, QString>::instance()->create("ReverseTile")))) {
+            ReverseTileDialog* dialog = static_cast<ReverseTileDialog*>(_legoDialog.at(dialogIndex));
+            ReverseTile* lego = static_cast<ReverseTile*>(_currLego.get());
+            lego->setColor(_legoColor);
+            lego->setWidth(dialog->getWidth());
+            lego->setLength(dialog->getLength());
+        } else {
+            qDebug() << "Cannot cast in ReverseTile* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoNode = dynamic_cast<ReverseTileNode*>(LegoFactory<ReverseTileNode, QString>::instance()->create("ReverseTileNode"))))
+            qDebug() << "Cannot cast in ReverseTileNode* within MainWindow::chooseDialog";
         break;
     // Road dialog
-    case 3:
+    case 4:
         if ((_currLego = dynamic_cast<Road*>(LegoFactory<Road, QString>::instance()->create("Road")))) {
             Road* lego = static_cast<Road*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));
@@ -509,7 +540,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in RoadNode* within MainWindow::chooseDialog";
         break;
     // Window dialog
-    case 4:
+    case 5:
         if ((_currLego = dynamic_cast<Window*>(LegoFactory<Window, QString>::instance()->create("Window")))) {
             Window* lego = static_cast<Window*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -519,7 +550,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoNode = dynamic_cast<WindowNode*>(LegoFactory<WindowNode, QString>::instance()->create("WindowNode"))))
             qDebug() << "Cannot cast in WindowNode* within MainWindow::chooseDialog";
         break;
-    case 5:
+    case 6:
         if ((_currLego = dynamic_cast<Door*>(LegoFactory<Door, QString>::instance()->create("Door")))) {
             Door* lego = static_cast<Door*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -529,7 +560,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoNode = dynamic_cast<DoorNode*>(LegoFactory<DoorNode, QString>::instance()->create("DoorNode"))))
             qDebug() << "Cannot cast in DoorNode* within MainWindow::chooseDialog";
         break;
-    case 6:
+    case 7:
         if ((_currLego = dynamic_cast<Wheel*>(LegoFactory<Wheel, QString>::instance()->create("Wheel")))) {
             Wheel* lego = static_cast<Wheel*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -541,7 +572,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
 
         break;
     // Character dialog
-    case 7:
+    case 8:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
             Character* lego = static_cast<Character*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));
@@ -552,7 +583,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in CharacterNode* within MainWindow::chooseDialog";
         break;
     // FrontShip dialog
-    case 8:
+    case 9:
         if ((_currLego = dynamic_cast<FrontShip*>(LegoFactory<FrontShip, QString>::instance()->create("FrontShip")))) {
             FrontShip* lego = static_cast<FrontShip*>(_currLego.get());
             lego->setColor(_legoColor);

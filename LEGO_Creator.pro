@@ -42,7 +42,10 @@ SOURCES += \
     FrontShipNode.cpp \
     FrontShipDialog.cpp \
     SettingsDialog.cpp \
-    Pages.cpp
+    Pages.cpp \
+    ReverseTile.cpp \
+    ReverseTileNode.cpp \
+    ReverseTileDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -87,7 +90,10 @@ HEADERS += \
     FrontShipNode.h \
     FrontShipDialog.h \
     SettingsDialog.h \
-    Pages.h
+    Pages.h \
+    ReverseTile.h \
+    ReverseTileNode.h \
+    ReverseTileDialog.h
 
 LIBS += \
     -L$OSG/lib \
