@@ -1,0 +1,227 @@
+Group {
+  UniqueID Group_0
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  StateSet {
+    UniqueID StateSet_1
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    GL_LIGHT0 ON
+  }
+  num_children 1
+  MatrixTransform {
+    UniqueID MatrixTransform_2
+    name "MatrixTransform1"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      16 8 4.8 1
+    }
+    num_children 1
+    Group {
+      nodeMask 0xffffffff
+      cullingActive TRUE
+      num_children 1
+      Geode {
+        UniqueID Geode_3
+        nodeMask 0xffffffff
+        cullingActive TRUE
+        num_drawables 12
+        Geometry {
+          UniqueID Geometry_4
+          DataVariance STATIC
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          PrimitiveSets 1
+          {
+            DrawArrays QUADS 0 20
+          }
+          VertexArray Vec3Array 20
+          {
+            16 -8 4.8
+            16 8 4.8
+            -16 8 4.8
+            -16 -8 4.8
+            16 -8 -4.8
+            16 -8 4.8
+            -16 -8 4.8
+            -16 -8 -4.8
+            16 8 -4.8
+            16 8 4.8
+            -16 8 4.8
+            -16 8 -4.8
+            -16 -8 -4.8
+            -16 -8 4.8
+            -16 8 4.8
+            -16 8 -4.8
+            16 -8 -4.8
+            16 -8 4.8
+            16 8 4.8
+            16 8 -4.8
+          }
+          NormalBinding PER_PRIMITIVE
+          NormalArray Vec3Array 5
+          {
+            0 0 1
+            0 -1 0
+            0 1 0
+            -1 0 0
+            1 0 0
+          }
+          ColorBinding OVERALL
+          ColorArray Vec4Array 1
+          {
+            1 0 0 1
+          }
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_5
+          DataVariance STATIC
+          Cylinder {
+            Center -12 -4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_6
+          DataVariance STATIC
+          Cylinder {
+            Center -12 4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_7
+          DataVariance STATIC
+          Cylinder {
+            Center -4 -4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_8
+          DataVariance STATIC
+          Cylinder {
+            Center -4 4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_9
+          DataVariance STATIC
+          Cylinder {
+            Center 4 -4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_10
+          DataVariance STATIC
+          Cylinder {
+            Center 4 4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_11
+          DataVariance STATIC
+          Cylinder {
+            Center 12 -4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_12
+          DataVariance STATIC
+          Cylinder {
+            Center 12 4 5.65
+            Radius 2.5
+            Height 1.69
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_13
+          DataVariance STATIC
+          Cylinder {
+            Center -8 0 0
+            Radius 3.15685
+            Height 9.57
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_14
+          DataVariance STATIC
+          Cylinder {
+            Center 0 0 0
+            Radius 3.15685
+            Height 9.57
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+        ShapeDrawable {
+          UniqueID ShapeDrawable_15
+          DataVariance STATIC
+          Cylinder {
+            Center 8 0 0
+            Radius 3.15685
+            Height 9.57
+            Rotation 0 0 0 1
+          }
+          useDisplayList TRUE
+          useVertexBufferObjects FALSE
+          color 1 0 0 1
+        }
+      }
+    }
+  }
+}

@@ -56,30 +56,6 @@ Group {
             -1000 -1000 1000 1
           }
           num_children 1
-          LightSource {
-            nodeMask 0xffffffff
-            cullingActive FALSE
-            StateSet {
-              rendering_hint DEFAULT_BIN
-              renderBinMode INHERIT
-              GL_LIGHT0 ON
-            }
-            referenceFrame RELATIVE
-            Light {
-              UniqueID Light_6
-              light_num 0
-              ambient 0.05 0.05 0.05 1
-              diffuse 1 1 1 1
-              specular 0.05 0.05 0.05 1
-              position 0 0 0 1
-              direction 0 0 -1
-              constant_attenuation 0.75
-              linear_attenuation 0
-              quadratic_attenuation 0
-              spot_exponent 0
-              spot_cutoff 180
-            }
-          }
         }
         Switch {
           nodeMask 0xffffffff
