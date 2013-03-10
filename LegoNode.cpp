@@ -2,13 +2,20 @@
 
 LegoNode::LegoNode(osg::ref_ptr<Lego> lego) :
     osg::Group() {
+
     _lego = lego;
+
+    // Because LEGO bricks don't move
+    setDataVariance(osg::Object::STATIC);
 }
 
 LegoNode::LegoNode(const LegoNode& legoNode) :
     osg::Group(legoNode) {
 
     _lego = legoNode._lego;
+
+    // Because LEGO bricks don't move
+    setDataVariance(osg::Object::STATIC);
 }
 
 LegoNode::~LegoNode() {
@@ -30,6 +37,9 @@ osg::ref_ptr<osg::Drawable> LegoNode::createPlot(double radiusX, double radiusY,
 
     // Set color
     plot->setColor(osg::Vec4(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0));
+
+    // Because LEGO bricks don't move
+    plot->setDataVariance(osg::Object::STATIC);
 
     return plot.get();
 }
@@ -60,6 +70,9 @@ osg::ref_ptr<osg::Drawable> LegoNode::createCylinder(double radiusX, double radi
 
     // Set color
     cyl->setColor(osg::Vec4(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0));
+
+    // Because LEGO bricks don't move
+    cyl->setDataVariance(osg::Object::STATIC);
 
     return cyl.get();
 }

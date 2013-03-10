@@ -74,10 +74,12 @@ void SettingsDialog::applyAction(void) {
         settings.setValue("ViewerWidth", currPage->getWidth());
         settings.setValue("ViewerLength", currPage->getLength());
         settings.setValue("ViewerColor", currPage->getColor());
+        settings.setValue("ViewerGridVisible", currPage->isGridVisible());
 
         // Get dialog values
         emit gridSizeChanged();
         emit viewerColorChanged(currPage->getColor());
+        emit gridVisible(currPage->isGridVisible());
     }
 }
 
@@ -92,14 +94,17 @@ void SettingsDialog::cancelAction(void) {
         settings.setValue("ViewerWidth", currPage->getPreviousWidth());
         settings.setValue("ViewerLength", currPage->getPreviousLength());
         settings.setValue("ViewerColor", currPage->getPreviousColor());
+        settings.setValue("ViewerGridVisible", currPage->isPreviousGridVisible());
 
         currPage->resetWidth();
         currPage->resetLength();
         currPage->resetColor();
+        currPage->resetGridVisible();
 
         // Get dialog values
         emit gridSizeChanged();
         emit viewerColorChanged(currPage->getPreviousColor());
+        emit gridVisible(currPage->isGridVisible());
     }
     close();
 }
@@ -112,14 +117,16 @@ void SettingsDialog::resetAction(void) {
     ViewerPage* currPage = dynamic_cast<ViewerPage*>(_pagesWidget->currentWidget());
     if (currPage) {
         // Get default values
-        QColor defaultColor = settings.value("DefaultViewerColor").value<QColor>();
         int defaultWidth = settings.value("DefaultViewerWidth").toInt();
         int defaultLength = settings.value("DefaultViewerLength").toInt();
+        QColor defaultColor = settings.value("DefaultViewerColor").value<QColor>();
+        bool defaultGridVisible = settings.value("DefaultViewerGridVisible").toBool();
 
         // Reset dialog values
         currPage->setWidth(defaultWidth);
         currPage->setLength(defaultLength);
         currPage->setColor(defaultColor);
+        currPage->toggleGridVisible(defaultGridVisible);
     }
 }
 

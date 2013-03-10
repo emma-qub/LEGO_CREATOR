@@ -18,14 +18,14 @@ GenerateRoadWindow::GenerateRoadWindow(QWidget *parent) :
     dimensionLayout->addRow("Length:", _lengthSpinBox);
 
     // Buttons
-    _okButton = new QPushButton("Ok", this);
-    connect(_okButton, SIGNAL(clicked()), this, SLOT(accept()));
     _cancelButton = new QPushButton("Cancel", this);
     connect(_cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+    _okButton = new QPushButton("Ok", this);
+    connect(_okButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
-    buttonsLayout->addWidget(_okButton);
     buttonsLayout->addWidget(_cancelButton);
+    buttonsLayout->addWidget(_okButton);
 
     // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout;

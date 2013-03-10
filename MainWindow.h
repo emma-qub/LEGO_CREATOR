@@ -33,8 +33,11 @@ public:
     void createUndoView(void);
     void createParamsDock(void);
     void createScene(void);
+
     void initTraffic(void);
     void removeTraffic(void);
+    void createLight(void);
+    void removeLight(void);
 
     void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 
@@ -69,6 +72,7 @@ public slots:
     void openSettings(void);
     void updateWorldGrid(void);
     void viewerColorUpdate(QColor color);
+    void setGridVisible(bool b);
 
     void checkExistence(QString fileName);
 

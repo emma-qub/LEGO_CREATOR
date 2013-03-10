@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _settings.setValue("DefaultViewerColor", QColor(236.0, 236.0, 236.0));
     _settings.setValue("DefaultViewerWidth", 20);
     _settings.setValue("DefaultViewerLength", 30);
+    _settings.setValue("DefaultViewerGridVisible", true);
 
     // Register in factories
     initFactories();
@@ -100,6 +101,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     connect(_settingsDialog, SIGNAL(gridSizeChanged()), this, SLOT(updateWorldGrid()));
     connect(_settingsDialog, SIGNAL(viewerColorChanged(QColor)), this, SLOT(viewerColorUpdate(QColor)));
+    connect(_settingsDialog, SIGNAL(gridVisible(bool)), this, SLOT(setGridVisible(bool)));
 
     // Change soft title
     setWindowTitle("LEGO Creator");
@@ -441,8 +443,7 @@ void MainWindow::createScene(void) {
     _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
-    _world.getScene()->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
-    _world.getScene()->addChild(ViewerWidget::createLigthSourceMat(0, osg::Vec3(-1000.0, -1000.0, 1000.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f)));
+    createLight();
 
     // Layout
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -459,8 +460,25 @@ void MainWindow::initTraffic(void) {
 }
 
 void MainWindow::removeTraffic(void) {
+    // Search traffic node and remove it
     for (unsigned int k = 0; k < _world.getScene()->getNumChildren(); k++) {
         if (_world.getScene()->getChild(k)->getName() == "TrafficNode") {
+            _world.getScene()->removeChild(k);
+            return;
+        }
+    }
+}
+
+void MainWindow::createLight(void) {
+    // Create a light source and add it to the scene
+    _world.getScene()->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
+    _world.getScene()->addChild(ViewerWidget::createLigthSourceMat(0, osg::Vec3(0.0, 0.0, 400.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f)));
+}
+
+void MainWindow::removeLight(void) {
+    // Search light matrix and remove it
+    for (unsigned int k = 0; k < _world.getScene()->getNumChildren(); k++) {
+        if (_world.getScene()->getChild(k)->getName() == "LightMatrix") {
             _world.getScene()->removeChild(k);
             return;
         }
@@ -967,8 +985,10 @@ void MainWindow::eraseScene(void) {
     freezeFit();
 
     // Traffic has been removed, we regenerate it
-    _traffic->createTraffic();
-    _world.getScene()->addChild(_traffic->getRoot());
+    initTraffic();
+
+    // Light has been removed, we recreate it
+    createLight();
 
     // To avoid any bug, traffic toggle action is set to off
     _viewTrafficAction->setChecked(false);
@@ -1092,6 +1112,9 @@ void MainWindow::writeFile(const QString& fileName) {
     // We don't want to save the traffic...
     removeTraffic();
 
+    // We don't want to save lights...
+    removeLight();
+
     // Try to write the scene in fileName file
     if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
         _saved = true;
@@ -1106,6 +1129,9 @@ void MainWindow::writeFile(const QString& fileName) {
 
     // We recreate traffic
     initTraffic();
+
+    // We recreate lights
+    createLight();
 }
 
 void MainWindow::saveFile(void) {
@@ -1281,6 +1307,14 @@ void MainWindow::viewerColorUpdate(QColor color) {
     _sceneViewer->getCamera()->setClearColor(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.));
 }
 
+void MainWindow::setGridVisible(bool b) {
+    // We remove grid
+    _world.removeGuideLines();
+    // And if grid visible is checked, we recreate it
+    if (b)
+        _world.createGuideLines();
+}
+
 void MainWindow::freezeFit(void) {
     // Piece has been fit, users can create another one
     _moveToolBar->setEnabled(false);
@@ -1385,7 +1419,8 @@ void MainWindow::createEditMenu(void) {
 
     // Add Settings action
     _settingsAction = editMenu->addAction("&Settings...");
-    _settingsAction->setShortcut(QKeySequence::Preferences);
+    //_settingsAction->setShortcut(QKeySequence::Preferences);
+    _settingsAction->setShortcut(QKeySequence("CTRL+ALT+SHIFT+S"));
     // Connect action
     connect(_settingsAction, SIGNAL(triggered()), this, SLOT(openSettings()));
 }

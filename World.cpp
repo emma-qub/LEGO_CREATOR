@@ -35,69 +35,83 @@ World::~World(void) {
 }
 
 void World::createGuideLines(void) {
-    // Remove previous lines
-    removeGuideLines();
-
-    // Create line geode
-    osg::ref_ptr<osg::Geode> line = new osg::Geode;
-
-    int width = 0;
-    int length = 0;
     // Get width and length defined within settings
     QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
-    if (settings.childKeys().contains("ViewerWidth")) {
-        width = settings.value("ViewerWidth").toInt();
+
+    // Get whether grid is visible
+    bool isGridVisible;
+    if (settings.childKeys().contains("ViewerGridVisible")) {
+        isGridVisible = settings.value("ViewerGridVisible").toBool();
     } else {
-        width = settings.value("DefaultViewerWidth").toInt();
-    }
-    if (settings.childKeys().contains("ViewerLength")) {
-        length = settings.value("ViewerLength").toInt();
-    } else {
-        length = settings.value("DefaultViewerLength").toInt();
+        isGridVisible = settings.value("DefaultViewerGridVisible").toBool();
     }
 
-    for (int i = -width; i <= width; i+=2) {
-        for (int j = -length; j <= length; j+=2) {
-            // Create four points
-            osg::Vec3 v0(i*Lego::length_unit, -length*Lego::length_unit, -0.1);
-            osg::Vec3 v1(i*Lego::length_unit, length*Lego::length_unit, -0.1);
-            osg::Vec3 v2(-width*Lego::length_unit, j*Lego::length_unit, -0.1);
-            osg::Vec3 v3(width*Lego::length_unit, j*Lego::length_unit, -0.1);
+    // If grid is visible, OK, otherwise, no need to do this part
+    if (isGridVisible) {
 
-            // Add points
-            osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-            vertices->push_back(v0);
-            vertices->push_back(v1);
-            vertices->push_back(v2);
-            vertices->push_back(v3);
+        // Remove previous lines
+        removeGuideLines();
 
-            // Create geometry
-            osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
-            geometry->setVertexArray(vertices);
+        // Create line geode
+        osg::ref_ptr<osg::Geode> line = new osg::Geode;
 
-            // Create color
-            osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-            osg::Vec4 colorVec(0.0, 0.0, 0.0, 1.0);
-            for (int k = 0; k < 4; k++)
-                colors->push_back(colorVec);
-
-            // Match color
-            geometry->setColorArray(colors);
-            geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
-            // Define line
-            geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));
-
-            // Add drawables geode
-            line->addDrawable(geometry);
+        int width = 0;
+        if (settings.childKeys().contains("ViewerWidth")) {
+            width = settings.value("ViewerWidth").toInt();
+        } else {
+            width = settings.value("DefaultViewerWidth").toInt();
         }
+
+        int length = 0;
+        if (settings.childKeys().contains("ViewerLength")) {
+            length = settings.value("ViewerLength").toInt();
+        } else {
+            length = settings.value("DefaultViewerLength").toInt();
+        }
+
+        for (int i = -width; i <= width; i+=2) {
+            for (int j = -length; j <= length; j+=2) {
+                // Create four points
+                osg::Vec3 v0(i*Lego::length_unit, -length*Lego::length_unit, -0.1);
+                osg::Vec3 v1(i*Lego::length_unit, length*Lego::length_unit, -0.1);
+                osg::Vec3 v2(-width*Lego::length_unit, j*Lego::length_unit, -0.1);
+                osg::Vec3 v3(width*Lego::length_unit, j*Lego::length_unit, -0.1);
+
+                // Add points
+                osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+                vertices->push_back(v0);
+                vertices->push_back(v1);
+                vertices->push_back(v2);
+                vertices->push_back(v3);
+
+                // Create geometry
+                osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+                geometry->setVertexArray(vertices);
+
+                // Create color
+                osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+                osg::Vec4 colorVec(0.0, 0.0, 0.0, 1.0);
+                for (int k = 0; k < 4; k++)
+                    colors->push_back(colorVec);
+
+                // Match color
+                geometry->setColorArray(colors);
+                geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+                // Define line
+                geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));
+
+                // Add drawables geode
+                line->addDrawable(geometry);
+            }
+        }
+
+        // Give a name
+        line->setName("GuideLines");
+
+        // Add line to scene
+        _scene->addChild(line);
     }
-
-    // Give a name
-    line->setName("GuideLines");
-
-    // Add line to scene
-    _scene->addChild(line);
 }
 
 void World::removeGuideLines(void) {
@@ -166,6 +180,8 @@ std::string World::addBrick(LegoNode* legoNode, Lego* lego) {
     // Create a matrix transform parent
     _currMatrixTransform = new osg::MatrixTransform;
     _currMatrixTransform->addChild(newLegoNode.get());
+    // Because LEGO bricks don't move
+    _currMatrixTransform->setDataVariance(osg::Object::STATIC);
     _scene->addChild(_currMatrixTransform.get());
 
     // Assign a brand new name to the previous matrix, in order to find it later

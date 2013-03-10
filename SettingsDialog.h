@@ -32,6 +32,7 @@ private:
 signals:
     void gridSizeChanged(void);
     void viewerColorChanged(QColor);
+    void gridVisible(bool);
 };
 
 #endif // SETTINGSDIALOG_H

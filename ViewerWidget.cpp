@@ -73,6 +73,9 @@ osg::MatrixTransform* ViewerWidget::createLigthSourceMat(unsigned int num, const
     // Add light to matrix transform
     sourceTrans->addChild(ligthSource.get());
 
+    // Give a name to light matrix, in order to remove it when saving file
+    sourceTrans->setName("LightMatrix");
+
     // Return matrix transform
     return sourceTrans.release();
 }

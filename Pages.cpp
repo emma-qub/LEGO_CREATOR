@@ -29,10 +29,19 @@ ViewerPage::ViewerPage(QWidget* parent) :
         _color = settings.value("DefaultViewerColor").value<QColor>();
     }
 
+    // Get whether grid is visible
+    bool gridVisible;
+    if (settings.childKeys().contains("ViewerGridVisible")) {
+        gridVisible = settings.value("ViewerGridVisible").toBool();
+    } else {
+        gridVisible = settings.value("DefaultViewerGridVisible").toBool();
+    }
+
     // Get previous value, to be undo with cancel button
     _previousWidth = width;
     _previousLength = length;
     _previousColor = _color;
+    _previousGridVisible = gridVisible;
 
     // Width
     _widthSpinBox = new QSpinBox;
@@ -74,9 +83,14 @@ ViewerPage::ViewerPage(QWidget* parent) :
     QGroupBox* colorGroupBox = new QGroupBox("Viewer background color");
     colorGroupBox->setLayout(colorLayout);
 
+    // Grid visible
+    _gridVisibleCheckBox = new QCheckBox("Grid visible", this);
+    _gridVisibleCheckBox->setChecked(gridVisible);
+
     // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(sizeGroupBox);
+    mainLayout->addWidget(_gridVisibleCheckBox);
     mainLayout->addWidget(colorGroupBox);
 
     // Set layout
