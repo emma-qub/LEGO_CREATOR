@@ -13,6 +13,8 @@ public:
     RoadDialog(QWidget* parent = 0);
     RoadDialog(const RoadDialog& roadDialog);
 
+    int getCurrentRoadTypeIndex(void) const { return _roadTypeComboBox->currentIndex(); }
+
     void reInitComboBox(void);
 
     virtual RoadDialog* cloning(void) const;

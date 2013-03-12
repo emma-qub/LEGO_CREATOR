@@ -45,7 +45,10 @@ SOURCES += \
     Pages.cpp \
     ReverseTile.cpp \
     ReverseTileNode.cpp \
-    ReverseTileDialog.cpp
+    ReverseTileDialog.cpp \
+    Cylinder.cpp \
+    CylinderNode.cpp \
+    CylinderDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -93,7 +96,10 @@ HEADERS += \
     Pages.h \
     ReverseTile.h \
     ReverseTileNode.h \
-    ReverseTileDialog.h
+    ReverseTileDialog.h \
+    Cylinder.h \
+    CylinderNode.h \
+    CylinderDialog.h
 
 LIBS += \
     -L$OSG/lib \

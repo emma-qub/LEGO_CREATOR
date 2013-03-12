@@ -22,6 +22,7 @@ CornerDialog::CornerDialog(const CornerDialog& cornerDialog) :
     // Connections
     connect(_cornerTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setLego(int)));
 
+    // Set layout
     setLayout(mainLayout);
 }
 

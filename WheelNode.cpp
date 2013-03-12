@@ -4,8 +4,6 @@
 #include <osg/MatrixTransform>
 #include <osg/Geometry>
 #include <osg/Material>
-#include <osg/BlendFunc>
-#include <osgUtil/SmoothingVisitor>
 
 WheelNode::WheelNode() :
     LegoNode() {

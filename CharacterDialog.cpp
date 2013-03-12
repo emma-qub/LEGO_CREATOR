@@ -22,6 +22,7 @@ CharacterDialog::CharacterDialog(const CharacterDialog& characterDialog) :
     // Connections
     connect(_characterTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setLego(int)));
 
+    // Set layout
     setLayout(mainLayout);
 }
 

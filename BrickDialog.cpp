@@ -47,6 +47,7 @@ BrickDialog::BrickDialog(const BrickDialog& brickDialog) :
     connect(_brickTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setLego(int)));
     connect(_brickTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMaxWidth(int)));
 
+    // Set layout
     setLayout(mainLayout);
 }
 
