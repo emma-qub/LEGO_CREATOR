@@ -16,11 +16,12 @@ Corner::Corner(const Corner& corner) :
 }
 
 void Corner::calculateBoundingBox(void) {
+    // according to corner type, the height is different
     switch (_cornerType) {
-    case 0:
+    case brick:
         _boundingBox = BoundingBox(0, 0, 0, 2, 2, 3);
         break;
-    case 1:
+    case plate:
         _boundingBox = BoundingBox(0, 0, 0, 2, 2, 1);
         break;
     }

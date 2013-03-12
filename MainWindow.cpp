@@ -346,9 +346,9 @@ void MainWindow::createParamsDock(void) {
     QStringList brickForms;
     brickForms << "Brick" << "Corner" << "Tile" << "ReverseTile" << "Road" << "Window" << "Door" << "Wheel" << "Character" << "FrontShip";
     _shapeComboBox->addItems(brickForms);
-    _shapeComboBox->setFixedWidth(100);
+    _shapeComboBox->setFixedWidth(150);
     QFormLayout* shapeLayout = new QFormLayout;
-    shapeLayout->addRow("LEGO:", _shapeComboBox);
+    shapeLayout->addRow("", _shapeComboBox);
 
     // Brick Preview
     QFrame* previewFrame = new QFrame(this);
@@ -436,6 +436,9 @@ void MainWindow::createScene(void) {
     double g = static_cast<double>(color.green());
     double b = static_cast<double>(color.blue());
 
+    // Viewer background color has changed, we have to update grid color
+    _world.createGuideLines();
+
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
@@ -472,7 +475,7 @@ void MainWindow::removeTraffic(void) {
 void MainWindow::createLight(void) {
     // Create a light source and add it to the scene
     _world.getScene()->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
-    _world.getScene()->addChild(ViewerWidget::createLigthSourceMat(0, osg::Vec3(0.0, 0.0, 400.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f)));
+    _world.getScene()->addChild(ViewerWidget::createLigthSourceMat(0, osg::Vec3(400.0, 400.0, 400.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f)));
 }
 
 void MainWindow::removeLight(void) {
@@ -487,7 +490,7 @@ void MainWindow::removeLight(void) {
 
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
-    _legoColor = QColorDialog::getColor(Qt::red, this);
+    _legoColor = QColorDialog::getColor(_legoColor, this);
     _currLego->setColor(_legoColor);
     _currLegoNode->createGeode();
 }

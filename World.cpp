@@ -34,7 +34,7 @@ World::World() {
 World::~World(void) {
 }
 
-void World::createGuideLines(void) {
+void World::createGuideLines() {
     // Get width and length defined within settings
     QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
 
@@ -69,6 +69,17 @@ void World::createGuideLines(void) {
             length = settings.value("DefaultViewerLength").toInt();
         }
 
+        // Get viewer background color
+        QColor bgColor;
+        if (settings.childKeys().contains("ViewerColor")) {
+            bgColor = settings.value("ViewerColor").value<QColor>();
+        } else {
+            bgColor = settings.value("DefaultViewerColor").value<QColor>();
+        }
+
+        // Calculate whether background color is dark
+        bool isViewerBgDark = (bgColor.black() > 127);
+
         for (int i = -width; i <= width; i+=2) {
             for (int j = -length; j <= length; j+=2) {
                 // Create four points
@@ -88,15 +99,18 @@ void World::createGuideLines(void) {
                 osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
                 geometry->setVertexArray(vertices);
 
-                // Create color
+                // Create color according to viewer color :
+                // if background color is dark, grid is white
+                // otherwise, grid is black
                 osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
                 osg::Vec4 colorVec(0.0, 0.0, 0.0, 1.0);
-                for (int k = 0; k < 4; k++)
-                    colors->push_back(colorVec);
+                if (isViewerBgDark)
+                    colorVec.set(1.0, 1.0, 1.0, 1.0);
+                colors->push_back(colorVec);
 
                 // Match color
                 geometry->setColorArray(colors);
-                geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+                geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
                 // Define line
                 geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 4));

@@ -73,6 +73,7 @@ void BrickDialog::setLego(int) {
 }
 
 void BrickDialog::updateMaxWidth(int brickType) {
+    // According to brick type, width max is different
     if (brickType == 1)
         _widthSpinBox->setMaximum(16);
     else

@@ -36,6 +36,7 @@ void Brick::setBrickType(int index) {
 }
 
 void Brick::calculateBoundingBox(void) {
+    // According to brick type, height is different
     switch (_brickType) {
     case classic:
         _boundingBox = BoundingBox(0, 0, 0, _length, _width, 3);
