@@ -490,9 +490,15 @@ void MainWindow::removeLight(void) {
 
 // Open the color dialog to change our LEGO color
 void MainWindow::browseColor() {
-    _legoColor = QColorDialog::getColor(_legoColor, this);
-    _currLego->setColor(_legoColor);
-    _currLegoNode->createGeode();
+    // Open color dialog
+    QColor newColor = QColorDialog::getColor(_legoColor, this);
+
+    // If users did not push cancel button
+    if (newColor.isValid()) {
+        _legoColor = newColor;
+        _currLego->setColor(_legoColor);
+        _currLegoNode->createGeode();
+    }
 }
 
 void MainWindow::chooseDialog(int dialogIndex) {

@@ -114,9 +114,14 @@ void ViewerPage::setColor(const QColor& color) {
 }
 
 void ViewerPage::browsePalette(void) {
-    _color = QColorDialog::getColor(_color, this);
+    // Open color dialog
+    QColor newColor = QColorDialog::getColor(_color, this);
 
-    QPixmap colorPixmap(50, 20);
-    colorPixmap.fill(_color);
-    _colorLabel->setPixmap(colorPixmap);
+    // If users did not push cancel button
+    if (newColor.isValid()) {
+        _color = newColor;
+        QPixmap colorPixmap(50, 20);
+        colorPixmap.fill(_color);
+        _colorLabel->setPixmap(colorPixmap);
+    }
 }
