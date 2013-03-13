@@ -4,8 +4,6 @@
 #include <osg/Material>
 #include <osg/ShapeDrawable>
 
-#include <QDebug>
-
 CylinderNode::CylinderNode() :
     LegoNode() {
 }
@@ -103,10 +101,6 @@ void CylinderNode::createGeode(void) {
 
     // Create cylinder shapes for thin ones
     } else {
-        qDebug() << Lego::plot_top_height/2
-                 << height*Lego::height_unit-Lego::plot_top_height
-                 << -height*Lego::height_unit/2+Lego::plot_top_height/2
-                 << Lego::plot_top_height;
         osg::ref_ptr<osg::ShapeDrawable> cylinderShape = new osg::ShapeDrawable(
                                              new osg::Cylinder(
                                                  osg::Vec3(0.0, 0.0, Lego::plot_top_height/2),
@@ -120,7 +114,7 @@ void CylinderNode::createGeode(void) {
         osg::ref_ptr<osg::ShapeDrawable> bottomCyShape = new osg::ShapeDrawable(
                                              new osg::Cylinder(
                                                  osg::Vec3(0.0, 0.0, -height*Lego::height_unit/2+Lego::plot_top_height/2),
-                                                 Lego::plot_top_radius,
+                                                 Lego::plot_bottom_radius,
                                                  Lego::plot_top_height
                                              )
                                          );
@@ -148,10 +142,6 @@ void CylinderNode::createGeode(void) {
             }
         }
     }
-
-//    // Add bottom cylinder if cylinder is big
-//    if (isBig)
-//        geode->addDrawable(createCylinder(0.0, 0.0, height, false));
 }
 
 CylinderNode* CylinderNode::cloning(void) const {
