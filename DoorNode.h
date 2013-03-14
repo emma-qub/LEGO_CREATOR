@@ -11,7 +11,10 @@ public:
     DoorNode(const DoorNode& doorNode);
 
     virtual void createGeode(void);
+    osg::ref_ptr<osg::Drawable> createDoorFrame(void);
     osg::ref_ptr<osg::Drawable> createDoor(void);
+    osg::ref_ptr<osg::Drawable> createDoorDecoration(void);
+    void addDoorHandle(void);
 
     virtual DoorNode* cloning(void) const;
 };
