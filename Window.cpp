@@ -1,7 +1,8 @@
 #include "Window.h"
 
-Window::Window(const QColor &color) :
-    Lego(color) {
+Window::Window(WindowType windowType, const QColor &color) :
+    Lego(color),
+    _windowType(windowType) {
 
     calculateBoundingBox();
 }
@@ -9,11 +10,56 @@ Window::Window(const QColor &color) :
 Window::Window(const Window& window) :
     Lego(window) {
 
+    _windowType = window._windowType;
+
     calculateBoundingBox();
 }
 
+void Window::setWindowType(int index) {
+    switch (index) {
+    case 0 :
+        _windowType = classic;
+        break;
+    case 1 :
+        _windowType = tiny;
+        break;
+    case 2 :
+        _windowType = bent;
+        break;
+    case 3 :
+        _windowType = thin;
+        break;
+    case 4 :
+        _windowType = big;
+        break;
+    case 5 :
+        _windowType = giant;
+        break;
+    }
+}
+
 void Window::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, 4, 1, 9);
+    // According to brick type, width, length and height are different
+    switch (_windowType) {
+    case classic:
+        _boundingBox = BoundingBox(0, 0, 0, 4, 1, 9);
+        break;
+    case tiny:
+        _boundingBox = BoundingBox(0, 0, 0, 2, 1, 6);
+        break;
+    case bent:
+        _boundingBox = BoundingBox(0, 0, 0, 4, 3, 9);
+        break;
+    case thin:
+        _boundingBox = BoundingBox(0, 0, 0, 2, 1, 9);
+        break;
+    case big:
+        _boundingBox = BoundingBox(0, 0, 0, 4, 2, 9);
+        break;
+    case giant:
+        _boundingBox = BoundingBox(0, 0, 0, 4, 1, 18);
+        break;
+    }
 }
 
 Window* Window::cloning(void) const {

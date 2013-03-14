@@ -13,9 +13,15 @@ public:
     WindowDialog(QWidget* parent = NULL);
     WindowDialog(const WindowDialog& windowDialog);
 
+    virtual void reInitComboBox(void);
+
     virtual WindowDialog* cloning(void) const;
 
-    virtual void setLego(int) {}
+public slots:
+    virtual void setLego(int);
+
+private:
+    QComboBox* _windowTypeComboBox;
 };
 
 #endif // WINDOWDIALOG_H
