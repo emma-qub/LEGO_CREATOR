@@ -25,7 +25,7 @@ TileDialog::TileDialog(const TileDialog& tileDialog) :
 
     // Tile length
     _lengthSpinBox = new QSpinBox(this);
-    _lengthSpinBox->setRange(1, 6);
+    _lengthSpinBox->setRange(1, 8);
     _lengthSpinBox->setValue(2);
     _lengthSpinBox->setFixedWidth(50);
     QFormLayout* lengthLayout = new QFormLayout;

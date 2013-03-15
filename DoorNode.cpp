@@ -69,8 +69,8 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorFrame(void) {
     // Get the door
     Door* door = static_cast<Door*>(_lego);
 
-    // Get door color
-    QColor color = door->getColor();
+    // Get door frame color
+    QColor doorFrameColor = door->getColor();
 
     // Get integer sizes
     int width = 1;
@@ -212,7 +212,7 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorFrame(void) {
     doorGeometry->setVertexArray(vertices);
 
     // Create color
-    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::Vec4 osgColor(static_cast<float>(doorFrameColor.red())/255.0, static_cast<float>(doorFrameColor.green())/255.0, static_cast<float>(doorFrameColor.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Every face has the same color, so there is only one color
     colors->push_back(osgColor);
@@ -256,6 +256,12 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorFrame(void) {
 }
 
 osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
+    // Get the door
+    Door* door = static_cast<Door*>(_lego);
+
+    // Get door color
+    QColor doorColor = door->getDoorColor();
+
     // Get integer sizes
     int width = 1;
     int length = 4;
@@ -337,7 +343,7 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
     doorGeometry->setVertexArray(vertices);
 
     // Create color
-    osg::Vec4 osgColor(1.0, 1.0, 1.0, 1.0);
+    osg::Vec4 osgColor(static_cast<float>(doorColor.red())/255.0, static_cast<float>(doorColor.green())/255.0, static_cast<float>(doorColor.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Every face has the same color, so there is only one color
     colors->push_back(osgColor);
@@ -415,7 +421,7 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorDecoration(void) {
     decorationGeometry->setVertexArray(vertices);
 
     // Create color
-    osg::Vec4 osgColor(0.0, 0.0, 0.0, 1.0);
+    osg::Vec4 osgColor(0.5, 0.5, 0.5, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Every face has the same color, so there is only one color
     colors->push_back(osgColor);
@@ -441,12 +447,18 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorDecoration(void) {
 }
 
 void DoorNode::addDoorHandle(void) {
+    // Get the door
+    Door* door = static_cast<Door*>(_lego);
+
+    // Get door handle color
+    QColor doorHandleColor = door->getDoorHandleColor();
+
     // Get integer sizes
     int width = 1;
     int length = 4;
 
     // Create door handle
-    osg::ref_ptr<Cylinder> cyl = new Cylinder(Cylinder::thinPlate, QColor(0, 0, 0));
+    osg::ref_ptr<Cylinder> cyl = new Cylinder(Cylinder::thinPlate, doorHandleColor);
     osg::ref_ptr<CylinderNode> doorHandle = new CylinderNode(cyl.get());
 
     // Create matrix transform to set door handle position

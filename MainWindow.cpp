@@ -507,7 +507,7 @@ void MainWindow::removeLight(void) {
 }
 
 // Open the color dialog to change our LEGO color
-void MainWindow::browseColor() {
+void MainWindow::browseColor(void) {
     // Open color dialog
     QColor newColor = QColorDialog::getColor(_legoColor, this);
 

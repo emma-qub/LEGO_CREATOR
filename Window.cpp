@@ -48,7 +48,7 @@ void Window::calculateBoundingBox(void) {
         _boundingBox = BoundingBox(0, 0, 0, 2, 1, 6);
         break;
     case bent:
-        _boundingBox = BoundingBox(0, 0, 0, 4, 3, 9);
+        _boundingBox = BoundingBox(0, 0, 0, 4, 4, 9);
         break;
     case thin:
         _boundingBox = BoundingBox(0, 0, 0, 2, 1, 9);
