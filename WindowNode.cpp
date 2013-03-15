@@ -3,6 +3,8 @@
 #include <osg/Geometry>
 #include <osg/Material>
 
+#include <cmath>
+
 WindowNode::WindowNode() :
     LegoNode() {
 }
@@ -309,8 +311,10 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     double plm = (length-0.5)*Lego::length_unit/2;
     double mh = (-height)*Lego::height_unit/2;
     double ph = (height)*Lego::height_unit/2;
-    double mhm = (-height+2)*Lego::height_unit/2;
-    double phm = (height-2)*Lego::height_unit/2;
+    double mhm = (-height+1.1)*Lego::height_unit/2;
+    double phm = (height-1)*Lego::height_unit/2;
+
+    double correction = Lego::height_unit/2.256;
 
     // Create 24 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -319,13 +323,13 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     osg::Vec3 v2(pl, mwm, mh);
     osg::Vec3 v3(ml, mwm, mh);
 
-    osg::Vec3 v4(mlm, pw, phm);
-    osg::Vec3 v5(plm, pw, phm);
+    osg::Vec3 v4(mlm, pw, ph);
+    osg::Vec3 v5(plm, pw, ph);
     osg::Vec3 v6(plm, mwm, mhm);
     osg::Vec3 v7(mlm, mwm, mhm);
 
-    osg::Vec3 v8(ml, pw, phm);
-    osg::Vec3 v9(pl, pw, phm);
+    osg::Vec3 v8(ml, pw-correction, phm);
+    osg::Vec3 v9(pl, pw-correction, phm);
     osg::Vec3 v10(pl, mwm, mhm);
     osg::Vec3 v11(ml, mwm, mhm);
 
@@ -334,13 +338,13 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     osg::Vec3 v22(pl, mw, mh);
     osg::Vec3 v23(ml, mw, mh);
 
-    osg::Vec3 v24(mlm, pwm, phm);
-    osg::Vec3 v25(plm, pwm, phm);
+    osg::Vec3 v24(mlm, pwm, ph);
+    osg::Vec3 v25(plm, pwm, ph);
     osg::Vec3 v26(plm, mw, mhm);
     osg::Vec3 v27(mlm, mw, mhm);
 
-    osg::Vec3 v28(ml, pwm, phm);
-    osg::Vec3 v29(pl, pwm, phm);
+    osg::Vec3 v28(ml, pwm-correction, phm);
+    osg::Vec3 v29(pl, pwm-correction, phm);
     osg::Vec3 v30(pl, mw, mhm);
     osg::Vec3 v31(ml, mw, mhm);
 
@@ -354,13 +358,13 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     vertices->push_back(v9);
     vertices->push_back(v8);
     // Front part left
-    vertices->push_back(v8);
+    vertices->push_back(v0);
     vertices->push_back(v4);
     vertices->push_back(v7);
     vertices->push_back(v11);
     // Front part right
     vertices->push_back(v5);
-    vertices->push_back(v9);
+    vertices->push_back(v1);
     vertices->push_back(v10);
     vertices->push_back(v6);
     // Front part bottom
@@ -376,13 +380,13 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     vertices->push_back(v29);
     vertices->push_back(v28);
     // Back part left
-    vertices->push_back(v28);
+    vertices->push_back(v20);
     vertices->push_back(v24);
     vertices->push_back(v27);
     vertices->push_back(v31);
     // Back part right
     vertices->push_back(v25);
-    vertices->push_back(v29);
+    vertices->push_back(v21);
     vertices->push_back(v30);
     vertices->push_back(v26);
     // Back part bottom
@@ -392,16 +396,11 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     vertices->push_back(v23);
 
     // Left part
-    // Left part top
-    vertices->push_back(v8);
+    // Left part middle
     vertices->push_back(v0);
     vertices->push_back(v20);
-    vertices->push_back(v28);
-    // Left part middle
-    vertices->push_back(v8);
-    vertices->push_back(v11);
     vertices->push_back(v31);
-    vertices->push_back(v28);
+    vertices->push_back(v11);
     // Left part bottom
     vertices->push_back(v3);
     vertices->push_back(v11);
@@ -415,15 +414,10 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
 
     // Right part
     // Right part middle
-    vertices->push_back(v9);
+    vertices->push_back(v1);
     vertices->push_back(v10);
     vertices->push_back(v30);
-    vertices->push_back(v29);
-    // Right part top
-    vertices->push_back(v9);
-    vertices->push_back(v1);
     vertices->push_back(v21);
-    vertices->push_back(v29);
     // Right part bottom
     vertices->push_back(v2);
     vertices->push_back(v10);
@@ -473,13 +467,13 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
     // Front
-    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 3.0/5.0, -4.0/5.0));
     normals->push_back(osg::Vec3(0, 3.0/5.0, -4.0/5.0));
     normals->push_back(osg::Vec3(0, 3.0/5.0, -4.0/5.0));
     normals->push_back(osg::Vec3(0, 1, 0));
 
     // Back
-    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -3.0/5.0, 4.0/5.0));
     normals->push_back(osg::Vec3(0, -3.0/5.0, 4.0/5.0));
     normals->push_back(osg::Vec3(0, -3.0/5.0, 4.0/5.0));
     normals->push_back(osg::Vec3(0, -1, 0));
@@ -487,11 +481,9 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     // Left
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
-    normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
 
     // Right
-    normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
@@ -506,7 +498,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     windowGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
     // Define 19 GL_QUADS with 19*4 vertices
-    windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 19*4));
+    windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 17*4));
 
     // Return the tile whithout plot
     return windowGeometry.get();
