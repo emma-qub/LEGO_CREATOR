@@ -21,6 +21,7 @@
 #include "FrontShipDialog.h"
 #include "ReverseTileDialog.h"
 #include "CylinderDialog.h"
+#include "GridDialog.h"
 
 #include "Traffic.h"
 
@@ -167,6 +168,10 @@ MainWindow::~MainWindow() {
     LegoFactory<Cylinder, QString>::kill();
     LegoFactory<CylinderNode, QString>::kill();
     LegoFactory<CylinderDialog, QString>::kill();
+
+    LegoFactory<Grid, QString>::kill();
+    LegoFactory<GridNode, QString>::kill();
+    LegoFactory<GridDialog, QString>::kill();
 }
 
 void MainWindow::initFactories(void) {
@@ -253,6 +258,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<CylinderNode, QString>::instance()->registerLego(QString("CylinderNode"), new CylinderNode);
     // Register CylinderDialog
     LegoFactory<CylinderDialog, QString>::instance()->registerLego(QString("CylinderDialog"), new CylinderDialog);
+
+    // Register Grid
+    LegoFactory<Grid, QString>::instance()->registerLego(QString("Grid"), new Grid);
+    // Register GridNode
+    LegoFactory<GridNode, QString>::instance()->registerLego(QString("GridNode"), new GridNode);
+    // Register GridDialog
+    LegoFactory<GridDialog, QString>::instance()->registerLego(QString("GridDialog"), new GridDialog);
 
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
@@ -342,6 +354,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create FrontShipDialog in MainWindow::initDialogs";
 
+    // GridDialog
+    if (GridDialog* gridDialog = dynamic_cast<GridDialog*>(LegoFactory<GridDialog, QString>::instance()->create("GridDialog")))
+        _legoDialog << gridDialog;
+    else
+        qDebug() << "Cannot create GridDialog in MainWindow::initDialogs";
+
     // CharacterDialog
     if (CharacterDialog* characterDialog = dynamic_cast<CharacterDialog*>(LegoFactory<CharacterDialog, QString>::instance()->create("CharacterDialog")))
         _legoDialog << characterDialog;
@@ -362,7 +380,18 @@ void MainWindow::createParamsDock(void) {
     // ComboBox choose your brick
     _shapeComboBox = new QComboBox(this);
     QStringList brickForms;
-    brickForms << "Brick" << "Corner" << "Tile" << "ReverseTile" << "Road" << "Cylinder" << "Window" << "Door" << "Wheel" << "FrontShip" << "Character";
+    brickForms << "Brick"
+               << "Corner"
+               << "Tile"
+               << "ReverseTile"
+               << "Road"
+               << "Cylinder"
+               << "Window"
+               << "Door"
+               << "Wheel"
+               << "FrontShip"
+               << "Grid"
+               << "Character";
     _shapeComboBox->addItems(brickForms);
     _shapeComboBox->setFixedWidth(150);
     QFormLayout* shapeLayout = new QFormLayout;
@@ -652,8 +681,19 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoNode = dynamic_cast<FrontShipNode*>(LegoFactory<FrontShipNode, QString>::instance()->create("FrontShipNode"))))
             qDebug() << "Cannot cast in FrontShipNode* within MainWindow::chooseDialog";
         break;
-    // Character dialog
+    // Grid dialog
     case 10:
+        if ((_currLego = dynamic_cast<Grid*>(LegoFactory<Grid, QString>::instance()->create("Grid")))) {
+            Grid* lego = static_cast<Grid*>(_currLego.get());
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Grid* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoNode = dynamic_cast<GridNode*>(LegoFactory<GridNode, QString>::instance()->create("GridNode"))))
+            qDebug() << "Cannot cast in GridNode* within MainWindow::chooseDialog";
+        break;
+    // Character dialog
+    case 11:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
             Character* lego = static_cast<Character*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));

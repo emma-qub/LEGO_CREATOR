@@ -185,7 +185,7 @@ void WheelNode::createPlate(void) {
     // Match vertices
     brickGeometry->setVertexArray(vertices);
 
-    // Add color (each rectangle has the same color except for the down one which is transparent)
+    // Create color
     osg::Vec4 colorVec(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     // Every face has the same color, so there is only one color

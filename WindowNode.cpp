@@ -348,7 +348,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     osg::Vec3 v30(pl, mw, mhm);
     osg::Vec3 v31(ml, mw, mhm);
 
-    // Create 15 faces with 24 vertices
+    // Create 17 faces with 24 vertices
     // NB: Down face is transparent, we don't even create it
 
     // Front part
@@ -497,7 +497,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     windowGeometry->setNormalArray(normals);
     windowGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Define 19 GL_QUADS with 19*4 vertices
+    // Define 17 GL_QUADS with 17*4 vertices
     windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 17*4));
 
     // Return the tile whithout plot
