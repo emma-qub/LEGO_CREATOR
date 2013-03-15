@@ -51,8 +51,10 @@ osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
     double w5 = (5*width)*Lego::length_unit/10;
     double l0 = (-length)*Lego::length_unit/2;
     double l1 = (-length)*Lego::length_unit/2+(Lego::length_unit/2-Lego::plot_top_radius);
-    double l2 = (length)*Lego::length_unit/2-(Lego::length_unit/2-Lego::plot_top_radius);
-    double l3 = (length)*Lego::length_unit/2;
+    double l2 = -(Lego::length_unit/2-Lego::plot_top_radius);
+    double l3 = (Lego::length_unit/2-Lego::plot_top_radius);
+    double l4 = (length)*Lego::length_unit/2-(Lego::length_unit/2-Lego::plot_top_radius);
+    double l5 = (length)*Lego::length_unit/2;
     double h0 = (-height)*Lego::height_unit/2;
     double h1 = 0;
     double h2 = (height)*Lego::height_unit/2;
@@ -77,26 +79,34 @@ osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
     osg::Vec3 v17(l0, w1, h0);
     osg::Vec3 v18(l0, w1, h2);
     osg::Vec3 v19(l0, w0, h2);
-    osg::Vec3 v20(l2, w5, h0);
-    osg::Vec3 v21(l2, w5, h1);
-    osg::Vec3 v22(l2, w0, h1);
-    osg::Vec3 v23(l2, w0, h0);
-    osg::Vec3 v24(l3, w5, h0);
-    osg::Vec3 v25(l3, w5, h1);
-    osg::Vec3 v26(l3, w0, h1);
-    osg::Vec3 v27(l3, w0, h0);
-    osg::Vec3 v30(l3, w5, h2);
-    osg::Vec3 v31(l3, w4, h2);
-    osg::Vec3 v32(l3, w4, h0);
-    osg::Vec3 v33(l3, w3, h1);
-    osg::Vec3 v34(l3, w3, h2);
-    osg::Vec3 v35(l3, w2, h2);
-    osg::Vec3 v36(l3, w2, h1);
-    osg::Vec3 v37(l3, w1, h0);
-    osg::Vec3 v38(l3, w1, h2);
-    osg::Vec3 v39(l3, w0, h2);
+    osg::Vec3 v20(l4, w5, h0);
+    osg::Vec3 v21(l4, w5, h1);
+    osg::Vec3 v22(l4, w0, h1);
+    osg::Vec3 v23(l4, w0, h0);
+    osg::Vec3 v24(l5, w5, h0);
+    osg::Vec3 v25(l5, w5, h1);
+    osg::Vec3 v26(l5, w0, h1);
+    osg::Vec3 v27(l5, w0, h0);
+    osg::Vec3 v30(l5, w5, h2);
+    osg::Vec3 v31(l5, w4, h2);
+    osg::Vec3 v32(l5, w4, h0);
+    osg::Vec3 v33(l5, w3, h1);
+    osg::Vec3 v34(l5, w3, h2);
+    osg::Vec3 v35(l5, w2, h2);
+    osg::Vec3 v36(l5, w2, h1);
+    osg::Vec3 v37(l5, w1, h0);
+    osg::Vec3 v38(l5, w1, h2);
+    osg::Vec3 v39(l5, w0, h2);
+    osg::Vec3 v40(l2, w3, h0);
+    osg::Vec3 v41(l2, w3, h1);
+    osg::Vec3 v42(l2, w2, h1);
+    osg::Vec3 v43(l2, w2, h0);
+    osg::Vec3 v44(l3, w3, h0);
+    osg::Vec3 v45(l3, w3, h1);
+    osg::Vec3 v46(l3, w2, h1);
+    osg::Vec3 v47(l3, w2, h0);
 
-    // Create 26 faces with 36 vertices
+    // Create 31 faces with 44 vertices
     // NB: Down face is transparent, we don't even create it
 
     // Left part
@@ -239,6 +249,33 @@ osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
     vertices->push_back(v27);
     vertices->push_back(v37);
 
+    // Bottom part
+    // Bottom part back
+    vertices->push_back(v42);
+    vertices->push_back(v43);
+    vertices->push_back(v47);
+    vertices->push_back(v46);
+    // Bottom part bottom
+    vertices->push_back(v40);
+    vertices->push_back(v43);
+    vertices->push_back(v47);
+    vertices->push_back(v44);
+    // Bottom part front
+    vertices->push_back(v40);
+    vertices->push_back(v44);
+    vertices->push_back(v45);
+    vertices->push_back(v41);
+    // Bottom part left
+    vertices->push_back(v40);
+    vertices->push_back(v41);
+    vertices->push_back(v42);
+    vertices->push_back(v43);
+    // Bottom part right
+    vertices->push_back(v44);
+    vertices->push_back(v45);
+    vertices->push_back(v46);
+    vertices->push_back(v47);
+
 
     // Create brick geometry
     osg::ref_ptr<osg::Geometry> gridGeometry = new osg::Geometry;
@@ -289,12 +326,18 @@ osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
 
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, 0, -1));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+
     // Match normals
     gridGeometry->setNormalArray(normals);
     gridGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Define 4 GL_QUADS, with 4*4 vertices
-    gridGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 26*4));
+    // Define 31 GL_QUADS, with 31*4 vertices
+    gridGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 31*4));
 
     // Return the door decoration
     return gridGeometry.get();
