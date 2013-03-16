@@ -210,7 +210,7 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     tileGeometry->setNormalArray(normals);
     tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Create 6 GL_TRIANGLES, i.e. 6*3 vertices
+    // Create 12 GL_TRIANGLES, i.e. 12*3 vertices
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 12*3));
 
     // Return the tile whithout plot

@@ -23,6 +23,7 @@
 #include "CylinderDialog.h"
 #include "GridDialog.h"
 #include "ConeDialog.h"
+#include "EdgeDialog.h"
 
 #include "Traffic.h"
 
@@ -174,6 +175,10 @@ MainWindow::~MainWindow() {
     LegoFactory<ConeNode, QString>::kill();
     LegoFactory<ConeDialog, QString>::kill();
 
+    LegoFactory<Edge, QString>::kill();
+    LegoFactory<EdgeNode, QString>::kill();
+    LegoFactory<EdgeDialog, QString>::kill();
+
     LegoFactory<Grid, QString>::kill();
     LegoFactory<GridNode, QString>::kill();
     LegoFactory<GridDialog, QString>::kill();
@@ -228,6 +233,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<ConeNode, QString>::instance()->registerLego(QString("ConeNode"), new ConeNode);
     // Register ConeDialog
     LegoFactory<ConeDialog, QString>::instance()->registerLego(QString("ConeDialog"), new ConeDialog);
+
+    // Register Edge
+    LegoFactory<Edge, QString>::instance()->registerLego(QString("Edge"), new Edge);
+    // Register EdgeNode
+    LegoFactory<EdgeNode, QString>::instance()->registerLego(QString("EdgeNode"), new EdgeNode);
+    // Register EdgeDialog
+    LegoFactory<EdgeDialog, QString>::instance()->registerLego(QString("EdgeDialog"), new EdgeDialog);
 
     // Register Window
     LegoFactory<Window, QString>::instance()->registerLego(QString("Window"), new Window);
@@ -348,6 +360,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create ConeDialog in MainWindow::initDialogs";
 
+    // EdgeDialog
+    if (EdgeDialog* edgeDialog = dynamic_cast<EdgeDialog*>(LegoFactory<EdgeDialog, QString>::instance()->create("EdgeDialog")))
+        _legoDialog << edgeDialog;
+    else
+        qDebug() << "Cannot create EdgeDialog in MainWindow::initDialogs";
+
     // WindowDialog
     if (WindowDialog* windowDialog = dynamic_cast<WindowDialog*>(LegoFactory<WindowDialog, QString>::instance()->create("WindowDialog")))
         _legoDialog << windowDialog;
@@ -405,6 +423,7 @@ void MainWindow::createParamsDock(void) {
                << "Road"
                << "Cylinder"
                << "Cone"
+               << "Edge"
                << "Window"
                << "Door"
                << "Wheel"
@@ -666,8 +685,19 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoNode = dynamic_cast<ConeNode*>(LegoFactory<ConeNode, QString>::instance()->create("ConeNode"))))
             qDebug() << "Cannot cast in ConeNode* within MainWindow::chooseDialog";
         break;
-    // Window dialog
+    // Edge dialog
     case 7:
+        if ((_currLego = dynamic_cast<Edge*>(LegoFactory<Edge, QString>::instance()->create("Edge")))) {
+            Edge* lego = static_cast<Edge*>(_currLego.get());
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Edge* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoNode = dynamic_cast<EdgeNode*>(LegoFactory<EdgeNode, QString>::instance()->create("EdgeNode"))))
+            qDebug() << "Cannot cast in EdgeNode* within MainWindow::chooseDialog";
+        break;
+    // Window dialog
+    case 8:
         if ((_currLego = dynamic_cast<Window*>(LegoFactory<Window, QString>::instance()->create("Window")))) {
             Window* lego = static_cast<Window*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -678,7 +708,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in WindowNode* within MainWindow::chooseDialog";
         break;
     // Door dialog
-    case 8:
+    case 9:
         if ((_currLego = dynamic_cast<Door*>(LegoFactory<Door, QString>::instance()->create("Door")))) {
             Door* lego = static_cast<Door*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -689,7 +719,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in DoorNode* within MainWindow::chooseDialog";
         break;
     // Wheel dialog
-    case 9:
+    case 10:
         if ((_currLego = dynamic_cast<Wheel*>(LegoFactory<Wheel, QString>::instance()->create("Wheel")))) {
             Wheel* lego = static_cast<Wheel*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -701,7 +731,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
 
         break;
     // FrontShip dialog
-    case 10:
+    case 11:
         if ((_currLego = dynamic_cast<FrontShip*>(LegoFactory<FrontShip, QString>::instance()->create("FrontShip")))) {
             FrontShip* lego = static_cast<FrontShip*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -712,7 +742,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in FrontShipNode* within MainWindow::chooseDialog";
         break;
     // Grid dialog
-    case 11:
+    case 12:
         if ((_currLego = dynamic_cast<Grid*>(LegoFactory<Grid, QString>::instance()->create("Grid")))) {
             Grid* lego = static_cast<Grid*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -723,7 +753,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in GridNode* within MainWindow::chooseDialog";
         break;
     // Character dialog
-    case 12:
+    case 13:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
             Character* lego = static_cast<Character*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));

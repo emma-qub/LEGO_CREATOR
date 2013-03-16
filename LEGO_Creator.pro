@@ -54,7 +54,10 @@ SOURCES += \
     GridDialog.cpp \
     Cone.cpp \
     ConeNode.cpp \
-    ConeDialog.cpp
+    ConeDialog.cpp \
+    Edge.cpp \
+    EdgeNode.cpp \
+    EdgeDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -111,7 +114,10 @@ HEADERS += \
     GridDialog.h \
     Cone.h \
     ConeNode.h \
-    ConeDialog.h
+    ConeDialog.h \
+    Edge.h \
+    EdgeNode.h \
+    EdgeDialog.h
 
 LIBS += \
     -L$OSG/lib \

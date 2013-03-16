@@ -139,7 +139,7 @@ osg::ref_ptr<osg::Geometry> ConeNode::createTruncatedCone(double startRadius, do
     // Smooth visitor to create normals automagically
     osgUtil::SmoothingVisitor::smooth(*coneGeometry);
 
-    // return cone geometry
+    // Return cone geometry
     return coneGeometry;
 }
 
