@@ -51,7 +51,10 @@ SOURCES += \
     CylinderDialog.cpp \
     Grid.cpp \
     GridNode.cpp \
-    GridDialog.cpp
+    GridDialog.cpp \
+    Cone.cpp \
+    ConeNode.cpp \
+    ConeDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -105,7 +108,10 @@ HEADERS += \
     CylinderDialog.h \
     Grid.h \
     GridNode.h \
-    GridDialog.h
+    GridDialog.h \
+    Cone.h \
+    ConeNode.h \
+    ConeDialog.h
 
 LIBS += \
     -L$OSG/lib \

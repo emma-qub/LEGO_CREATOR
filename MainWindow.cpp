@@ -22,6 +22,7 @@
 #include "ReverseTileDialog.h"
 #include "CylinderDialog.h"
 #include "GridDialog.h"
+#include "ConeDialog.h"
 
 #include "Traffic.h"
 
@@ -169,6 +170,10 @@ MainWindow::~MainWindow() {
     LegoFactory<CylinderNode, QString>::kill();
     LegoFactory<CylinderDialog, QString>::kill();
 
+    LegoFactory<Cone, QString>::kill();
+    LegoFactory<ConeNode, QString>::kill();
+    LegoFactory<ConeDialog, QString>::kill();
+
     LegoFactory<Grid, QString>::kill();
     LegoFactory<GridNode, QString>::kill();
     LegoFactory<GridDialog, QString>::kill();
@@ -189,13 +194,6 @@ void MainWindow::initFactories(void) {
     // Register CornerDialog
     LegoFactory<CornerDialog, QString>::instance()->registerLego(QString("CornerDialog"), new CornerDialog);
 
-    // Register Road
-    LegoFactory<Road, QString>::instance()->registerLego(QString("Road"), new Road);
-    // Register RoadNode
-    LegoFactory<RoadNode, QString>::instance()->registerLego(QString("RoadNode"), new RoadNode);
-    // Register RoadDialog
-    LegoFactory<RoadDialog, QString>::instance()->registerLego(QString("RoadDialog"), new RoadDialog);
-
     // Register Tile
     LegoFactory<Tile, QString>::instance()->registerLego(QString("Tile"), new Tile);
     // Register TileNode
@@ -209,6 +207,27 @@ void MainWindow::initFactories(void) {
     LegoFactory<ReverseTileNode, QString>::instance()->registerLego(QString("ReverseTileNode"), new ReverseTileNode);
     // Register ReverseTileDialog
     LegoFactory<ReverseTileDialog, QString>::instance()->registerLego(QString("ReverseTileDialog"), new ReverseTileDialog);
+
+    // Register Road
+    LegoFactory<Road, QString>::instance()->registerLego(QString("Road"), new Road);
+    // Register RoadNode
+    LegoFactory<RoadNode, QString>::instance()->registerLego(QString("RoadNode"), new RoadNode);
+    // Register RoadDialog
+    LegoFactory<RoadDialog, QString>::instance()->registerLego(QString("RoadDialog"), new RoadDialog);
+
+    // Register Cylinder
+    LegoFactory<Cylinder, QString>::instance()->registerLego(QString("Cylinder"), new Cylinder);
+    // Register CylinderNode
+    LegoFactory<CylinderNode, QString>::instance()->registerLego(QString("CylinderNode"), new CylinderNode);
+    // Register CylinderDialog
+    LegoFactory<CylinderDialog, QString>::instance()->registerLego(QString("CylinderDialog"), new CylinderDialog);
+
+    // Register Cone
+    LegoFactory<Cone, QString>::instance()->registerLego(QString("Cone"), new Cone);
+    // Register ConeNode
+    LegoFactory<ConeNode, QString>::instance()->registerLego(QString("ConeNode"), new ConeNode);
+    // Register ConeDialog
+    LegoFactory<ConeDialog, QString>::instance()->registerLego(QString("ConeDialog"), new ConeDialog);
 
     // Register Window
     LegoFactory<Window, QString>::instance()->registerLego(QString("Window"), new Window);
@@ -224,26 +243,12 @@ void MainWindow::initFactories(void) {
     // Register DoorDialog
     LegoFactory<DoorDialog, QString>::instance()->registerLego(QString("DoorDialog"), new DoorDialog);
 
-    // Register FromFile
-    LegoFactory<FromFile, QString>::instance()->registerLego(QString("FromFile"), new FromFile);
-    // Register FromFileNode
-    LegoFactory<FromFileNode, QString>::instance()->registerLego(QString("FromFileNode"), new FromFileNode);
-    // Register FromFileDialog
-    LegoFactory<FromFileDialog, QString>::instance()->registerLego(QString("FromFileDialog"), new FromFileDialog);
-
     // Register Wheel
     LegoFactory<Wheel, QString>::instance()->registerLego(QString("Wheel"), new Wheel);
     // Register WheelNode
     LegoFactory<WheelNode, QString>::instance()->registerLego(QString("WheelNode"), new WheelNode);
     // Register WheelDialog
     LegoFactory<WheelDialog, QString>::instance()->registerLego(QString("WheelDialog"), new WheelDialog);
-
-    // Register Character
-    LegoFactory<Character, QString>::instance()->registerLego(QString("Character"), new Character);
-    // Register CharacterNode
-    LegoFactory<CharacterNode, QString>::instance()->registerLego(QString("CharacterNode"), new CharacterNode);
-    // Register CharacterDialog
-    LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
 
     // Register FrontShip
     LegoFactory<FrontShip, QString>::instance()->registerLego(QString("FrontShip"), new FrontShip);
@@ -252,19 +257,26 @@ void MainWindow::initFactories(void) {
     // Register FrontShipDialog
     LegoFactory<FrontShipDialog, QString>::instance()->registerLego(QString("FrontShipDialog"), new FrontShipDialog);
 
-    // Register Cylinder
-    LegoFactory<Cylinder, QString>::instance()->registerLego(QString("Cylinder"), new Cylinder);
-    // Register CylinderNode
-    LegoFactory<CylinderNode, QString>::instance()->registerLego(QString("CylinderNode"), new CylinderNode);
-    // Register CylinderDialog
-    LegoFactory<CylinderDialog, QString>::instance()->registerLego(QString("CylinderDialog"), new CylinderDialog);
-
     // Register Grid
     LegoFactory<Grid, QString>::instance()->registerLego(QString("Grid"), new Grid);
     // Register GridNode
     LegoFactory<GridNode, QString>::instance()->registerLego(QString("GridNode"), new GridNode);
     // Register GridDialog
     LegoFactory<GridDialog, QString>::instance()->registerLego(QString("GridDialog"), new GridDialog);
+
+    // Register Character
+    LegoFactory<Character, QString>::instance()->registerLego(QString("Character"), new Character);
+    // Register CharacterNode
+    LegoFactory<CharacterNode, QString>::instance()->registerLego(QString("CharacterNode"), new CharacterNode);
+    // Register CharacterDialog
+    LegoFactory<CharacterDialog, QString>::instance()->registerLego(QString("CharacterDialog"), new CharacterDialog);
+
+    // Register FromFile
+    LegoFactory<FromFile, QString>::instance()->registerLego(QString("FromFile"), new FromFile);
+    // Register FromFileNode
+    LegoFactory<FromFileNode, QString>::instance()->registerLego(QString("FromFileNode"), new FromFileNode);
+    // Register FromFileDialog
+    LegoFactory<FromFileDialog, QString>::instance()->registerLego(QString("FromFileDialog"), new FromFileDialog);
 
     // ENREGISTRER ICI LES AUTRES CLASSES DE PIECE LEGO QUE L'ON CREERA
 }
@@ -330,6 +342,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create CylinderDialog in MainWindow::initDialogs";
 
+    // ConeDialog
+    if (ConeDialog* coneDialog = dynamic_cast<ConeDialog*>(LegoFactory<ConeDialog, QString>::instance()->create("ConeDialog")))
+        _legoDialog << coneDialog;
+    else
+        qDebug() << "Cannot create ConeDialog in MainWindow::initDialogs";
+
     // WindowDialog
     if (WindowDialog* windowDialog = dynamic_cast<WindowDialog*>(LegoFactory<WindowDialog, QString>::instance()->create("WindowDialog")))
         _legoDialog << windowDialog;
@@ -386,6 +404,7 @@ void MainWindow::createParamsDock(void) {
                << "ReverseTile"
                << "Road"
                << "Cylinder"
+               << "Cone"
                << "Window"
                << "Door"
                << "Wheel"
@@ -636,8 +655,19 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoNode = dynamic_cast<CylinderNode*>(LegoFactory<CylinderNode, QString>::instance()->create("CylinderNode"))))
             qDebug() << "Cannot cast in CylinderNode* within MainWindow::chooseDialog";
         break;
-    // Window dialog
+    // Cone dialog
     case 6:
+        if ((_currLego = dynamic_cast<Cone*>(LegoFactory<Cone, QString>::instance()->create("Cone")))) {
+            Cone* lego = static_cast<Cone*>(_currLego.get());
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Cone* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoNode = dynamic_cast<ConeNode*>(LegoFactory<ConeNode, QString>::instance()->create("ConeNode"))))
+            qDebug() << "Cannot cast in ConeNode* within MainWindow::chooseDialog";
+        break;
+    // Window dialog
+    case 7:
         if ((_currLego = dynamic_cast<Window*>(LegoFactory<Window, QString>::instance()->create("Window")))) {
             Window* lego = static_cast<Window*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -648,7 +678,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in WindowNode* within MainWindow::chooseDialog";
         break;
     // Door dialog
-    case 7:
+    case 8:
         if ((_currLego = dynamic_cast<Door*>(LegoFactory<Door, QString>::instance()->create("Door")))) {
             Door* lego = static_cast<Door*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -659,7 +689,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in DoorNode* within MainWindow::chooseDialog";
         break;
     // Wheel dialog
-    case 8:
+    case 9:
         if ((_currLego = dynamic_cast<Wheel*>(LegoFactory<Wheel, QString>::instance()->create("Wheel")))) {
             Wheel* lego = static_cast<Wheel*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -671,7 +701,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
 
         break;
     // FrontShip dialog
-    case 9:
+    case 10:
         if ((_currLego = dynamic_cast<FrontShip*>(LegoFactory<FrontShip, QString>::instance()->create("FrontShip")))) {
             FrontShip* lego = static_cast<FrontShip*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -682,7 +712,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in FrontShipNode* within MainWindow::chooseDialog";
         break;
     // Grid dialog
-    case 10:
+    case 11:
         if ((_currLego = dynamic_cast<Grid*>(LegoFactory<Grid, QString>::instance()->create("Grid")))) {
             Grid* lego = static_cast<Grid*>(_currLego.get());
             lego->setColor(_legoColor);
@@ -693,7 +723,7 @@ void MainWindow::chooseDialog(int dialogIndex) {
             qDebug() << "Cannot cast in GridNode* within MainWindow::chooseDialog";
         break;
     // Character dialog
-    case 11:
+    case 12:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
             Character* lego = static_cast<Character*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));

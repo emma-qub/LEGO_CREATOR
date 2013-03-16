@@ -23,6 +23,7 @@ void GridNode::createGeode(void) {
     // Remove children
     removeChildren(0, getNumChildren());
 
+    // Create geode
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     addChild(geode);
 
@@ -275,7 +276,6 @@ osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
     vertices->push_back(v45);
     vertices->push_back(v46);
     vertices->push_back(v47);
-
 
     // Create brick geometry
     osg::ref_ptr<osg::Geometry> gridGeometry = new osg::Geometry;
