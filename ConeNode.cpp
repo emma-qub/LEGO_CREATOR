@@ -39,11 +39,15 @@ void ConeNode::createGeode(void) {
     // Get integer sizes
     int height = 3;
 
+    // Set double values
+    double zCenter = Lego::plot_bottom_height/4;
+    double length = height*Lego::height_unit-2*zCenter;
+
     // Create Cone
     geode->addDrawable(createTruncatedCone(Lego::length_unit/2,
                                            Lego::plot_top_radius,
-                                           Lego::plot_bottom_height/4,
-                                           height*Lego::height_unit-Lego::plot_bottom_height/2,
+                                           zCenter,
+                                           length,
                                            50));
 
     // Add plot
@@ -55,7 +59,7 @@ void ConeNode::createGeode(void) {
     // Add bottom cache
     osg::ref_ptr<osg::ShapeDrawable> cache = new osg::ShapeDrawable(
                 new osg::Cylinder(
-                    osg::Vec3(0, 0, Lego::plot_bottom_height/4-(height*Lego::height_unit-Lego::plot_bottom_height/2)/2),
+                    osg::Vec3(0, 0, zCenter-length/2),
                     Lego::length_unit/2,
                     0.1));
     cache->setColor(osg::Vec4(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0));
@@ -113,7 +117,6 @@ osg::ref_ptr<osg::Geometry> ConeNode::createTruncatedCone(double startRadius, do
         vertices->push_back(osg::Vec3(xBottom[k+1], yBottom[k+1], center-length/2));
     }
 
-    // Note no memory management for coneBodyGeometry as this is returned from the function
     // Create cone geometry
     osg::ref_ptr<osg::Geometry> coneGeometry = new osg::Geometry;
 
