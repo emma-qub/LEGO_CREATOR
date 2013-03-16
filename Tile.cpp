@@ -34,7 +34,7 @@ void Tile::setTileType(int index) {
 
 void Tile::calculateBoundingBox(void) {
     // According to roof type, height is different
-    if (_tileType == roof)
+    if (_tileType == roof || (_tileType == classic && _width == 1 && _length == 1))
         _boundingBox = BoundingBox(0, 0, 0, _width, _length, 2);
     else
         _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);

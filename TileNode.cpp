@@ -103,6 +103,7 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     double ml = (-length)*Lego::length_unit/2;
     double pl = (length)*Lego::length_unit/2;
     double mh = (-height)*Lego::height_unit/2;
+    double mhm = (-height+1)*Lego::height_unit/2;
     double ph = (height)*Lego::height_unit/2;
 
     // Create 6 vertices
@@ -113,9 +114,22 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     osg::Vec3 v3(pw, ml, mh);
     osg::Vec3 v4(mw, ml, ph);
     osg::Vec3 v5(mw, pl, ph);
+    osg::Vec3 v6(mw, ml, mhm);
+    osg::Vec3 v7(pw, ml, mhm);
+    osg::Vec3 v8(pw, pl, mhm);
+    osg::Vec3 v9(mw, pl, mhm);
 
     // Create 4 faces, 2 faces are quads splitted into two triangles
     // NB: Down face is transparent, we don't even create it
+
+    // Front face t1
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+    vertices->push_back(v7);
+    // Front face t2
+    vertices->push_back(v2);
+    vertices->push_back(v7);
+    vertices->push_back(v8);
 
     // Back face t1
     vertices->push_back(v5);
@@ -127,23 +141,39 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     vertices->push_back(v0);
 
     // Slop face t1
-    vertices->push_back(v3);
+    vertices->push_back(v7);
     vertices->push_back(v4);
     vertices->push_back(v5);
     // Slop face t2
-    vertices->push_back(v2);
-    vertices->push_back(v3);
+    vertices->push_back(v8);
+    vertices->push_back(v7);
     vertices->push_back(v5);
 
-    // Left triangle face
+    // Left triangle
     vertices->push_back(v4);
-    vertices->push_back(v3);
+    vertices->push_back(v7);
+    vertices->push_back(v6);
+    // Left part t1
     vertices->push_back(v0);
+    vertices->push_back(v3);
+    vertices->push_back(v6);
+    // Left part t2
+    vertices->push_back(v7);
+    vertices->push_back(v3);
+    vertices->push_back(v6);
 
     // Right triangle face
+    vertices->push_back(v9);
+    vertices->push_back(v8);
+    vertices->push_back(v5);
+    // Right part t1
+    vertices->push_back(v1);
+    vertices->push_back(v9);
+    vertices->push_back(v8);
+    // Right part t2
     vertices->push_back(v1);
     vertices->push_back(v2);
-    vertices->push_back(v5);
+    vertices->push_back(v8);
 
     // Create tile geometry
     osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
@@ -163,11 +193,17 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
 
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(1/std::sqrt(2), 0, 1/std::sqrt(2)));
     normals->push_back(osg::Vec3(1/std::sqrt(2), 0, 1/std::sqrt(2)));
     normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
 
     // Match normals
@@ -175,7 +211,7 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
     // Create 6 GL_TRIANGLES, i.e. 6*3 vertices
-    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 6*3));
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 12*3));
 
     // Return the tile whithout plot
     return tileGeometry.get();
