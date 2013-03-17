@@ -15,12 +15,25 @@ EdgeDialog::EdgeDialog(const EdgeDialog& edgeDialog) :
     QFormLayout* edgeTypeLayout = new QFormLayout;
     edgeTypeLayout->addRow("Edge type:", _edgeTypeComboBox);
 
+    // Edge length
+    _lengthSpinBox = new QSpinBox(this);
+    _lengthSpinBox->setRange(2, 4);
+    _lengthSpinBox->setValue(2);
+    _lengthSpinBox->setFixedWidth(50);
+    QFormLayout* lengthLayout = new QFormLayout;
+    lengthLayout->addRow("Length:", _lengthSpinBox);
+    _lengthGroupBox = new QGroupBox;
+    _lengthGroupBox->setLayout(lengthLayout);
+
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(edgeTypeLayout);
+    mainLayout->addWidget(_lengthGroupBox);
 
     // Connections
+    connect(_lengthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLego(int)));
     connect(_edgeTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setLego(int)));
+    connect(_edgeTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMaxLength(int)));
 
     // Set layout
     setLayout(mainLayout);
@@ -34,6 +47,7 @@ void EdgeDialog::setLego(int) {
     if (Edge* edge = dynamic_cast<Edge*>(_lego)) {
         if (EdgeNode* edgeNode = dynamic_cast<EdgeNode*>(_legoNode)) {
             edge->setEdgeType(_edgeTypeComboBox->currentIndex());
+            edge->setLength(_lengthSpinBox->value());
 
             edgeNode->createGeode();
 
@@ -44,6 +58,14 @@ void EdgeDialog::setLego(int) {
     } else {
         qDebug() << "Cannot cast in Edge* EdgeDialog::setLego";
     }
+}
+
+void EdgeDialog::updateMaxLength(int edgeType) {
+    // According to brick type, length max is different
+    if (edgeType == Edge::corner)
+        _lengthGroupBox->setVisible(false);
+    else
+        _lengthGroupBox->setVisible(true);
 }
 
 EdgeDialog* EdgeDialog::cloning(void) const {

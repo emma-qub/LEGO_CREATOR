@@ -28,10 +28,42 @@ void EdgeNode::createGeode(void) {
     addChild(geode);
 
     // Create edge shape
-    geode->addDrawable(createEdge());
+    geode->addDrawable(createClassicEdge());
+
+    // Get the Edge
+    Edge* edge = static_cast<Edge*>(_lego);
+
+    // Get integer sizes
+    int width = 1;
+    int length = edge->getLength();
+    if (edge->getEdgeType() == Edge::corner)
+        length = 1;
+    int height = 3;
+
+    // Add left part to create corner
+    if (edge->getEdgeType() == Edge::corner)
+        geode->addDrawable(createCornerEdge());
+
+    // Distance between two plot center
+    double distPlot = Lego::length_unit;
+
+    // Get the
+    // Calculate x max and y max for plots
+    double xminb = -(length-2)*Lego::length_unit/2;
+    double yminb = -(width-1)*Lego::length_unit/2;
+
+    // Add bottom cylinders iteratively
+    for (int i = 0; i < length-1; i++) {
+        for (int j = 0; j < width; j++) {
+            double radiusX = xminb + i*distPlot;
+            double radiusY = yminb + j*distPlot;
+
+            geode->addDrawable(createCylinder(radiusX, radiusY, 0.5, true, (-height+0.5)*Lego::height_unit/2));
+        }
+    }
 }
 
-osg::ref_ptr<osg::Drawable> EdgeNode::createEdge(void) {
+osg::ref_ptr<osg::Drawable> EdgeNode::createClassicEdge(void) {
     // Get the Edge
     Edge* edge = static_cast<Edge*>(_lego);
 
@@ -40,15 +72,15 @@ osg::ref_ptr<osg::Drawable> EdgeNode::createEdge(void) {
 
     // Get integer sizes
     int width = 1;
-    int length = 2;
+    int length = edge->getLength();
     if (edge->getEdgeType() == Edge::corner)
         length = 1;
     int height = 3;
 
     // Get real position, according to tile size
     double pw = (-width)*Lego::length_unit/2;
-    double mwm = (width-0.5)*Lego::length_unit/2;
     double mw = (width)*Lego::length_unit/2;
+    double mwm = (width-0.5)*Lego::length_unit/2;
     double ml = (-length)*Lego::length_unit/2;
     double pl = (length)*Lego::length_unit/2;
     double mh = (-height)*Lego::height_unit/2;
@@ -165,6 +197,103 @@ osg::ref_ptr<osg::Drawable> EdgeNode::createEdge(void) {
 
     // Define 10 GL_QUADS with 10*4 vertices
     edgeGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 10*4));
+
+    // Return edge geometry
+    return edgeGeometry;
+}
+
+osg::ref_ptr<osg::Drawable> EdgeNode::createCornerEdge(void) {
+    // Get the Edge
+    Edge* edge = static_cast<Edge*>(_lego);
+
+    // Get brick color
+    QColor color = edge->getColor();
+
+    // Get integer sizes
+    int width = 1;
+    int length = 1;
+    int height = 3;
+
+    // Get real position, according to tile size
+    double pw = (-width)*Lego::length_unit/2;
+    double mw = (width)*Lego::length_unit/2;
+    double mwm = (width-0.5)*Lego::length_unit/2;
+    double ml = (-length)*Lego::length_unit/2;
+    double mlm = (-length+0.5)*Lego::length_unit/2;
+    double mhm = (-height+2)*Lego::height_unit/2;
+    double ph = (height)*Lego::height_unit/2;
+
+    // Create 8 vertices
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    osg::Vec3 v0(ml, mwm, mhm);
+    osg::Vec3 v1(mlm, mwm, mhm);
+    osg::Vec3 v2(mlm, pw, mhm);
+    osg::Vec3 v3(ml, pw, mhm);
+    osg::Vec3 v4(ml, pw, ph);
+    osg::Vec3 v5(mlm, pw, ph);
+    osg::Vec3 v6(mlm, mw, ph);
+    osg::Vec3 v7(ml, mw, ph);
+
+    // Create 10 faces with 14 vertices
+    // NB: Down faces are transparent, we don't even create them
+
+    // Corner part
+    // Corner part top
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+    // Corner part back
+    vertices->push_back(v0);
+    vertices->push_back(v1);
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+    // Corner part left
+    vertices->push_back(v0);
+    vertices->push_back(v3);
+    vertices->push_back(v4);
+    vertices->push_back(v7);
+    // Corner part right
+    vertices->push_back(v1);
+    vertices->push_back(v2);
+    vertices->push_back(v5);
+    vertices->push_back(v6);
+    // Corner part front
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+
+    // Create edge geometry
+    osg::ref_ptr<osg::Geometry> edgeGeometry = new osg::Geometry;
+
+    // Match vertices
+    edgeGeometry->setVertexArray(vertices);
+
+    // Create color
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
+
+    // Match color
+    edgeGeometry->setColorArray(colors);
+    edgeGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+
+    // Match normals
+    edgeGeometry->setNormalArray(normals);
+    edgeGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define 5 GL_QUADS with 5*4 vertices
+    edgeGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 5*4));
 
     // Return edge geometry
     return edgeGeometry;

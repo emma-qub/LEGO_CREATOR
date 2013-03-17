@@ -2,8 +2,9 @@
 
 #include "QDebug"
 
-Edge::Edge(EdgeType edgeType, const QColor &color) :
+Edge::Edge(int length, EdgeType edgeType, const QColor &color) :
     Lego(color),
+    _length(length),
     _edgeType(edgeType) {
 
     calculateBoundingBox();
@@ -12,6 +13,7 @@ Edge::Edge(EdgeType edgeType, const QColor &color) :
 Edge::Edge(const Edge& edge) :
     Lego(edge) {
 
+    _length = edge._length;
     _edgeType = edge._edgeType;
 
     calculateBoundingBox();
@@ -32,7 +34,7 @@ void Edge::calculateBoundingBox(void) {
     // According to Edge type, height is different
     switch (_edgeType) {
     case classic:
-        _boundingBox = BoundingBox(0, 0, 0, 2, 1, 3);
+        _boundingBox = BoundingBox(0, 0, 0, _length, 1, 3);
         break;
     case corner:
         _boundingBox = BoundingBox(0, 0, 0, 1, 1, 3);

@@ -688,8 +688,10 @@ void MainWindow::chooseDialog(int dialogIndex) {
     // Edge dialog
     case 7:
         if ((_currLego = dynamic_cast<Edge*>(LegoFactory<Edge, QString>::instance()->create("Edge")))) {
+            EdgeDialog* dialog = static_cast<EdgeDialog*>(_legoDialog.at(dialogIndex));
             Edge* lego = static_cast<Edge*>(_currLego.get());
             lego->setColor(_legoColor);
+            lego->setLength(dialog->getLength());
         } else {
             qDebug() << "Cannot cast in Edge* within MainWindow::chooseDialog";
         }

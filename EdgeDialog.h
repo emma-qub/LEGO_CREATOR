@@ -7,11 +7,13 @@
 #include "EdgeNode.h"
 
 class EdgeDialog : public LegoDialog {
+    Q_OBJECT
 
 public:
     EdgeDialog(QWidget* parent = NULL);
     EdgeDialog(const EdgeDialog& edgeDialog);
 
+    int getLength(void) const { return _lengthSpinBox->text().toInt(); }
     int getCurrentEdgeTypeIndex(void) const { return _edgeTypeComboBox->currentIndex(); }
 
     virtual void reInitComboBox(void);
@@ -20,9 +22,12 @@ public:
 
 public slots:
     virtual void setLego(int);
+    virtual void updateMaxLength(int edgeType);
 
 private:
+    QSpinBox* _lengthSpinBox;
     QComboBox* _edgeTypeComboBox;
+    QGroupBox* _lengthGroupBox;
 
 };
 

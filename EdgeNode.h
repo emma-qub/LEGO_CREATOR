@@ -12,7 +12,8 @@ public:
     EdgeNode(const EdgeNode& edgeNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createEdge(void);
+    osg::ref_ptr<osg::Drawable> createClassicEdge(void);
+    osg::ref_ptr<osg::Drawable> createCornerEdge(void);
 
     virtual EdgeNode* cloning(void) const;
 };
