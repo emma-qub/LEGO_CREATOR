@@ -2,6 +2,7 @@
 
 #include <osg/Geometry>
 #include <osg/Material>
+#include <osgUtil/Tessellator>
 
 #include <cmath>
 
@@ -44,6 +45,14 @@ void WindowNode::createGeode(void) {
     } else {
         geode->addDrawable(createWindow());
     }
+
+    // Create left pannel, if needed
+    if (window->isLeftPannelUsed())
+        geode->addDrawable(createLeftPannel());
+
+    // Create right pannel, if needed
+    if (window->isRightPannelUsed())
+        geode->addDrawable(createRightPannel());
 
     // Distance between two plot center
     double distPlot = Lego::length_unit;
@@ -311,8 +320,8 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     double plm = (length-0.5)*Lego::length_unit/2;
     double mh = (-height)*Lego::height_unit/2;
     double ph = (height)*Lego::height_unit/2;
-    double mhm = (-height+1.1)*Lego::height_unit/2;
-    double phm = (height-1)*Lego::height_unit/2;
+    double mhm = (-height+2)*Lego::height_unit/2;
+    double phm = (height-2)*Lego::height_unit/2;
 
     double correction = Lego::height_unit/2.256;
 
@@ -502,6 +511,200 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
 
     // Return the tile whithout plot
     return windowGeometry.get();
+}
+
+osg::ref_ptr<osg::Drawable> WindowNode::createLeftPannel(void) const {
+    // Get door color
+    QColor color = QColor(Qt::white);
+
+    // Get integer sizes
+    int width = 1;
+    int length = 4;
+    int height = 9;
+
+    // Get real position, according to tile size
+    double w = (-width+0.5)*Lego::length_unit/2;
+    double l0 = (-length+0.5)*Lego::length_unit/2;
+    double l1 = (-length+1)*Lego::length_unit/2;
+    double l2 = (-0.6)*Lego::length_unit/2;
+    double l3 = (-0.1)*Lego::length_unit/2;
+    double h0 = (-height+2)*Lego::height_unit/2;
+    double h1 = (-height+3)*Lego::height_unit/2;
+    double h2 = (-0.5)*Lego::height_unit/2;
+    double h3 = (0.5)*Lego::height_unit/2;
+    double h4 = (height-3)*Lego::height_unit/2;
+    double h5 = (height-2)*Lego::height_unit/2;
+
+    // Create 12 vertices
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    osg::Vec3 v0(l0, w, h0);
+    osg::Vec3 v1(l3, w, h0);
+    osg::Vec3 v2(l3, w, h5);
+    osg::Vec3 v3(l0, w, h5);
+
+    osg::Vec3 v4(l1, w, h4);
+    osg::Vec3 v5(l2, w, h4);
+    osg::Vec3 v6(l2, w, h3);
+    osg::Vec3 v7(l1, w, h3);
+
+    osg::Vec3 v8(l1, w, h2);
+    osg::Vec3 v9(l2, w, h2);
+    osg::Vec3 v10(l2, w, h1);
+    osg::Vec3 v11(l1, w, h1);
+
+    // Create a face with 2 holes
+    // Front part
+    vertices->push_back(v0);
+    vertices->push_back(v1);
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+
+    vertices->push_back(v8);
+    vertices->push_back(v9);
+    vertices->push_back(v10);
+    vertices->push_back(v11);
+
+    // Create door geometry
+    osg::ref_ptr<osg::Geometry> pannelGeometry = new osg::Geometry;
+
+    // Match vertices
+    pannelGeometry->setVertexArray(vertices);
+
+    // Create color
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
+
+    // Match color
+    pannelGeometry->setColorArray(colors);
+    pannelGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, -1, 0));
+
+    // Match normals
+    pannelGeometry->setNormalArray(normals);
+    pannelGeometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
+
+    // Define 1 GL_QUADS with 1*4 vertices, corresponding to door main quad
+    pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+
+    // Define 4 GL_QUADS with 1*4 vertices per quad, corresponding to 4 holes in door
+    pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
+    pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 8, 4));
+
+    // Retesslate to create holes
+    osgUtil::Tessellator tesslator;
+    tesslator.setTessellationType(osgUtil::Tessellator::TESS_TYPE_GEOMETRY);
+    tesslator.setWindingType(osgUtil::Tessellator::TESS_WINDING_ODD);
+    tesslator.retessellatePolygons(*pannelGeometry);
+
+    // Return the door with four holes
+    return pannelGeometry.get();
+}
+
+osg::ref_ptr<osg::Drawable> WindowNode::createRightPannel(void) const {
+    // Get door color
+    QColor color = QColor(Qt::white);
+
+    // Get integer sizes
+    int width = 1;
+    int length = 4;
+    int height = 9;
+
+    // Get real position, according to tile size
+    double w = (-width+0.5)*Lego::length_unit/2;
+    double l0 = (0.1)*Lego::length_unit/2;
+    double l1 = (0.6)*Lego::length_unit/2;
+    double l2 = (length-1)*Lego::length_unit/2;
+    double l3 = (length-0.5)*Lego::length_unit/2;
+    double h0 = (-height+2)*Lego::height_unit/2;
+    double h1 = (-height+3)*Lego::height_unit/2;
+    double h2 = (-0.5)*Lego::height_unit/2;
+    double h3 = (0.5)*Lego::height_unit/2;
+    double h4 = (height-3)*Lego::height_unit/2;
+    double h5 = (height-2)*Lego::height_unit/2;
+
+    // Create 12 vertices
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    osg::Vec3 v0(l0, w, h0);
+    osg::Vec3 v1(l3, w, h0);
+    osg::Vec3 v2(l3, w, h5);
+    osg::Vec3 v3(l0, w, h5);
+
+    osg::Vec3 v4(l1, w, h4);
+    osg::Vec3 v5(l2, w, h4);
+    osg::Vec3 v6(l2, w, h3);
+    osg::Vec3 v7(l1, w, h3);
+
+    osg::Vec3 v8(l1, w, h2);
+    osg::Vec3 v9(l2, w, h2);
+    osg::Vec3 v10(l2, w, h1);
+    osg::Vec3 v11(l1, w, h1);
+
+    // Create a face with 2 holes
+    // Front part
+    vertices->push_back(v0);
+    vertices->push_back(v1);
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+
+    vertices->push_back(v8);
+    vertices->push_back(v9);
+    vertices->push_back(v10);
+    vertices->push_back(v11);
+
+    // Create door geometry
+    osg::ref_ptr<osg::Geometry> pannelGeometry = new osg::Geometry;
+
+    // Match vertices
+    pannelGeometry->setVertexArray(vertices);
+
+    // Create color
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
+
+    // Match color
+    pannelGeometry->setColorArray(colors);
+    pannelGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, -1, 0));
+
+    // Match normals
+    pannelGeometry->setNormalArray(normals);
+    pannelGeometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
+
+    // Define 1 GL_QUADS with 1*4 vertices, corresponding to door main quad
+    pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+
+    // Define 4 GL_QUADS with 1*4 vertices per quad, corresponding to 4 holes in door
+    pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
+    pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 8, 4));
+
+    // Retesslate to create holes
+    osgUtil::Tessellator tesslator;
+    tesslator.setTessellationType(osgUtil::Tessellator::TESS_TYPE_GEOMETRY);
+    tesslator.setWindingType(osgUtil::Tessellator::TESS_WINDING_ODD);
+    tesslator.retessellatePolygons(*pannelGeometry);
+
+    // Return the door with four holes
+    return pannelGeometry.get();
 }
 
 WindowNode* WindowNode::cloning(void) const {

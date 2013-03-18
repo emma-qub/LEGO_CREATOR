@@ -13,6 +13,8 @@ public:
     virtual void createGeode(void);
     osg::ref_ptr<osg::Drawable> createWindow(void) const;
     osg::ref_ptr<osg::Drawable> createBentWindow(void) const;
+    osg::ref_ptr<osg::Drawable> createLeftPannel(void) const;
+    osg::ref_ptr<osg::Drawable> createRightPannel(void) const;
 
     virtual WindowNode* cloning(void) const;
 };

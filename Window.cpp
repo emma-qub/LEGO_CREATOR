@@ -1,8 +1,10 @@
 #include "Window.h"
 
-Window::Window(WindowType windowType, const QColor &color) :
+Window::Window(WindowType windowType, bool useLeftPanel, bool useRightPanel, const QColor& color) :
     Lego(color),
-    _windowType(windowType) {
+    _windowType(windowType),
+    _useLeftPanel(useLeftPanel),
+    _useRightPanel(useRightPanel) {
 
     calculateBoundingBox();
 }
@@ -11,6 +13,8 @@ Window::Window(const Window& window) :
     Lego(window) {
 
     _windowType = window._windowType;
+    _useLeftPanel = window._useLeftPanel;
+    _useRightPanel = window._useRightPanel;
 
     calculateBoundingBox();
 }

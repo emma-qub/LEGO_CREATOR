@@ -282,7 +282,7 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
     double h6 = (height-3)*Lego::height_unit/2;
     double h7 = (height-2)*Lego::height_unit/2;
 
-    // Create 24 vertices
+    // Create 20 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
     osg::Vec3 v0(l0, w, h0);
     osg::Vec3 v1(l5, w, h0);

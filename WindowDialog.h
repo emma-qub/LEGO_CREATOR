@@ -19,9 +19,13 @@ public:
 
 public slots:
     virtual void setLego(int);
+    virtual void pannelVisible(int);
+    virtual void isPannelUsed(void);
 
 private:
     QComboBox* _windowTypeComboBox;
+    QCheckBox* _useLeftPannel;
+    QCheckBox* _useRightPannel;
 };
 
 #endif // WINDOWDIALOG_H
