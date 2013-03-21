@@ -10,7 +10,7 @@ TileDialog::TileDialog(const TileDialog& tileDialog) :
     // Tile type
     _tileTypeComboBox = new QComboBox(this);
     QStringList tileTypeList;
-    tileTypeList << "Classic" << "Roof" << "Big Roof";
+    tileTypeList << "Classic" << "Intern Corner" << "Extern Corner" << "Roof" << "Big Roof";
     _tileTypeComboBox->addItems(tileTypeList);
     QFormLayout* tileTypeLayout = new QFormLayout;
     tileTypeLayout->addRow("Tile type:", _tileTypeComboBox);
@@ -31,19 +31,37 @@ TileDialog::TileDialog(const TileDialog& tileDialog) :
     QFormLayout* lengthLayout = new QFormLayout;
     lengthLayout->addRow("Length", _lengthSpinBox);
 
-    // Size layout
-    QHBoxLayout* sizeLayout = new QHBoxLayout;
-    sizeLayout->addLayout(widthLayout);
-    sizeLayout->addLayout(lengthLayout);
+    // Width length layout
+    QHBoxLayout* widthLengthLayout = new QHBoxLayout;
+    widthLengthLayout->addLayout(widthLayout);
+    widthLengthLayout->addLayout(lengthLayout);
+
+    // Width length group box
+    _widthLengthGroupBox = new QGroupBox(this);
+    _widthLengthGroupBox->setLayout(widthLengthLayout);
+
+    // Tile size layout
+    _sizeSpinBox = new QSpinBox(this);
+    _sizeSpinBox->setRange(2, 4);
+    _sizeSpinBox->setValue(2);
+    _sizeSpinBox->setFixedWidth(50);
+    QFormLayout* sizeLayout = new QFormLayout;
+    sizeLayout->addRow("Size", _sizeSpinBox);
+
+    _sizeGroupBox = new QGroupBox(this);
+    _sizeGroupBox->setLayout(sizeLayout);
+    _sizeGroupBox->setVisible(false);
 
     // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(tileTypeLayout);
-    mainLayout->addLayout(sizeLayout);
+    mainLayout->addWidget(_widthLengthGroupBox);
+    mainLayout->addWidget(_sizeGroupBox);
 
     // Connections
     connect(_widthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLego(int)));
     connect(_lengthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLego(int)));
+    connect(_sizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLego(int)));
     connect(_tileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setLego(int)));
     connect(_tileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMaxWidth(int)));
 
@@ -57,9 +75,14 @@ void TileDialog::reInitComboBox(void) {
 void TileDialog::setLego(int) {
     if (Tile* tile = dynamic_cast<Tile*>(_lego)) {
         if (TileNode* tileNode = dynamic_cast<TileNode*>(_legoNode)) {
-            tile->setWidth(_widthSpinBox->text().toInt());
-            tile->setLength(_lengthSpinBox->text().toInt());
             tile->setTileType(_tileTypeComboBox->currentIndex());
+            if (tile->getTileType() == Tile::cornerInt || tile->getTileType() == Tile::cornerExt) {
+                tile->setWidth(_sizeSpinBox->text().toInt());
+                tile->setLength(_sizeSpinBox->text().toInt());
+            } else {
+                tile->setWidth(_widthSpinBox->text().toInt());
+                tile->setLength(_lengthSpinBox->text().toInt());
+            }
 
             tileNode->createGeode();
 
@@ -73,10 +96,17 @@ void TileDialog::setLego(int) {
 }
 
 void TileDialog::updateMaxWidth(int tileType) {
-    if (tileType == Tile::classic) {
-        _widthSpinBox->setRange(1, 4);
+    if (tileType == Tile::cornerInt || tileType == Tile::cornerExt) {
+        _widthLengthGroupBox->setVisible(false);
+        _sizeGroupBox->setVisible(true);
     } else {
-        _widthSpinBox->setRange(2, 2);
+        _widthLengthGroupBox->setVisible(true);
+        _sizeGroupBox->setVisible(false);
+        if (tileType == Tile::classic) {
+            _widthSpinBox->setRange(1, 4);
+        } else {
+            _widthSpinBox->setRange(2, 2);
+        }
     }
 }
 

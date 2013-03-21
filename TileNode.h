@@ -14,6 +14,8 @@ public:
     virtual void createGeode(void);
     osg::ref_ptr<osg::Drawable> createTinyClassic(void) const;
     osg::ref_ptr<osg::Drawable> createClassic(void) const;
+    osg::ref_ptr<osg::Drawable> createCornerInt(void) const;
+    osg::ref_ptr<osg::Drawable> createCornerExt(void) const;
     osg::ref_ptr<osg::Drawable> createRoof(void) const;
 
     virtual TileNode* cloning(void) const;

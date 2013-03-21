@@ -65,6 +65,27 @@ void TileNode::createGeode(void) {
             geode->addDrawable(createTinyClassic());
         }
         break;
+    case Tile::cornerInt:
+        geode->addDrawable(createCornerInt());
+        // Add right plots
+        for (int k = 0; k < length-1; k++) {
+            double radiusX = -xmin;
+            double radiusY = ymin + k*distPlot;
+            geode->addDrawable(createPlot(radiusX, radiusY, height));
+        }
+        // Add back plots
+        for (int k = 0; k < width-1; k++) {
+            double radiusX = xmin + k*distPlot;
+            double radiusY = -ymin;
+            geode->addDrawable(createPlot(radiusX, radiusY, height));
+        }
+        // Add corner plot
+        geode->addDrawable(createPlot((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        break;
+    case Tile::cornerExt:
+        geode->addDrawable(createCornerExt());
+        geode->addDrawable(createPlot((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        break;
     case Tile::roof:
         geode->addDrawable(createRoof());
         break;
@@ -365,9 +386,9 @@ osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(0, 0, 1));
     normals->push_back(osg::Vec3(0, 0, 1));
-    double norm = std::sqrt((width-1)*(width-1) + height*height);
-    normals->push_back(osg::Vec3((width-1)/norm, 0, height/norm));
-    normals->push_back(osg::Vec3((width-1)/norm, 0, height/norm));
+    double norm = std::sqrt((width-1)*(width-1) + (height-0.5)*(height-0.5));
+    normals->push_back(osg::Vec3((width-1)/norm, 0, (height-0.5)/norm));
+    normals->push_back(osg::Vec3((width-1)/norm, 0, (height-0.5)/norm));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
@@ -383,8 +404,379 @@ osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     tileGeometry->setNormalArray(normals);
     tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Define tile 18 GL_TRIANGLES with 20*3 vertices
+    // Define tile 18 GL_TRIANGLES with 18*3 vertices
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 18*3));
+
+    // Return the tile whithout plot
+    return tileGeometry.get();
+}
+
+osg::ref_ptr<osg::Drawable> TileNode::createCornerInt(void) const {
+    // Get the tile
+    Tile* tile = static_cast<Tile*>(_lego);
+
+    // Get tile color
+    QColor color = tile->getColor();
+
+    // Get integer sizes
+    int width = tile->getWidth();
+    int length = tile->getLength();
+    int height = 3;
+
+    // Get real position, according to tile size
+    double pw = (-width)*Lego::length_unit/2;
+    double mwp = (width-2)*Lego::length_unit/2;
+    double mw = (width)*Lego::length_unit/2;
+    double ml = (-length)*Lego::length_unit/2;
+    double pl = (length)*Lego::length_unit/2;
+    double plm = (length-2)*Lego::length_unit/2;
+    double mh = (-height)*Lego::height_unit/2;
+    double mhp = (-height+1)*Lego::height_unit/2;
+    double ph = (height)*Lego::height_unit/2;
+
+    // Create 14 vertices
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    osg::Vec3 v0(ml, mw, mh);
+    osg::Vec3 v1(pl, mw, mh);
+    osg::Vec3 v2(pl, pw, mh);
+    osg::Vec3 v3(ml, pw, mh);
+    osg::Vec3 v4(ml, pw, mhp);
+    osg::Vec3 v5(ml, mwp, ph);
+    osg::Vec3 v6(ml, mw, ph);
+    osg::Vec3 v7(pl, mw, ph);
+    osg::Vec3 v8(plm, mwp, ph);
+    osg::Vec3 v9(plm, pw, ph);
+    osg::Vec3 v10(pl, pw, ph);
+    osg::Vec3 v11(plm, pw, mhp);
+    osg::Vec3 v12(ml, mwp, mhp);
+
+    // Create 20 faces, 8 faces are quads splitted in two triangles
+    // NB: Down face is transparent, we don't even create it
+
+    // Front face t1
+    vertices->push_back(v3);
+    vertices->push_back(v4);
+    vertices->push_back(v11);
+    // Front face t2
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+    vertices->push_back(v11);
+    // Front face t3
+    vertices->push_back(v2);
+    vertices->push_back(v10);
+    vertices->push_back(v11);
+    // Front face t4
+    vertices->push_back(v9);
+    vertices->push_back(v10);
+    vertices->push_back(v11);
+    // Front face t5
+    vertices->push_back(v4);
+    vertices->push_back(v11);
+    vertices->push_back(v9);
+
+    // Back face t1
+    vertices->push_back(v7);
+    vertices->push_back(v6);
+    vertices->push_back(v1);
+    // Back face t2
+    vertices->push_back(v6);
+    vertices->push_back(v1);
+    vertices->push_back(v0);
+
+    // Top face t1
+    vertices->push_back(v5);
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+    // Top face t2
+    vertices->push_back(v5);
+    vertices->push_back(v8);
+    vertices->push_back(v7);
+    // Top face t3
+    vertices->push_back(v7);
+    vertices->push_back(v8);
+    vertices->push_back(v9);
+    // Top face t4
+    vertices->push_back(v7);
+    vertices->push_back(v10);
+    vertices->push_back(v9);
+
+    // Slop face t1
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+    vertices->push_back(v8);
+    // Slop face t2
+    vertices->push_back(v4);
+    vertices->push_back(v9);
+    vertices->push_back(v8);
+
+    // Right face t1
+    vertices->push_back(v1);
+    vertices->push_back(v10);
+    vertices->push_back(v2);
+    // Right face t2
+    vertices->push_back(v1);
+    vertices->push_back(v10);
+    vertices->push_back(v7);
+
+    // Left t1
+    vertices->push_back(v0);
+    vertices->push_back(v12);
+    vertices->push_back(v6);
+    // Left t2
+    vertices->push_back(v5);
+    vertices->push_back(v12);
+    vertices->push_back(v6);
+    // Left t3
+    vertices->push_back(v0);
+    vertices->push_back(v12);
+    vertices->push_back(v3);
+    // Left t4
+    vertices->push_back(v12);
+    vertices->push_back(v4);
+    vertices->push_back(v3);
+    // Left t5
+    vertices->push_back(v12);
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+
+    // Create tile geometry
+    osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
+
+    // Match vertices
+    tileGeometry->setVertexArray(vertices);
+
+    // Add color (each rectangle has the same color except for the down one which is transparent)
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
+
+    // Match color
+    tileGeometry->setColorArray(colors);
+    tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    double normL = std::sqrt((length-1)*(length-1) + (height-0.5)*(height-0.5));
+    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
+    double normW = std::sqrt((width-1)*(width-1) + (height-0.5)*(height-0.5));
+    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+
+    // Match normals
+    tileGeometry->setNormalArray(normals);
+    tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define tile 20 GL_TRIANGLES with 20*3 vertices
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 20*3));
+
+    // Return the tile whithout plot
+    return tileGeometry.get();
+}
+
+osg::ref_ptr<osg::Drawable> TileNode::createCornerExt(void) const {
+    // Get the tile
+    Tile* tile = static_cast<Tile*>(_lego);
+
+    // Get tile color
+    QColor color = tile->getColor();
+
+    // Get integer sizes
+    int width = tile->getWidth();
+    int length = tile->getLength();
+    int height = 3;
+
+    // Get real position, according to tile size
+    double pw = (-width)*Lego::length_unit/2;
+    double mwp = (width-2)*Lego::length_unit/2;
+    double mw = (width)*Lego::length_unit/2;
+    double ml = (-length)*Lego::length_unit/2;
+    double pl = (length)*Lego::length_unit/2;
+    double plm = (length-2)*Lego::length_unit/2;
+    double mh = (-height)*Lego::height_unit/2;
+    double mhp = (-height+1)*Lego::height_unit/2;
+    double ph = (height)*Lego::height_unit/2;
+
+    // Create 14 vertices
+    osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+    osg::Vec3 v0(ml, mw, mh);
+    osg::Vec3 v1(pl, mw, mh);
+    osg::Vec3 v2(pl, pw, mh);
+    osg::Vec3 v3(ml, pw, mh);
+    osg::Vec3 v4(ml, pw, mhp);
+    osg::Vec3 v5(ml, mw, mhp);
+    osg::Vec3 v6(plm, mw, ph);
+    osg::Vec3 v7(plm, mwp, ph);
+    osg::Vec3 v8(pl, mw, ph);
+    osg::Vec3 v9(pl, mwp, ph);
+    osg::Vec3 v10(pl, pw, mhp);
+    osg::Vec3 v11(plm, pw, mhp);
+    osg::Vec3 v12(ml, mwp, mhp);
+    osg::Vec3 v13(plm, mw, mhp);
+    osg::Vec3 v14(pl, mwp, mhp);
+
+    // Create 20 faces, 8 faces are quads splitted in two triangles
+    // NB: Down face is transparent, we don't even create it
+
+    // Front face t1
+    vertices->push_back(v3);
+    vertices->push_back(v4);
+    vertices->push_back(v10);
+    // Front face t2
+    vertices->push_back(v2);
+    vertices->push_back(v3);
+    vertices->push_back(v10);
+    // Front face t3
+    vertices->push_back(v9);
+    vertices->push_back(v7);
+    vertices->push_back(v11);
+    // Front face t4
+    vertices->push_back(v9);
+    vertices->push_back(v10);
+    vertices->push_back(v11);
+    // Front face t5 (real triangle)
+    vertices->push_back(v4);
+    vertices->push_back(v11);
+    vertices->push_back(v7);
+
+    // Back face t1
+    vertices->push_back(v0);
+    vertices->push_back(v1);
+    vertices->push_back(v5);
+    // Back face t2
+    vertices->push_back(v5);
+    vertices->push_back(v13);
+    vertices->push_back(v1);
+    // Back face t3
+    vertices->push_back(v6);
+    vertices->push_back(v13);
+    vertices->push_back(v1);
+    // Back face t4
+    vertices->push_back(v8);
+    vertices->push_back(v6);
+    vertices->push_back(v1);
+    // Back face t5 (real triangle)
+    vertices->push_back(v5);
+    vertices->push_back(v13);
+    vertices->push_back(v6);
+
+    // Top face t1
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+    vertices->push_back(v8);
+    // Top face t2
+    vertices->push_back(v7);
+    vertices->push_back(v8);
+    vertices->push_back(v9);
+
+    // Right face t1
+    vertices->push_back(v1);
+    vertices->push_back(v8);
+    vertices->push_back(v9);
+    // Right face t2
+    vertices->push_back(v1);
+    vertices->push_back(v9);
+    vertices->push_back(v14);
+    // Right face t3
+    vertices->push_back(v1);
+    vertices->push_back(v14);
+    vertices->push_back(v10);
+    // Right face t4
+    vertices->push_back(v1);
+    vertices->push_back(v10);
+    vertices->push_back(v2);
+    // Right face t5 (real triangle)
+    vertices->push_back(v9);
+    vertices->push_back(v10);
+    vertices->push_back(v14);
+
+    // Left t1
+    vertices->push_back(v0);
+    vertices->push_back(v3);
+    vertices->push_back(v5);
+    // Left t2
+    vertices->push_back(v3);
+    vertices->push_back(v4);
+    vertices->push_back(v5);
+    // Left t3
+    vertices->push_back(v5);
+    vertices->push_back(v6);
+    vertices->push_back(v12);
+    // Left t4
+    vertices->push_back(v6);
+    vertices->push_back(v7);
+    vertices->push_back(v12);
+    // Left t5 (real triangle)
+    vertices->push_back(v12);
+    vertices->push_back(v4);
+    vertices->push_back(v7);
+
+    // Create tile geometry
+    osg::ref_ptr<osg::Geometry> tileGeometry = new osg::Geometry;
+
+    // Match vertices
+    tileGeometry->setVertexArray(vertices);
+
+    // Add color (each rectangle has the same color except for the down one which is transparent)
+    osg::Vec4 osgColor(static_cast<float>(color.red())/255.0, static_cast<float>(color.green())/255.0, static_cast<float>(color.blue())/255.0, 1.0);
+    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+    // Every face has the same color, so there is only one color
+    colors->push_back(osgColor);
+
+    // Match color
+    tileGeometry->setColorArray(colors);
+    tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+    // Create normals
+    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, -1, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
+    double normL = std::sqrt((length-1)*(length-1) + (height-0.5)*(height-0.5));
+    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
+    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
+    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(0, 0, 1));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    double normW = std::sqrt((width-1)*(width-1) + (height-0.5)*(height-0.5));
+    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
+    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
+    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
+
+    // Match normals
+    tileGeometry->setNormalArray(normals);
+    tileGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+    // Define tile 22 GL_TRIANGLES with 22*3 vertices
+    tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 22*3));
 
     // Return the tile whithout plot
     return tileGeometry.get();

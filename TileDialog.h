@@ -27,7 +27,10 @@ public slots:
 private:
     QSpinBox* _widthSpinBox;
     QSpinBox* _lengthSpinBox;
+    QSpinBox* _sizeSpinBox;
     QComboBox* _tileTypeComboBox;
+    QGroupBox* _widthLengthGroupBox;
+    QGroupBox* _sizeGroupBox;
 
 };
 

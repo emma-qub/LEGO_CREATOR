@@ -24,20 +24,43 @@ void Tile::setTileType(int index) {
     case 0 :
         _tileType = classic;
         break;
-    case 1 :
-        _tileType = roof;
+    case 1:
+        _tileType = cornerInt;
         break;
     case 2:
+        _tileType = cornerExt;
+        break;
+    case 3 :
+        _tileType = roof;
+        break;
+    case 4:
         _tileType = bigRoof;
+        break;
     }
 }
 
 void Tile::calculateBoundingBox(void) {
     // According to roof type, height is different
-    if (_tileType == roof || (_tileType == classic && _width == 1 && _length == 1))
-        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 2);
-    else
+    switch (_tileType) {
+    case classic:
         _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+        break;
+    case cornerInt:
+        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+        break;
+    case cornerExt:
+        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+        break;
+    case roof:
+        if (_tileType == classic && _width == 1)
+            _boundingBox = BoundingBox(0, 0, 0, _width, _length, 2);
+        else
+            _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+        break;
+    case bigRoof:
+        _boundingBox = BoundingBox(0, 0, 0, _width, _length, 3);
+        break;
+    }
 }
 
 Tile* Tile::cloning(void) const {
