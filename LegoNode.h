@@ -21,7 +21,6 @@ public:
     osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY, int height) const;
     osg::ref_ptr<osg::Drawable> createCylinder(double radiusX, double radiusY, double height, bool thin, double center = 0) const;
 
-    //virtual LegoNode* cloning(void) const = 0;
     virtual LegoNode* cloning(void) const { return new LegoNode(*this); }
 
 protected:

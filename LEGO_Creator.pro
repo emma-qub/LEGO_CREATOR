@@ -57,7 +57,11 @@ SOURCES += \
     ConeDialog.cpp \
     Edge.cpp \
     EdgeNode.cpp \
-    EdgeDialog.cpp
+    EdgeDialog.cpp \
+    ClampNode.cpp \
+    ClampDialog.cpp \
+    Clamp.cpp \
+    SkyBox.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -117,7 +121,11 @@ HEADERS += \
     ConeDialog.h \
     Edge.h \
     EdgeNode.h \
-    EdgeDialog.h
+    EdgeDialog.h \
+    ClampNode.h \
+    ClampDialog.h \
+    Clamp.h \
+    SkyBox.h
 
 LIBS += \
     -L$OSG/lib \

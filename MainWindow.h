@@ -35,6 +35,7 @@ public:
     void createScene(void);
 
     void initTraffic(void);
+    void addSkyBox(void);
     void removeTraffic(void);
     void createLight(void);
     void removeLight(void);

@@ -26,11 +26,14 @@
 #include "EdgeDialog.h"
 
 #include "Traffic.h"
+#include "SkyBox.h"
 
 #include <QSettings>
 
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
+#include <osg/TexGen>
+
 
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -88,6 +91,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Init Traffic from world scene
     initTraffic();
+
+    // Add skybox
+    addSkyBox();
 
     // Set tabs mode
     setCentralWidget(_sceneFrame);
@@ -545,6 +551,43 @@ void MainWindow::initTraffic(void) {
 
     // Add traffic root to the scene
     _world.getScene()->addChild(_traffic->getRoot());
+}
+
+void MainWindow::addSkyBox(void) {
+    // Create sphere
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(), _world.getScene()->getBound().radius())));
+    geode->setCullingActive(false);
+
+    // Create Skybox
+    osg::ref_ptr<SkyBox> sb = new SkyBox;
+
+    // Modify state set
+    sb->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::TexGen);
+
+    // Create 6 same images to map the cube
+    osg::ref_ptr<osg::Image> img = osgDB::readImageFile("../LEGO_CREATOR/IMG/logoLego.png");
+    // Create right image
+    osg::ref_ptr<osg::Image> right = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/right.png");
+    // Create left image
+    osg::ref_ptr<osg::Image> left = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/left.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> front = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/front.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> back = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/back.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> top = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/top.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> bottom = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/bottom.png");
+
+    // Map 6 cube faces
+    sb->setEnvironmentMap(0, right.get(), left.get(), front.get(), back.get(), top.get(), bottom.get());
+
+    // Add sphere to the sky box
+    sb->addChild(geode.get());
+
+    // Add sky box to the scene
+    _world.getScene()->addChild(sb.get());
 }
 
 void MainWindow::removeTraffic(void) {
