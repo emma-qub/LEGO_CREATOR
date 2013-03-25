@@ -218,8 +218,11 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
-    normals->push_back(osg::Vec3(1/std::sqrt(2), 0, 1/std::sqrt(2)));
-    normals->push_back(osg::Vec3(1/std::sqrt(2), 0, 1/std::sqrt(2)));
+    double w = pw - mw;
+    double h = ph - mhm;
+    double norm = std::sqrt(w*w + h*h);
+    normals->push_back(osg::Vec3(h/norm, 0, w/norm));
+    normals->push_back(osg::Vec3(h/norm, 0, w/norm));
     normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(0, -1, 0));
@@ -386,9 +389,11 @@ osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(0, 0, 1));
     normals->push_back(osg::Vec3(0, 0, 1));
-    double norm = std::sqrt((width-1)*(width-1) + (height-0.5)*(height-0.5));
-    normals->push_back(osg::Vec3((width-1)/norm, 0, (height-0.5)/norm));
-    normals->push_back(osg::Vec3((width-1)/norm, 0, (height-0.5)/norm));
+    double w = pw - mwp;
+    double h = ph - mhp;
+    double norm = std::sqrt(w*w + h*h);
+    normals->push_back(osg::Vec3(h/norm, 0, w/norm));
+    normals->push_back(osg::Vec3(h/norm, 0, w/norm));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
@@ -568,10 +573,13 @@ osg::ref_ptr<osg::Drawable> TileNode::createCornerInt(void) const {
     normals->push_back(osg::Vec3(0, 0, 1));
     normals->push_back(osg::Vec3(0, 0, 1));
     normals->push_back(osg::Vec3(0, 0, 1));
-    double normL = std::sqrt((length-1)*(length-1) + (height-0.5)*(height-0.5));
-    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
-    double normW = std::sqrt((width-1)*(width-1) + (height-0.5)*(height-0.5));
-    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
+    double w = mwp - pw;
+    double h = ph - mhp;
+    double l = plm - ml;
+    double normW = std::sqrt(w*w + h*h);
+    double normL = std::sqrt(l*l + h*h);
+    normals->push_back(osg::Vec3(0, -h/normL, l/normL));
+    normals->push_back(osg::Vec3(-h/normW, 0, w/normW));
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
@@ -744,14 +752,20 @@ osg::ref_ptr<osg::Drawable> TileNode::createCornerExt(void) const {
     tileGeometry->setColorArray(colors);
     tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
+    // Calculate slop normals
+    double h = ph - mhp;
+    double w = mwp - pw;
+    double l = plm - ml;
+    double normW = std::sqrt(w*w + h*h);
+    double normL = std::sqrt(l*l + h*h);
+
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
     normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(0, -1, 0));
-    double normL = std::sqrt((length-1)*(length-1) + (height-0.5)*(height-0.5));
-    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
-    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
-    normals->push_back(osg::Vec3((length-1)/normL, 0, (height-0.5)/normL));
+    normals->push_back(osg::Vec3(0, -h/normW, w/normW));
+    normals->push_back(osg::Vec3(0, -h/normW, w/normW));
+    normals->push_back(osg::Vec3(0, -h/normW, w/normW));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
@@ -766,10 +780,9 @@ osg::ref_ptr<osg::Drawable> TileNode::createCornerExt(void) const {
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
-    double normW = std::sqrt((width-1)*(width-1) + (height-0.5)*(height-0.5));
-    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
-    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
-    normals->push_back(osg::Vec3(0, (width-1)/normW, (height-0.5)/normW));
+    normals->push_back(osg::Vec3(-h/normL, 0, l/normL));
+    normals->push_back(osg::Vec3(-h/normL, 0, l/normL));
+    normals->push_back(osg::Vec3(-h/normL, 0, l/normL));
 
     // Match normals
     tileGeometry->setNormalArray(normals);
@@ -914,17 +927,21 @@ osg::ref_ptr<osg::Drawable> TileNode::createRoof(void) const {
     tileGeometry->setColorArray(colors);
     tileGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
+    // Create slop normals
+    double w = pw;
+    double h = ph - mhp;
+    double norm = std::sqrt(w*w + h*h);
+
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
     normals->push_back(osg::Vec3(1, 0, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
-    double norm = std::sqrt((width/2)*(width/2) + height*height);
-    normals->push_back(osg::Vec3(width/(2*norm), 0, height/norm));
-    normals->push_back(osg::Vec3(width/(2*norm), 0, height/norm));
+    normals->push_back(osg::Vec3(h/norm, 0, w/norm));
+    normals->push_back(osg::Vec3(h/norm, 0, w/norm));
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
-    normals->push_back(osg::Vec3(-width/(2*norm), 0, height/norm));
-    normals->push_back(osg::Vec3(-width/(2*norm), 0, height/norm));
+    normals->push_back(osg::Vec3(-h/norm, 0, w/norm));
+    normals->push_back(osg::Vec3(-h/norm, 0, w/norm));
     normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(0, -1, 0));
