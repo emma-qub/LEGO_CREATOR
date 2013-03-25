@@ -201,9 +201,11 @@ osg::ref_ptr<osg::Drawable> ReverseTileNode::createReverseTile(void) const {
     normals->push_back(osg::Vec3(-1, 0, 0));
     normals->push_back(osg::Vec3(0, 0, 1));
     normals->push_back(osg::Vec3(0, 0, 1));
-    double norm = std::sqrt((width-1)*(width-1) + height*height);
-    normals->push_back(osg::Vec3((width-1)/norm, 0, -height/norm));
-    normals->push_back(osg::Vec3((width-1)/norm, 0, -height/norm));
+    double w = pw - mwp;
+    double h = phm - mh;
+    double norm = std::sqrt(w*w + h*h);
+    normals->push_back(osg::Vec3(h/norm, 0, -w/norm));
+    normals->push_back(osg::Vec3(h/norm, 0, -w/norm));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
