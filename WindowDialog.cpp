@@ -62,8 +62,14 @@ void WindowDialog::setLego(int) {
     if (Window* window = dynamic_cast<Window*>(_lego)) {
         if (WindowNode* windowNode = dynamic_cast<WindowNode*>(_legoNode)) {
             window->setWindowType(_windowTypeComboBox->currentIndex());
-            window->setUseLeftPanel(_useLeftPannel->isChecked());
-            window->setUseRightPanel(_useRightPannel->isChecked());
+            // If window is classic, we may have to create pannels
+            if (window->getWindowType() == Window::classic) {
+                window->setUseLeftPanel(_useLeftPannel->isChecked());
+                window->setUseRightPanel(_useRightPannel->isChecked());
+            } else {
+                window->setUseLeftPanel(false);
+                window->setUseRightPanel(false);
+            }
 
             windowNode->createGeode();
 
