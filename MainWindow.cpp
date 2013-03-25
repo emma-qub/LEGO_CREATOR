@@ -24,6 +24,7 @@
 #include "GridDialog.h"
 #include "ConeDialog.h"
 #include "EdgeDialog.h"
+#include "ClampDialog.h"
 
 #include "Traffic.h"
 #include "SkyBox.h"
@@ -33,8 +34,6 @@
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
 #include <osg/TexGen>
-
-
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -188,6 +187,10 @@ MainWindow::~MainWindow() {
     LegoFactory<Grid, QString>::kill();
     LegoFactory<GridNode, QString>::kill();
     LegoFactory<GridDialog, QString>::kill();
+
+    LegoFactory<Clamp, QString>::kill();
+    LegoFactory<ClampNode, QString>::kill();
+    LegoFactory<ClampDialog, QString>::kill();
 }
 
 void MainWindow::initFactories(void) {
@@ -281,6 +284,13 @@ void MainWindow::initFactories(void) {
     LegoFactory<GridNode, QString>::instance()->registerLego(QString("GridNode"), new GridNode);
     // Register GridDialog
     LegoFactory<GridDialog, QString>::instance()->registerLego(QString("GridDialog"), new GridDialog);
+
+    // Register Clamp
+    LegoFactory<Clamp, QString>::instance()->registerLego(QString("Clamp"), new Clamp);
+    // Register ClampNode
+    LegoFactory<ClampNode, QString>::instance()->registerLego(QString("ClampNode"), new ClampNode);
+    // Register ClampDialog
+    LegoFactory<ClampDialog, QString>::instance()->registerLego(QString("ClampDialog"), new ClampDialog);
 
     // Register Character
     LegoFactory<Character, QString>::instance()->registerLego(QString("Character"), new Character);
@@ -402,6 +412,12 @@ void MainWindow::initDialogs(void) {
     else
         qDebug() << "Cannot create GridDialog in MainWindow::initDialogs";
 
+    // ClampDialog
+    if (ClampDialog* clampDialog = dynamic_cast<ClampDialog*>(LegoFactory<ClampDialog, QString>::instance()->create("ClampDialog")))
+        _legoDialog << clampDialog;
+    else
+        qDebug() << "Cannot create ClampDialog in MainWindow::initDialogs";
+
     // CharacterDialog
     if (CharacterDialog* characterDialog = dynamic_cast<CharacterDialog*>(LegoFactory<CharacterDialog, QString>::instance()->create("CharacterDialog")))
         _legoDialog << characterDialog;
@@ -435,6 +451,7 @@ void MainWindow::createParamsDock(void) {
                << "Wheel"
                << "FrontShip"
                << "Grid"
+               << "Clamp"
                << "Character";
     _shapeComboBox->addItems(brickForms);
     _shapeComboBox->setFixedWidth(150);
@@ -565,8 +582,6 @@ void MainWindow::addSkyBox(void) {
     // Modify state set
     sb->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::TexGen);
 
-    // Create 6 same images to map the cube
-    osg::ref_ptr<osg::Image> img = osgDB::readImageFile("../LEGO_CREATOR/IMG/logoLego.png");
     // Create right image
     osg::ref_ptr<osg::Image> right = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/right.png");
     // Create left image
@@ -797,8 +812,19 @@ void MainWindow::chooseDialog(int dialogIndex) {
         if (!(_currLegoNode = dynamic_cast<GridNode*>(LegoFactory<GridNode, QString>::instance()->create("GridNode"))))
             qDebug() << "Cannot cast in GridNode* within MainWindow::chooseDialog";
         break;
-    // Character dialog
+    // Clamp dialog
     case 13:
+        if ((_currLego = dynamic_cast<Clamp*>(LegoFactory<Clamp, QString>::instance()->create("Clamp")))) {
+            Clamp* lego = static_cast<Clamp*>(_currLego.get());
+            lego->setColor(_legoColor);
+        } else {
+            qDebug() << "Cannot cast in Clamp* within MainWindow::chooseDialog";
+        }
+        if (!(_currLegoNode = dynamic_cast<ClampNode*>(LegoFactory<ClampNode, QString>::instance()->create("ClampNode"))))
+            qDebug() << "Cannot cast in ClampNode* within MainWindow::chooseDialog";
+        break;
+    // Character dialog
+    case 14:
         if ((_currLego = dynamic_cast<Character*>(LegoFactory<Character, QString>::instance()->create("Character")))) {
             Character* lego = static_cast<Character*>(_currLego.get());
             lego->setColor(QColor(0, 112, 44));

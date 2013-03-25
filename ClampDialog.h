@@ -14,9 +14,8 @@ public:
     ClampDialog(const ClampDialog& clampDialog);
     
     virtual ClampDialog* cloning(void) const;
-    
-public slots:
-    virtual void setLego(int);
+
+    virtual void setLego(int) {}
     
 private:
     

@@ -13,7 +13,7 @@ Clamp::Clamp(const Clamp& clamp) :
 }
 
 void Clamp::calculateBoundingBox(void) {
-    _boundingBox = BoundingBox(0, 0, 0, 2, 3, 3);
+    _boundingBox = BoundingBox(0, 0, 0, 2, 1, 4);
 }
 
 Clamp* Clamp::cloning(void) const {
@@ -23,4 +23,3 @@ Clamp* Clamp::cloning(void) const {
 QString Clamp::whoiam(void) const {
     return "Clamp";
 }
-

@@ -596,7 +596,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createLeftPannel(void) const {
     // Define 1 GL_QUADS with 1*4 vertices, corresponding to door main quad
     pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
 
-    // Define 4 GL_QUADS with 1*4 vertices per quad, corresponding to 4 holes in door
+    // Define 4 GL_QUADS with 1*4 vertices per quad, corresponding to 2 holes in door
     pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
     pannelGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 8, 4));
 
