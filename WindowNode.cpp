@@ -323,7 +323,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     double mhm = (-height+2)*Lego::height_unit/2;
     double phm = (height-2)*Lego::height_unit/2;
 
-    double correction = Lego::height_unit/2.256;
+    double correction = Lego::height_unit;
 
     // Create 24 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -473,17 +473,27 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     windowGeometry->setColorArray(colors);
     windowGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
+    // Create slop normals
+    double h = ph - mhm;
+    double w = pw - mwm;
+    double norm = std::sqrt(w*w + h*h);
+
+//    osg::Vec3 v0(ml, pw, ph);
+//    osg::Vec3 v4(mlm, pw, ph);
+//    osg::Vec3 v7(mlm, mwm, mhm);
+//    osg::Vec3 v11(ml, mwm, mhm);
+
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
     // Front
-    normals->push_back(osg::Vec3(0, 3.0/5.0, -4.0/5.0));
-    normals->push_back(osg::Vec3(0, 3.0/5.0, -4.0/5.0));
-    normals->push_back(osg::Vec3(0, 3.0/5.0, -4.0/5.0));
+    normals->push_back(osg::Vec3(0, h/norm, -w/norm));
+    normals->push_back(osg::Vec3(0, h/norm, -w/norm));
+    normals->push_back(osg::Vec3(0, h/norm, -w/norm));
     normals->push_back(osg::Vec3(0, 1, 0));
 
     // Back
-    normals->push_back(osg::Vec3(0, -3.0/5.0, 4.0/5.0));
-    normals->push_back(osg::Vec3(0, -3.0/5.0, 4.0/5.0));
+    normals->push_back(osg::Vec3(0, -h/norm, w/norm));
+    normals->push_back(osg::Vec3(0, -h/norm, w/norm));
     normals->push_back(osg::Vec3(0, -3.0/5.0, 4.0/5.0));
     normals->push_back(osg::Vec3(0, -1, 0));
 
