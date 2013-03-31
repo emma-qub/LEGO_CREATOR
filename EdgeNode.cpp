@@ -58,7 +58,7 @@ void EdgeNode::createGeode(void) {
             double radiusX = xminb + i*distPlot;
             double radiusY = yminb + j*distPlot;
 
-            geode->addDrawable(createCylinder(radiusX, radiusY, 0.5, true, (-height+0.5)*Lego::height_unit/2));
+            addChild(createBottomCylinder(radiusX, radiusY, 0.5, true, (-height+0.5)*Lego::height_unit/2));
         }
     }
 }

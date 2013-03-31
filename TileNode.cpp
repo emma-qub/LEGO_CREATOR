@@ -59,8 +59,8 @@ void TileNode::createGeode(void) {
             for (int j = 0; j < length; j++) {
                 double radiusX = xmin;
                 double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-                geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+                addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+                //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
             }
         } else {
             geode->addDrawable(createTinyClassic());
@@ -72,24 +72,24 @@ void TileNode::createGeode(void) {
         for (int k = 0; k < length-1; k++) {
             double radiusX = -xmin;
             double radiusY = ymin + k*distPlot;
-            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+            addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+            //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
         // Add back plots
         for (int k = 0; k < width-1; k++) {
             double radiusX = xmin + k*distPlot;
             double radiusY = -ymin;
-            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+            addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+            //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
         // Add corner plot
-        geode->addDrawable(createPlotCylinder((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
-        geode->addDrawable(createPlotTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        addChild(createPlotCylinderAndTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        //geode->addDrawable(createPlotTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
         break;
     case Tile::cornerExt:
         geode->addDrawable(createCornerExt());
-        geode->addDrawable(createPlotCylinder((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
-        geode->addDrawable(createPlotTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        addChild(createPlotCylinderAndTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        //geode->addDrawable(createPlotTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
         break;
     case Tile::roof:
         geode->addDrawable(createRoof());
@@ -106,7 +106,7 @@ void TileNode::createGeode(void) {
         for (int j = 0; j < length-1; j++) {
             double radiusX = xminb + i*distPlot;
             double radiusY = yminb + j*distPlot;
-            geode->addDrawable(createCylinder(radiusX, radiusY, 0.5, false, (-height+0.5)*Lego::height_unit/2));
+            addChild(createBottomCylinder(radiusX, radiusY, 0.5, false, (-height+0.5)*Lego::height_unit/2));
         }
     }
 }

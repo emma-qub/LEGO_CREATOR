@@ -2,6 +2,7 @@
 
 #include <osg/Geometry>
 #include <osg/Material>
+#include <osgUtil/Tessellator>
 
 BrickNode::BrickNode() :
     LegoNode() {
@@ -63,8 +64,8 @@ void BrickNode::createGeode(void) {
             for (int j = 0; j < width; j++) {
                 double radiusX = xmin + i*distPlot;
                 double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-                geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+                addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+                //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
             }
         }
     }
@@ -79,7 +80,7 @@ void BrickNode::createGeode(void) {
         for (int j = 0; j < width-1; j++) {
             double radiusX = xminb + i*distPlot;
             double radiusY = yminb + j*distPlot;
-            geode->addDrawable(createCylinder(radiusX, radiusY, height, thin));
+            addChild(createBottomCylinder(radiusX, radiusY, height, thin));
         }
     }
 }
@@ -109,6 +110,12 @@ osg::Drawable *BrickNode::createBrick(void) const {
     double r = length*Lego::length_unit/2;
     double f = -width*Lego::length_unit/2;
     double b = width*Lego::length_unit/2;
+    double mwpm = (-width)*Lego::length_unit/2+Lego::height_unit/2;
+    double pwm = (width)*Lego::length_unit/2-Lego::height_unit/2;
+    double mlp = (-length+0.5)*Lego::length_unit/2;
+    double plm = (length-0.5)*Lego::length_unit/2;
+    double mh = (-height)*Lego::height_unit/2;
+    double mhpm = (height)*Lego::height_unit/2-Lego::plot_top_height;
 
     // Create 8 vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
@@ -120,9 +127,33 @@ osg::Drawable *BrickNode::createBrick(void) const {
     osg::Vec3 rbd(r, b, d);
     osg::Vec3 rbu(r, b, u);
     osg::Vec3 lbu(l, b, u);
+    osg::Vec3 v20(mlp, mwpm, mh);
+    osg::Vec3 v21(plm, mwpm, mh);
+    osg::Vec3 v22(plm, pwm, mh);
+    osg::Vec3 v23(mlp, pwm, mh);
+    osg::Vec3 v24(mlp, mwpm, mhpm);
+    osg::Vec3 v25(plm, mwpm, mhpm);
+    osg::Vec3 v26(plm, pwm, mhpm);
+    osg::Vec3 v27(mlp, pwm, mhpm);
 
     // Create faces
     // NB: Down face is transparent, we don't even create it
+
+    // Bottom
+    vertices->push_back(lfd);
+    vertices->push_back(rfd);
+    vertices->push_back(rbd);
+    vertices->push_back(lbd);
+    // Bottom hole
+    vertices->push_back(v20);
+    vertices->push_back(v21);
+    vertices->push_back(v22);
+    vertices->push_back(v23);
+    // Bottom far
+    vertices->push_back(v24);
+    vertices->push_back(v25);
+    vertices->push_back(v26);
+    vertices->push_back(v27);
 
     // Up face
     vertices->push_back(rfu);
@@ -154,6 +185,30 @@ osg::Drawable *BrickNode::createBrick(void) const {
     vertices->push_back(rbu);
     vertices->push_back(rbd);
 
+    // Bottom front
+    vertices->push_back(v20);
+    vertices->push_back(v21);
+    vertices->push_back(v25);
+    vertices->push_back(v24);
+
+    // Bottom right
+    vertices->push_back(v21);
+    vertices->push_back(v22);
+    vertices->push_back(v26);
+    vertices->push_back(v25);
+
+    // Bottom back
+    vertices->push_back(v22);
+    vertices->push_back(v23);
+    vertices->push_back(v27);
+    vertices->push_back(v26);
+
+    // Bottom left
+    vertices->push_back(v23);
+    vertices->push_back(v20);
+    vertices->push_back(v24);
+    vertices->push_back(v27);
+
     // Create brick geometry
     osg::ref_ptr<osg::Geometry> brickGeometry = new osg::Geometry;
 
@@ -172,18 +227,36 @@ osg::Drawable *BrickNode::createBrick(void) const {
 
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+    normals->push_back(osg::Vec3(0, 0, -1));
+    normals->push_back(osg::Vec3(0, 0, -1));
     normals->push_back(osg::Vec3(0, 0, 1));
     normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(0, 1, 0));
     normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(1, 0, 0));
+    normals->push_back(osg::Vec3(0, 1, 0));
+    normals->push_back(osg::Vec3(-1, 0, 0));
+    normals->push_back(osg::Vec3(0, -1, 0));
     normals->push_back(osg::Vec3(1, 0, 0));
 
     // Match normals
     brickGeometry->setNormalArray(normals);
     brickGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-    // Create 5 GL_QUADS, i.e. 5*4 vertices
-    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 5*4));
+    // Define 1 GL_QUADS with 1*4 vertices, corresponding to bottom part
+    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0*4, 4));
+
+    // Define 1 GL_QUADS with 1*4 vertices, corresponding to 1 hole in bottom part
+    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 1*4, 4));
+
+    // Retesslate to create hole
+    osgUtil::Tessellator tesslator;
+    tesslator.setTessellationType(osgUtil::Tessellator::TESS_TYPE_GEOMETRY);
+    tesslator.setWindingType(osgUtil::Tessellator::TESS_WINDING_ODD);
+    tesslator.retessellatePolygons(*brickGeometry);
+
+    // Create 9 GL_QUADS, i.e. 9*4 vertices
+    brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 2*4, 9*4));
 
     // return brick geometry
     return brickGeometry.release();

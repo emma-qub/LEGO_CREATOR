@@ -52,8 +52,8 @@ void DoorNode::createGeode(void) {
         for (int j = 0; j < width; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+            addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+            //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 
@@ -62,7 +62,7 @@ void DoorNode::createGeode(void) {
     for (int i = 0; i < length-1; i++) {
         double radiusX = xminb + i*distPlot;
         double radiusY = ymin;
-        geode->addDrawable(createCylinder(radiusX, radiusY, 0.5, true, (-height+0.5)*Lego::height_unit/2));
+        addChild(createBottomCylinder(radiusX, radiusY, 0.5, true, (-height+0.5)*Lego::height_unit/2));
     }
 }
 

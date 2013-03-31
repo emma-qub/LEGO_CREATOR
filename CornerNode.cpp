@@ -33,16 +33,16 @@ void CornerNode::createGeode(void) {
     int height = corner->calculateHeight();
 
     // Create plots
-    geode->addDrawable(createPlotCylinder(Lego::length_unit/2, Lego::length_unit/2, height));
-    geode->addDrawable(createPlotTop(Lego::length_unit/2, Lego::length_unit/2, height));
-    geode->addDrawable(createPlotCylinder(Lego::length_unit/2, -Lego::length_unit/2, height));
-    geode->addDrawable(createPlotTop(Lego::length_unit/2, -Lego::length_unit/2, height));
-    geode->addDrawable(createPlotCylinder(-Lego::length_unit/2, -Lego::length_unit/2, height));
-    geode->addDrawable(createPlotTop(-Lego::length_unit/2, -Lego::length_unit/2, height));
+    addChild(createPlotCylinderAndTop(Lego::length_unit/2, Lego::length_unit/2, height));
+    //geode->addDrawable(createPlotTop(Lego::length_unit/2, Lego::length_unit/2, height));
+    addChild(createPlotCylinderAndTop(Lego::length_unit/2, -Lego::length_unit/2, height));
+    //geode->addDrawable(createPlotTop(Lego::length_unit/2, -Lego::length_unit/2, height));
+    addChild(createPlotCylinderAndTop(-Lego::length_unit/2, -Lego::length_unit/2, height));
+    //geode->addDrawable(createPlotTop(-Lego::length_unit/2, -Lego::length_unit/2, height));
 
     // Create bottom cylinders
-    geode->addDrawable(createCylinder(Lego::length_unit/2, 0, height, true));
-    geode->addDrawable(createCylinder(0, -Lego::length_unit/2, height, true));
+    addChild(createBottomCylinder(Lego::length_unit/2, 0, height, true));
+    addChild(createBottomCylinder(0, -Lego::length_unit/2, height, true));
 }
 
 osg::Drawable *CornerNode::createCorner() const {

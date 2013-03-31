@@ -46,14 +46,14 @@ void FrontShipNode::createGeode(void) {
         for (int i = 1; i < 3; i++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+            addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+            //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 
     double radiusX = (width-4)*Lego::length_unit/2;
     double radiusY = (length-4)*Lego::length_unit/2;
-    geode->addDrawable(createCylinder(radiusX, radiusY, 0.5, false, (-height+0.5)*Lego::height_unit/2));
+    addChild(createBottomCylinder(radiusX, radiusY, 0.5, false, (-height+0.5)*Lego::height_unit/2));
 }
 
 

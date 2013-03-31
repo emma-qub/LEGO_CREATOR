@@ -50,13 +50,13 @@ void WheelNode::createGeode(void) {
         for (int j = 0; j < 2; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
-            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
+            addChild(createPlotCylinderAndTop(radiusX, radiusY, height));
+            //geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 
     // Add bottom cylinder
-    geode->addDrawable(createCylinder(0, 0, height, false));
+    addChild(createBottomCylinder(0, 0, height, false));
 }
 
 void WheelNode::createWheel(bool isLeftWheel) {

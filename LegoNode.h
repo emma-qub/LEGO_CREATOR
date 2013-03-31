@@ -27,11 +27,13 @@ public:
                                          int numberSegments = 20) const;
     osg::Drawable* makeCylinder(double x, double y, double z,
                                              double height, double radius,
+                                             bool isInt = false,
                                              int numberSegments = 20) const;
 
     osg::Drawable* createPlotCylinder(double radiusX, double radiusY, int height) const;
     osg::Drawable* createPlotTop(double radiusX, double radiusY, int height) const;
-    osg::Drawable* createCylinder(double radiusX, double radiusY, double height, bool thin, double center = 0) const;
+    osg::Geode* createPlotCylinderAndTop(double radiusX, double radiusY, int height) const;
+    osg::Geode* createBottomCylinder(double radiusX, double radiusY, double height, bool thin, double center = 0) const;
 
     virtual LegoNode* cloning(void) const { return new LegoNode(*this); }
 

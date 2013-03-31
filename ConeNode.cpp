@@ -51,11 +51,11 @@ void ConeNode::createGeode(void) {
                                            50));
 
     // Add plot
-    geode->addDrawable(createPlotCylinder(0, 0, height));
-    geode->addDrawable(createPlotTop(0, 0, height));
+    addChild(createPlotCylinderAndTop(0, 0, height));
+    ////geode->addDrawable(createPlotTop(0, 0, height));
 
     // Add bottom cylinder
-    geode->addDrawable(createCylinder(0, 0, 0.5, false, (-height+0.5)*Lego::height_unit/2));
+    addChild(createBottomCylinder(0, 0, 0.5, false, (-height+0.5)*Lego::height_unit/2));
 
     // Add bottom cache
     osg::ref_ptr<osg::ShapeDrawable> cache = new osg::ShapeDrawable(
