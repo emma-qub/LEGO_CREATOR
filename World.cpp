@@ -4,8 +4,11 @@
 #include <QSettings>
 
 #include "LegoFactory.h"
+#include "SkyBox.h"
 
-#include <osgUtil/Optimizer>
+#include <osgDB/WriteFile>
+#include <osgDB/ReadFile>
+#include <osg/TexGen>
 
 int World::minHeight = 0;
 int World::maxHeight = 100;
@@ -19,22 +22,26 @@ World::World() {
     // Initialize matrix transform indexes
     _matTransIndexes = QVector<unsigned int>(0);
 
-    // Create scene
+    // Create scenes
     _scene = new osg::Group;
+    _decorScene = new osg::Group;
+    _scene->addChild(_decorScene.get());
+    _constructionScene = new osg::Group;
+    _scene->addChild(_constructionScene.get());
+
+    // Create current matrix transform
     _currMatrixTransform = new osg::MatrixTransform;
 
-    // Add guide lines
+    // Add decor elements
     createGuideLines();
-
-    // Optimizer
-    osgUtil::Optimizer optimizer;
-    optimizer.optimize(_scene);
+    createLight(0, osg::Vec3(400.0, 400.0, 400.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    createSkybox();
 }
 
 World::~World(void) {
 }
 
-void World::createGuideLines() {
+void World::createGuideLines(void) {
     // Get width and length defined within settings
     QSettings settings(QSettings::UserScope, "Perso", "Lego Creator");
 
@@ -120,20 +127,127 @@ void World::createGuideLines() {
             }
         }
 
-        // Give a name
+        // Give a name to guide lines node, in order to being able to remove it
         line->setName("GuideLines");
 
         // Add line to scene
-        _scene->addChild(line);
+        _decorScene->addChild(line);
     }
 }
 
 void World::removeGuideLines(void) {
-    for (unsigned int k = 0; k < _scene->getNumChildren(); k++) {
+    for (unsigned int k = 0; k < _decorScene->getNumChildren(); k++) {
         // If child is the previous guide lines, we remove it
-        if (_scene->getChild(k)->getName() == "GuideLines")
-            _scene->removeChild(k);
+        if (_decorScene->getChild(k)->getName() == "GuideLines")
+            _decorScene->removeChild(k);
     }
+}
+
+void World::createLight(unsigned int num, const osg::Vec3& trans, const osg::Vec4& color) {
+    // Remove previous light
+    removeLight();
+
+    // Create a ligth
+    osg::ref_ptr<osg::Light> light = new osg::Light;
+    // Assign a number
+    light->setLightNum(num);
+    // Assign color
+    light->setDiffuse(color);
+    // Put light at inifinite
+    light->setPosition(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    // Set constant attenuation to get good light rendering
+    light->setConstantAttenuation(0.75f);
+
+    // Create light source
+    osg::ref_ptr<osg::LightSource> ligthSource = new osg::LightSource;
+    // Assign light
+    ligthSource->setLight(light);
+    // Create matrix transfomr to move light
+    osg::ref_ptr<osg::MatrixTransform> sourceTrans = new osg::MatrixTransform;
+    // Move light to trans users values
+    sourceTrans->setMatrix(osg::Matrix::translate(trans));
+    // Add light to matrix transform
+    sourceTrans->addChild(ligthSource.get());
+
+    // Give a name to light matrix node, in order to being able to remove it
+    sourceTrans->setName("LightMatrix");
+
+    // Set mode
+    _decorScene->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
+
+    // Add matrix transform to scene decor
+    _decorScene->addChild(sourceTrans);
+}
+
+void World::removeLight(void) {
+    // Search light matrix and remove it
+    for (unsigned int k = 0; k < _decorScene->getNumChildren(); k++) {
+        if (_decorScene->getChild(k)->getName() == "LightMatrix") {
+            _decorScene->removeChild(k);
+            return;
+        }
+    }
+}
+
+void World::createSkybox(void) {
+    // Remove previous skybox
+    removeSkybox();
+
+    // Create sphere
+    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(), _decorScene->getBound().radius())));
+    geode->setCullingActive(false);
+
+    // Create Skybox
+    osg::ref_ptr<SkyBox> sb = new SkyBox;
+
+    // Modify state set
+    sb->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::TexGen);
+
+    // Create right image
+    osg::ref_ptr<osg::Image> right = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/right.png");
+    // Create left image
+    osg::ref_ptr<osg::Image> left = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/left.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> front = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/front.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> back = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/back.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> top = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/top.png");
+    // Create front image
+    osg::ref_ptr<osg::Image> bottom = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/bottom.png");
+
+    // Map 6 cube faces
+    sb->setEnvironmentMap(0, right.get(), left.get(), front.get(), back.get(), top.get(), bottom.get());
+
+    // Add sphere to the sky box
+    sb->addChild(geode.get());
+
+    // Give a name to skybox node, in order to being able to remove it
+    sb->setName("Skybox");
+
+    // Add sky box to the scene
+    _decorScene->addChild(sb);
+}
+
+void World::removeSkybox(void) {
+    // Search skybox node and remove it
+    for (unsigned int k = 0; k < _decorScene->getNumChildren(); k++) {
+        if (_decorScene->getChild(k)->getName() == "Skybox") {
+            _decorScene->removeChild(k);
+            return;
+        }
+    }
+}
+
+void World::eraseConstructionScene(void) {
+    // Remove every child within construction scene
+    _constructionScene->removeChildren(0, _constructionScene->getNumChildren());
+}
+
+bool World::writeFile(const QString& fileName) {
+    // Try to write the construction scene elements in fileName file
+    return (osgDB::writeNodeFile(*(_constructionScene), fileName.toStdString()));
 }
 
 void World::initBrick(void) {
@@ -161,7 +275,7 @@ void World::initBrick(void) {
 
 void World::deleteLego(void) {
     // Remove last Lego inserted
-    _scene->removeChild(_matTransIndexes.last());
+    _constructionScene->removeChild(_matTransIndexes.last());
     // Pop the stack
     _matTransIndexes.pop_back();
 }
@@ -169,17 +283,17 @@ void World::deleteLego(void) {
 void World::deleteLego(const std::string& matrixName) {
     // The node to delete
     osg::Node* concernedMatTrans = NULL;
-    // We search for the _scene child that has the right name
-    for (unsigned int k = 0; k < _scene->getNumChildren(); k++) {
-        if (_scene->getChild(k)->getName() == matrixName) {
-            concernedMatTrans = _scene->getChild(k);
+    // We search for the _constructiveScene child that has the right name
+    for (unsigned int k = 0; k < _constructionScene->getNumChildren(); k++) {
+        if (_constructionScene->getChild(k)->getName() == matrixName) {
+            concernedMatTrans = _constructionScene->getChild(k);
             break;
         }
     }
 
     // If we found the right child, we delete it
     if (concernedMatTrans)
-        _scene->removeChild(concernedMatTrans);
+        _constructionScene->removeChild(concernedMatTrans);
     // Else, we print a message...
     else
         qDebug() << "Cannot find the right child within World::deleteLego";
@@ -196,7 +310,7 @@ std::string World::addBrick(LegoNode* legoNode, Lego* lego) {
     _currMatrixTransform->addChild(newLegoNode.get());
     // Because LEGO bricks don't move
     _currMatrixTransform->setDataVariance(osg::Object::STATIC);
-    _scene->addChild(_currMatrixTransform.get());
+    _constructionScene->addChild(_currMatrixTransform.get());
 
     // Assign a brand new name to the previous matrix, in order to find it later
     // First, we increment the counter
@@ -209,7 +323,7 @@ std::string World::addBrick(LegoNode* legoNode, Lego* lego) {
     initBrick();
 
     // Add curr matrix transform index in array
-    _matTransIndexes << _scene->getChildIndex(_currMatrixTransform);
+    _matTransIndexes << _constructionScene->getChildIndex(_currMatrixTransform);
 
     // Return the matrix transform name, because we need to record it within addCommand class
     // Therefore, we will be able to find it later, when undo/redo several times

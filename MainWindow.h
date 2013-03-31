@@ -8,7 +8,7 @@
 #include "LegoDialog.h"
 #include "World.h"
 
-#include "Traffic.h"
+//#include "Traffic.h"
 
 
 class MainWindow : public QMainWindow {
@@ -27,18 +27,18 @@ public:
     void createFileMenu(void);
     void createEditMenu(void);
     void createGenerateMenu(void);
-    void createTrafficMenu(void);
+    //void createTrafficMenu(void);
     void createHelpMenu(void);
     void createToolBar(void);
     void createUndoView(void);
     void createParamsDock(void);
     void createScene(void);
 
-    void initTraffic(void);
-    void addSkyBox(void);
-    void removeTraffic(void);
-    void createLight(void);
-    void removeLight(void);
+    //void initTraffic(void);
+    //void addSkyBox(void);
+    //void removeTraffic(void);
+    //void createLight(void);
+    //void removeLight(void);
 
     void chooseRoad(int i, int j, int width, int length, bool roadTop, bool roadRight);
 
@@ -77,15 +77,12 @@ public slots:
 
     void checkExistence(QString fileName);
 
-    void switchTraffic(bool b);
+    //void switchTraffic(bool b);
 
     void freezeFit(void);
     void freezeCreate(void);
 
 private:
-    //QTabWidget* _tabs;
-    Traffic* _traffic;
-
     ViewerWidget* _brickViewer;
     ViewerWidget* _sceneViewer;
     QFrame* _sceneFrame;
@@ -120,8 +117,6 @@ private:
     QAction* _generateHouseAction;
     QAction* _generateCityAction;
     QAction* _generateFormule1Action;
-
-    QAction* _viewTrafficAction;
 
     QAction* _helpAction;
     QAction* _aboutAction;

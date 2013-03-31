@@ -32,7 +32,6 @@ public:
     virtual ~ViewerWidget();
 
     static osg::Camera* createCamera(const osg::Vec4 &color, int x, int y, int w, int h);
-    static osg::MatrixTransform* createLigthSourceMat(unsigned int num, const osg::Vec3& trans, const osg::Vec4& color);
 
     osg::Camera* getCamera(void) const { return _camera.get(); }
 

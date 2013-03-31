@@ -26,14 +26,7 @@
 #include "EdgeDialog.h"
 #include "ClampDialog.h"
 
-#include "Traffic.h"
-#include "SkyBox.h"
-
 #include <QSettings>
-
-#include <osgDB/WriteFile>
-#include <osgDB/ReadFile>
-#include <osg/TexGen>
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -73,7 +66,7 @@ MainWindow::MainWindow(QWidget* parent) :
     createFileMenu();
     createEditMenu();
     createGenerateMenu();
-    createTrafficMenu();
+    //createTrafficMenu();
     createHelpMenu();
 
     // Create tool bar
@@ -89,10 +82,10 @@ MainWindow::MainWindow(QWidget* parent) :
     createScene();
 
     // Init Traffic from world scene
-    initTraffic();
+    //initTraffic();
 
     // Add skybox
-    addSkyBox();
+    //addSkyBox();
 
     // Set tabs mode
     setCentralWidget(_sceneFrame);
@@ -544,9 +537,6 @@ void MainWindow::createScene(void) {
     double g = static_cast<double>(color.green());
     double b = static_cast<double>(color.blue());
 
-    // Viewer background color has changed, we have to update grid color
-    _world.createGuideLines();
-
     // Scene viewer
     _sceneViewer = new ViewerWidget;
     _sceneViewer->initView();
@@ -554,81 +544,11 @@ void MainWindow::createScene(void) {
     _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     _sceneViewer->changeScene(_world.getScene().get());
     _sceneViewer->initWidget();
-    createLight();
 
     // Layout
     QVBoxLayout* previewLayout = new QVBoxLayout;
     previewLayout->addWidget(_sceneViewer);
     _sceneFrame->setLayout(previewLayout);
-}
-
-void MainWindow::initTraffic(void) {
-   // Create a new traffic
-    _traffic = new Traffic;
-
-    // Add traffic root to the scene
-    _world.getScene()->addChild(_traffic->getRoot());
-}
-
-void MainWindow::addSkyBox(void) {
-    // Create sphere
-    osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(), _world.getScene()->getBound().radius())));
-    geode->setCullingActive(false);
-
-    // Create Skybox
-    osg::ref_ptr<SkyBox> sb = new SkyBox;
-
-    // Modify state set
-    sb->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::TexGen);
-
-    // Create right image
-    osg::ref_ptr<osg::Image> right = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/right.png");
-    // Create left image
-    osg::ref_ptr<osg::Image> left = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/left.png");
-    // Create front image
-    osg::ref_ptr<osg::Image> front = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/front.png");
-    // Create front image
-    osg::ref_ptr<osg::Image> back = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/back.png");
-    // Create front image
-    osg::ref_ptr<osg::Image> top = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/top.png");
-    // Create front image
-    osg::ref_ptr<osg::Image> bottom = osgDB::readImageFile("../LEGO_CREATOR/IMG/skybox/skybox1/bottom.png");
-
-    // Map 6 cube faces
-    sb->setEnvironmentMap(0, right.get(), left.get(), front.get(), back.get(), top.get(), bottom.get());
-
-    // Add sphere to the sky box
-    sb->addChild(geode.get());
-
-    // Add sky box to the scene
-    _world.getScene()->addChild(sb.get());
-}
-
-void MainWindow::removeTraffic(void) {
-    // Search traffic node and remove it
-    for (unsigned int k = 0; k < _world.getScene()->getNumChildren(); k++) {
-        if (_world.getScene()->getChild(k)->getName() == "TrafficNode") {
-            _world.getScene()->removeChild(k);
-            return;
-        }
-    }
-}
-
-void MainWindow::createLight(void) {
-    // Create a light source and add it to the scene
-    _world.getScene()->getOrCreateStateSet()->setMode(GL_LIGHT0, osg::StateAttribute::ON);
-    _world.getScene()->addChild(ViewerWidget::createLigthSourceMat(0, osg::Vec3(400.0, 400.0, 400.0), osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f)));
-}
-
-void MainWindow::removeLight(void) {
-    // Search light matrix and remove it
-    for (unsigned int k = 0; k < _world.getScene()->getNumChildren(); k++) {
-        if (_world.getScene()->getChild(k)->getName() == "LightMatrix") {
-            _world.getScene()->removeChild(k);
-            return;
-        }
-    }
 }
 
 // Open the color dialog to change our LEGO color
@@ -1177,14 +1097,9 @@ void MainWindow::generateFormule1(void) {
     openFromFile("../LEGO_CREATOR/OSG/formule1.osg");
 }
 
-void MainWindow::switchTraffic(bool b) {
-    // Switch traffic to on or off, according to traffic toggle action state
-    _traffic->switchTraffic(b);
-}
-
 void MainWindow::eraseScene(void) {
-    // remove everything from scene
-    _world.getScene()->removeChildren(0, _world.getScene()->getNumChildren());
+    // remove everything from construction scene
+    _world.eraseConstructionScene();
 
     // There is no file associated anymore
     _settings.setValue("FileName", "");
@@ -1197,18 +1112,6 @@ void MainWindow::eraseScene(void) {
 
     // We can create LEGO pieces, and therefore not move/fit them
     freezeFit();
-
-    // Traffic has been removed, we regenerate it
-    initTraffic();
-
-    // Light has been removed, we recreate it
-    createLight();
-
-    // To avoid any bug, traffic toggle action is set to off
-    _viewTrafficAction->setChecked(false);
-
-    // Guide lines has been removed too, we recreate it
-    _world.createGuideLines();
 
     // Empty undo/redo stack, ofc
     _undoStack->clear();
@@ -1320,32 +1223,13 @@ void MainWindow::openFile(void) {
 }
 
 void MainWindow::writeFile(const QString& fileName) {
-    // We don't want to save the grid...
-    _world.removeGuideLines();
-
-    // We don't want to save the traffic...
-    removeTraffic();
-
-    // We don't want to save lights...
-    removeLight();
-
-    // Try to write the scene in fileName file
-    if (osgDB::writeNodeFile(*(_world.getScene().get()), fileName.toStdString())) {
+    // Write scene
+    if (_world.writeFile(fileName)) {
         _saved = true;
         _alreadySaved = true;
-    // Fail to write
     } else {
-        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction.");
+        QMessageBox::critical(this, "The document has not been saved", "An error occured while tempting to save your construction within MainWindow::writeFile.");
     }
-
-    // We draw back the grid
-    _world.createGuideLines();
-
-    // We recreate traffic
-    initTraffic();
-
-    // We recreate lights
-    createLight();
 }
 
 void MainWindow::saveFile(void) {
@@ -1443,18 +1327,8 @@ void MainWindow::saveAsFile(void) {
         // Set current file name
         _settings.setValue("FileName", fileName);
 
-        // We don't want to save the grid...
-        _world.removeGuideLines();
-
         // Write scene into OSG file
         writeFile(savePath+fileName);
-
-        // We draw back the grid
-        _world.createGuideLines();
-    // If users canceled,
-    } else {
-        _saved = false;
-        _alreadySaved = false;
     }
 
     // Same issue: rendering OSG in the main thread avoid to paint fancy saveFile dialog
@@ -1509,7 +1383,7 @@ void MainWindow::openSettings(void) {
 }
 
 void MainWindow::updateWorldGrid(void) {
-    _world.createGuideLines();
+    //_world.createGuideLines();
 }
 
 void MainWindow::viewerColorUpdate(QColor color) {
@@ -1666,18 +1540,6 @@ void MainWindow::createGenerateMenu(void) {
     _generateFormule1Action->setShortcut(QKeySequence("CTRL+SHIFT+F"));
     // Connect action
     connect(_generateFormule1Action, SIGNAL(triggered()), this, SLOT(generateFormule1()));
-}
-
-void MainWindow::createTrafficMenu(void) {
-    // Create Traffic menu
-    QMenu* trafficMenu = menuBar()->addMenu("&Traffic");
-
-    // Add View Traffic sub menu
-    _viewTrafficAction = trafficMenu->addAction("Toggle traffic");
-    _viewTrafficAction->setShortcut(QKeySequence("CTRL+SHIFT+T"));
-    _viewTrafficAction->setCheckable(true);
-    _viewTrafficAction->setChecked(false);
-    connect(_viewTrafficAction, SIGNAL(toggled(bool)), this, SLOT(switchTraffic(bool)));
 }
 
 void MainWindow::createHelpMenu(void) {

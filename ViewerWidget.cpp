@@ -39,7 +39,7 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
 
     // Create camera and graphic context from traits
     osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-    camera->setGraphicsContext( new osgQt::GraphicsWindowQt(traits.get()));
+    camera->setGraphicsContext(new osgQt::GraphicsWindowQt(traits.get()));
 
     // Create color, viewport and projection values
     camera->setClearColor(color);
@@ -48,36 +48,6 @@ osg::Camera* ViewerWidget::createCamera(const osg::Vec4& color, int x, int y, in
 
     // Return camera
     return camera.release();
-}
-
-osg::MatrixTransform* ViewerWidget::createLigthSourceMat(unsigned int num, const osg::Vec3& trans, const osg::Vec4& color) {
-    // Create a ligth
-    osg::ref_ptr<osg::Light> light = new osg::Light;
-    // Assign a number
-    light->setLightNum(num);
-    // Assign color
-    light->setDiffuse(color);
-    // Put light at inifinite
-    light->setPosition(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
-    // Set constant attenuation to get good light rendering
-    light->setConstantAttenuation(0.75f);
-
-    // Create light source
-    osg::ref_ptr<osg::LightSource> ligthSource = new osg::LightSource;
-    // Assign light
-    ligthSource->setLight(light);
-    // Create matrix transfomr to move light
-    osg::ref_ptr<osg::MatrixTransform> sourceTrans = new osg::MatrixTransform;
-    // Move light to trans users values
-    sourceTrans->setMatrix(osg::Matrix::translate(trans));
-    // Add light to matrix transform
-    sourceTrans->addChild(ligthSource.get());
-
-    // Give a name to light matrix, in order to remove it when saving file
-    sourceTrans->setName("LightMatrix");
-
-    // Return matrix transform
-    return sourceTrans.release();
 }
 
 void ViewerWidget::initView(void) {

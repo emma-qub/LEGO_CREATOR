@@ -62,9 +62,11 @@ void ClampNode::createGeode(void) {
     cylinderGeode->addDrawable(cylinderPart.get());
 
     // Create top and bottom cylinder
-    osg::ref_ptr<osg::Drawable> topBottomPart = makeDisk(0, w, h, length*Lego::length_unit, Lego::height_unit/2);
-    // Add drawable to geode
-    cylinderGeode->addDrawable(topBottomPart.get());
+    osg::ref_ptr<osg::Drawable> topPart = makeDisk(0, w, h, Lego::height_unit/2, length*Lego::length_unit, true);
+    osg::ref_ptr<osg::Drawable> bottomPart = makeDisk(0, w, h, Lego::height_unit/2, length*Lego::length_unit, false);
+    // Add drawables to geode
+    cylinderGeode->addDrawable(topPart.get());
+    cylinderGeode->addDrawable(bottomPart.get());
 
     // Create matrix transform to rotate cylinder
     osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;

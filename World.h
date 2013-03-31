@@ -20,8 +20,15 @@ public:
 
     osg::ref_ptr<osg::Group> getScene(void) const { return _scene.get(); }
 
-    void createGuideLines();
+    void createGuideLines(void);
     void removeGuideLines(void);
+    void createLight(unsigned int num, const osg::Vec3 &trans, const osg::Vec4 &color);
+    void removeLight(void);
+    void createSkybox(void);
+    void removeSkybox(void);
+    void eraseConstructionScene(void);
+    bool writeFile(const QString& fileName);
+
     void initBrick(void);
     void fitBrick(void);
     void deleteLego(void);
@@ -43,6 +50,8 @@ public:
 
 private:
     osg::ref_ptr<osg::Group> _scene;
+    osg::ref_ptr<osg::Group> _decorScene;
+    osg::ref_ptr<osg::Group> _constructionScene;
     osg::ref_ptr<osg::MatrixTransform> _currMatrixTransform;
     QVector<unsigned int> _matTransIndexes;
     double _x;

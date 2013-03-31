@@ -18,9 +18,16 @@ public:
     virtual Lego* getLego(void) { return _lego; }
     virtual void setLego(Lego* lego) { _lego = lego; }
 
-    osg::ref_ptr<osg::Drawable> makeDisk(double x, double y, double z, double height, double radius, int numberSegments = 50) const;
-    osg::ref_ptr<osg::Drawable> makeCylinder(double x, double y, double z, double height, double radius, int numberSegments = 50) const;
-    osg::ref_ptr<osg::Drawable> makeTrimmedCylinder(/*double xExt, double yExt, double zExt, double xInt, double yInt, double zInt, double height, double radiusExt, double radiusInt, int numberSegments = 50*/) const;
+    osg::ref_ptr<osg::Drawable> makeDisk(double xExt, double yExt, double z,
+                                         double radiusExt, double height,
+                                         bool isTop,
+                                         bool hasHole = false,
+                                         double xInt = 0.0, double yInt = 0.0,
+                                         double radiusInt = 0.0,
+                                         int numberSegments = 50) const;
+    osg::ref_ptr<osg::Drawable> makeCylinder(double x, double y, double z,
+                                             double height, double radius,
+                                             int numberSegments = 50) const;
 
     osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY, int height) const;
     osg::ref_ptr<osg::Drawable> createCylinder(double radiusX, double radiusY, double height, bool thin, double center = 0) const;

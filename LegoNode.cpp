@@ -5,6 +5,9 @@
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osgUtil/SmoothingVisitor>
+#include <osgUtil/Tessellator>
+
+#include <QDebug>
 
 LegoNode::LegoNode(osg::ref_ptr<Lego> lego) :
     osg::Group() {
@@ -27,7 +30,13 @@ LegoNode::LegoNode(const LegoNode& legoNode) :
 LegoNode::~LegoNode() {
 }
 
-osg::ref_ptr<osg::Drawable> LegoNode::makeDisk(double x, double y, double z, double height, double radius, int numberSegments) const {
+osg::ref_ptr<osg::Drawable> LegoNode::makeDisk(double xExt, double yExt, double z, double radiusExt, double height, bool isTop, bool hasHole, double xInt, double yInt, double radiusInt, int numberSegments) const {
+    // Calculate real z value, according to whether it's top or bottom disk
+    if (isTop)
+        z += height/2;
+    else
+        z -= height/2;
+
     // Get plate color
     QColor color = _lego->getColor();
 
@@ -36,41 +45,56 @@ osg::ref_ptr<osg::Drawable> LegoNode::makeDisk(double x, double y, double z, dou
     float angleDelta = 2.0f * osg::PI/(float)numberSegments;
 
     // Create arrays to hold the X & Y coeffiecients
-    std::vector<float> xCoords = std::vector<float>(numberSegments+1);
-    std::vector<float> yCoords = std::vector<float>(numberSegments+1);
+    int size = numberSegments+1;
+    if (hasHole)
+        size = 2*(numberSegments+1);
+    std::vector<float> xCoords = std::vector<float>(size);
+    std::vector<float> yCoords = std::vector<float>(size);
 
-    // Fill top and bottom point vectors
-    for (int i = 0; i < numberSegments; i++, angle -= angleDelta)
-    {
+    // Fill x and y point vectors
+    for (int i = 0; i < numberSegments; i++, angle -= angleDelta) {
         // Compute the cos/sin of the current angle as we rotate around the cylinder
         float cosAngle = cosf(angle);
         float sinAngle = sinf(angle);
 
-        // Compute the top/bottom locations
-        xCoords[i] = x + cosAngle * radius;
-        yCoords[i] = y + sinAngle * radius;
+        // Compute the top/bottom extern locations
+        xCoords[i] = xExt + cosAngle * radiusExt;
+        yCoords[i] = yExt + sinAngle * radiusExt;
+
+        // Compute the top/bottom intern locations if needed
+        if (hasHole) {
+            xCoords[i+numberSegments+1] = xInt + cosAngle * radiusInt;
+            yCoords[i+numberSegments+1] = yInt + sinAngle * radiusInt;
+        }
     }
 
-    // Put the last point equal to the first point so the cylinder
-    // is complete
+    // Put the last point equal to the first point
+    // so the disk is complete
     xCoords[numberSegments] = xCoords[0];
     yCoords[numberSegments] = yCoords[0];
+
+    // Idem for intern disk
+    xCoords[2*numberSegments+1] = xCoords[numberSegments+1];
+    yCoords[2*numberSegments+1] = yCoords[numberSegments+1];
 
     // Create an array to hold the cylinder vertices
     osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
 
-    // Add top disk center
-    vertices->push_back(osg::Vec3(x, y, z+height/2));
-    // Create surrounding vertices and fill normal array
-    for (int k = 0; k <= numberSegments; k++) {
-        vertices->push_back(osg::Vec3(xCoords[k], yCoords[k], z+height/2));
+    // Add disk center
+    vertices->push_back(osg::Vec3(xExt, yExt, z));
+    // Add top extern vertices
+    for (int k = 0; k < size; k++) {
+        vertices->push_back(osg::Vec3(xCoords[k], yCoords[k], z));
     }
 
-    // Add bottom disk center
-    vertices->push_back(osg::Vec3(x, y, z-height/2));
-    // Create surrounding vertices and fill normal array
-    for (int k = 0; k <= numberSegments; k++) {
-        vertices->push_back(osg::Vec3(xCoords[k], yCoords[k], z-height/2));
+    // If there is a whole, we add intern vertices
+    if (hasHole) {
+        // Add top disk center
+        vertices->push_back(osg::Vec3(xInt, yInt, z));
+        // Add top intern vertices (watch the wise)
+        for (int k = size-1; k >= numberSegments+1; k--) {
+            vertices->push_back(osg::Vec3(xCoords[k], yCoords[k], z));
+        }
     }
 
     // Create cylinder geometry
@@ -91,16 +115,25 @@ osg::ref_ptr<osg::Drawable> LegoNode::makeDisk(double x, double y, double z, dou
 
     // Create normals
     osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-    normals->push_back(osg::Vec3(0, 0, 1));
-    normals->push_back(osg::Vec3(0, 0, -1));
+    if (isTop)
+        normals->push_back(osg::Vec3(0, 0, 1));
+    else
+        normals->push_back(osg::Vec3(0, 0, -1));
 
     // Match normals
     cylinderGeometry->setNormalArray(normals);
     cylinderGeometry->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
     // Create numberSegments GL_QUADS, i.e. numberSegments*4 vertices
-    cylinderGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLE_FAN, 0, numberSegments+1));
-    cylinderGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLE_FAN, numberSegments+2, numberSegments+1));
+    cylinderGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLE_FAN, 0, size+1));
+
+    // Retesslate to create hole if needed
+    if (hasHole) {
+        osgUtil::Tessellator tesslator;
+        tesslator.setTessellationType(osgUtil::Tessellator::TESS_TYPE_GEOMETRY);
+        tesslator.setWindingType(osgUtil::Tessellator::TESS_WINDING_ODD);
+        tesslator.retessellatePolygons(*cylinderGeometry);
+    }
 
     // Return cone geometry
     return cylinderGeometry.release();
@@ -170,10 +203,6 @@ osg::ref_ptr<osg::Drawable> LegoNode::makeCylinder(double x, double y, double z,
 
     // Return cone geometry
     return cylinderGeometry.release();
-}
-
-osg::ref_ptr<osg::Drawable> LegoNode::makeTrimmedCylinder(/*double xExt, double yExt, double zExt, double xInt, double yInt, double zInt, double height, double radiusExt, double radiusInt, int numberSegments*/) const {
-    return NULL;
 }
 
 osg::ref_ptr<osg::Drawable> LegoNode::createPlot(double radiusX, double radiusY, int height) const {
