@@ -7,11 +7,11 @@
 class ReverseTileNode : public LegoNode {
 public:
     ReverseTileNode();
-    ReverseTileNode(osg::ref_ptr<ReverseTile> reverseTile);
+    ReverseTileNode(ReverseTile* reverseTile);
     ReverseTileNode(const ReverseTileNode& reverseTileNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createReverseTile(void) const;
+    osg::Drawable* createReverseTile(void) const;
 
     virtual ReverseTileNode* cloning(void) const;
 };

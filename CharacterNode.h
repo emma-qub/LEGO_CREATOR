@@ -9,7 +9,7 @@ class CharacterNode : public LegoNode
 {
 public:
     CharacterNode();
-    CharacterNode(osg::ref_ptr<Character> character);
+    CharacterNode(Character* character);
     CharacterNode(const CharacterNode& characterNode);
 
     virtual void createGeode(void);

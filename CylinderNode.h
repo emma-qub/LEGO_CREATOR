@@ -8,7 +8,7 @@ class CylinderNode : public LegoNode {
 
 public:
     CylinderNode();
-    CylinderNode(osg::ref_ptr<Cylinder> cylinder);
+    CylinderNode(Cylinder* cylinder);
     CylinderNode(const CylinderNode& cylinderNode);
 
     virtual void createGeode(void);

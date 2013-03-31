@@ -8,7 +8,7 @@ CylinderNode::CylinderNode() :
     LegoNode() {
 }
 
-CylinderNode::CylinderNode(osg::ref_ptr<Cylinder> cylinder) :
+CylinderNode::CylinderNode(Cylinder *cylinder) :
     LegoNode(cylinder) {
 
     createGeode();
@@ -138,7 +138,8 @@ void CylinderNode::createGeode(void) {
             for (int j = 0; j < 2*radius; j++) {
                 double radiusX = xmin + i*distPlot;
                 double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlot(radiusX, radiusY, height));
+                geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+                geode->addDrawable(createPlotTop(radiusX, radiusY, height));
             }
         }
     }

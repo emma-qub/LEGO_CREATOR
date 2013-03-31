@@ -8,11 +8,11 @@ class CornerNode : public LegoNode {
 
 public:
     CornerNode();
-    CornerNode(osg::ref_ptr<Corner> corner);
+    CornerNode(Corner* corner);
     CornerNode(const CornerNode& cornerNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createCorner() const;
+    osg::Drawable* createCorner() const;
 
     virtual CornerNode* cloning(void) const;
 };

@@ -12,7 +12,7 @@ public:
     ClampNode(const ClampNode& clamp);
     
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createBrick(void) const;
+    osg::Drawable* createBrick(void) const;
     
     virtual ClampNode* cloning(void) const;
 };

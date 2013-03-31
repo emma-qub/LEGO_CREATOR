@@ -7,7 +7,7 @@ BrickNode::BrickNode() :
     LegoNode() {
 }
 
-BrickNode::BrickNode(osg::ref_ptr<Brick> brick) :
+BrickNode::BrickNode(Brick* brick) :
     LegoNode(brick) {
 
     createGeode();
@@ -63,7 +63,8 @@ void BrickNode::createGeode(void) {
             for (int j = 0; j < width; j++) {
                 double radiusX = xmin + i*distPlot;
                 double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlot(radiusX, radiusY, height));
+                geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+                geode->addDrawable(createPlotTop(radiusX, radiusY, height));
             }
         }
     }
@@ -83,7 +84,7 @@ void BrickNode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> BrickNode::createBrick(void) const {
+osg::Drawable *BrickNode::createBrick(void) const {
     // Get the brick
     Brick* brick = static_cast<Brick*>(_lego);
 
@@ -185,7 +186,7 @@ osg::ref_ptr<osg::Drawable> BrickNode::createBrick(void) const {
     brickGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 5*4));
 
     // return brick geometry
-    return brickGeometry.get();
+    return brickGeometry.release();
 }
 
 BrickNode* BrickNode::cloning(void) const {

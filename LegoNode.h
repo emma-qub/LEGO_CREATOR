@@ -18,19 +18,20 @@ public:
     virtual Lego* getLego(void) { return _lego; }
     virtual void setLego(Lego* lego) { _lego = lego; }
 
-    osg::ref_ptr<osg::Drawable> makeDisk(double xExt, double yExt, double z,
+    osg::Drawable* makeDisk(double xExt, double yExt, double z,
                                          double radiusExt, double height,
                                          bool isTop,
                                          bool hasHole = false,
                                          double xInt = 0.0, double yInt = 0.0,
                                          double radiusInt = 0.0,
-                                         int numberSegments = 50) const;
-    osg::ref_ptr<osg::Drawable> makeCylinder(double x, double y, double z,
+                                         int numberSegments = 20) const;
+    osg::Drawable* makeCylinder(double x, double y, double z,
                                              double height, double radius,
-                                             int numberSegments = 50) const;
+                                             int numberSegments = 20) const;
 
-    osg::ref_ptr<osg::Drawable> createPlot(double radiusX, double radiusY, int height) const;
-    osg::ref_ptr<osg::Drawable> createCylinder(double radiusX, double radiusY, double height, bool thin, double center = 0) const;
+    osg::Drawable* createPlotCylinder(double radiusX, double radiusY, int height) const;
+    osg::Drawable* createPlotTop(double radiusX, double radiusY, int height) const;
+    osg::Drawable* createCylinder(double radiusX, double radiusY, double height, bool thin, double center = 0) const;
 
     virtual LegoNode* cloning(void) const { return new LegoNode(*this); }
 

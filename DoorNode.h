@@ -7,13 +7,13 @@
 class DoorNode : public LegoNode {
 public:
     DoorNode();
-    DoorNode(osg::ref_ptr<Door> door);
+    DoorNode(Door* door);
     DoorNode(const DoorNode& doorNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createDoorFrame(void);
-    osg::ref_ptr<osg::Drawable> createDoor(void);
-    osg::ref_ptr<osg::Drawable> createDoorDecoration(void);
+    osg::Drawable* createDoorFrame(void);
+    osg::Drawable* createDoor(void);
+    osg::Drawable* createDoorDecoration(void);
     void addDoorHandle(void);
 
     virtual DoorNode* cloning(void) const;

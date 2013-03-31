@@ -10,7 +10,7 @@ WindowNode::WindowNode() :
     LegoNode() {
 }
 
-WindowNode::WindowNode(osg::ref_ptr<Window> window) :
+WindowNode::WindowNode(Window *window) :
     LegoNode(window) {
 
     createGeode();
@@ -66,7 +66,8 @@ void WindowNode::createGeode(void) {
         for (int i = 0; i < length; i++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = -ymin;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     } else {
         // Add plots iteratively if the brick type is not flat
@@ -74,7 +75,8 @@ void WindowNode::createGeode(void) {
             for (int j = 0; j < width; j++) {
                 double radiusX = xmin + i*distPlot;
                 double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlot(radiusX, radiusY, height));
+                geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+                geode->addDrawable(createPlotTop(radiusX, radiusY, height));
             }
         }
     }
@@ -95,7 +97,7 @@ void WindowNode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> WindowNode::createWindow(void) const {
+osg::Drawable* WindowNode::createWindow(void) const {
     // Get the window
     Window* window = static_cast<Window*>(_lego);
 
@@ -288,10 +290,10 @@ osg::ref_ptr<osg::Drawable> WindowNode::createWindow(void) const {
     windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 15*4));
 
     // Return the tile whithout plot
-    return windowGeometry.get();
+    return windowGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
+osg::Drawable* WindowNode::createBentWindow(void) const {
     // Get the window
     Window* window = static_cast<Window*>(_lego);
 
@@ -520,10 +522,10 @@ osg::ref_ptr<osg::Drawable> WindowNode::createBentWindow(void) const {
     windowGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 17*4));
 
     // Return the tile whithout plot
-    return windowGeometry.get();
+    return windowGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> WindowNode::createLeftPannel(void) const {
+osg::Drawable* WindowNode::createLeftPannel(void) const {
     // Get door color
     QColor color = QColor(Qt::white);
 
@@ -617,10 +619,10 @@ osg::ref_ptr<osg::Drawable> WindowNode::createLeftPannel(void) const {
     tesslator.retessellatePolygons(*pannelGeometry);
 
     // Return the door with four holes
-    return pannelGeometry.get();
+    return pannelGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> WindowNode::createRightPannel(void) const {
+osg::Drawable* WindowNode::createRightPannel(void) const {
     // Get door color
     QColor color = QColor(Qt::white);
 
@@ -714,7 +716,7 @@ osg::ref_ptr<osg::Drawable> WindowNode::createRightPannel(void) const {
     tesslator.retessellatePolygons(*pannelGeometry);
 
     // Return the door with four holes
-    return pannelGeometry.get();
+    return pannelGeometry.release();
 }
 
 WindowNode* WindowNode::cloning(void) const {

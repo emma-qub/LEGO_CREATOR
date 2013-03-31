@@ -9,7 +9,7 @@ EdgeNode::EdgeNode() :
     LegoNode() {
 }
 
-EdgeNode::EdgeNode(osg::ref_ptr<Edge> edge) :
+EdgeNode::EdgeNode(Edge *edge) :
     LegoNode(edge) {
 
     createGeode();
@@ -63,7 +63,7 @@ void EdgeNode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> EdgeNode::createClassicEdge(void) {
+osg::Drawable *EdgeNode::createClassicEdge(void) {
     // Get the Edge
     Edge* edge = static_cast<Edge*>(_lego);
 
@@ -199,10 +199,10 @@ osg::ref_ptr<osg::Drawable> EdgeNode::createClassicEdge(void) {
     edgeGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 10*4));
 
     // Return edge geometry
-    return edgeGeometry;
+    return edgeGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> EdgeNode::createCornerEdge(void) {
+osg::Drawable* EdgeNode::createCornerEdge(void) {
     // Get the Edge
     Edge* edge = static_cast<Edge*>(_lego);
 
@@ -296,7 +296,7 @@ osg::ref_ptr<osg::Drawable> EdgeNode::createCornerEdge(void) {
     edgeGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 5*4));
 
     // Return edge geometry
-    return edgeGeometry;
+    return edgeGeometry.release();
 }
 
 EdgeNode* EdgeNode::cloning(void) const {

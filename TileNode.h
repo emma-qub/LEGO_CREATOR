@@ -12,11 +12,11 @@ public:
     TileNode(const TileNode& tileNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createTinyClassic(void) const;
-    osg::ref_ptr<osg::Drawable> createClassic(void) const;
-    osg::ref_ptr<osg::Drawable> createCornerInt(void) const;
-    osg::ref_ptr<osg::Drawable> createCornerExt(void) const;
-    osg::ref_ptr<osg::Drawable> createRoof(void) const;
+    osg::Drawable* createTinyClassic(void) const;
+    osg::Drawable* createClassic(void) const;
+    osg::Drawable* createCornerInt(void) const;
+    osg::Drawable* createCornerExt(void) const;
+    osg::Drawable* createRoof(void) const;
 
     virtual TileNode* cloning(void) const;
 };

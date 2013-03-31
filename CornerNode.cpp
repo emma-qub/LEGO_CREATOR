@@ -7,7 +7,7 @@ CornerNode::CornerNode() :
     LegoNode() {
 }
 
-CornerNode::CornerNode(osg::ref_ptr<Corner> corner) :
+CornerNode::CornerNode(Corner *corner) :
     LegoNode(corner) {
 
     createGeode();
@@ -33,16 +33,19 @@ void CornerNode::createGeode(void) {
     int height = corner->calculateHeight();
 
     // Create plots
-    geode->addDrawable(createPlot(Lego::length_unit/2, Lego::length_unit/2, height));
-    geode->addDrawable(createPlot(Lego::length_unit/2, -Lego::length_unit/2, height));
-    geode->addDrawable(createPlot(-Lego::length_unit/2, -Lego::length_unit/2, height));
+    geode->addDrawable(createPlotCylinder(Lego::length_unit/2, Lego::length_unit/2, height));
+    geode->addDrawable(createPlotTop(Lego::length_unit/2, Lego::length_unit/2, height));
+    geode->addDrawable(createPlotCylinder(Lego::length_unit/2, -Lego::length_unit/2, height));
+    geode->addDrawable(createPlotTop(Lego::length_unit/2, -Lego::length_unit/2, height));
+    geode->addDrawable(createPlotCylinder(-Lego::length_unit/2, -Lego::length_unit/2, height));
+    geode->addDrawable(createPlotTop(-Lego::length_unit/2, -Lego::length_unit/2, height));
 
     // Create bottom cylinders
     geode->addDrawable(createCylinder(Lego::length_unit/2, 0, height, true));
     geode->addDrawable(createCylinder(0, -Lego::length_unit/2, height, true));
 }
 
-osg::ref_ptr<osg::Drawable> CornerNode::createCorner() const {
+osg::Drawable *CornerNode::createCorner() const {
     // Get the corner
     Corner* corner = static_cast<Corner*>(_lego);
 
@@ -163,7 +166,7 @@ osg::ref_ptr<osg::Drawable> CornerNode::createCorner() const {
     cornerGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 8*4));
 
     // Return corner geometry
-    return cornerGeometry.get();
+    return cornerGeometry.release();
 }
 
 CornerNode* CornerNode::cloning(void) const {

@@ -11,7 +11,7 @@ DoorNode::DoorNode() :
     LegoNode() {
 }
 
-DoorNode::DoorNode(osg::ref_ptr<Door> door) :
+DoorNode::DoorNode(Door *door) :
     LegoNode(door) {
 
     createGeode();
@@ -52,7 +52,8 @@ void DoorNode::createGeode(void) {
         for (int j = 0; j < width; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 
@@ -65,7 +66,7 @@ void DoorNode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> DoorNode::createDoorFrame(void) {
+osg::Drawable *DoorNode::createDoorFrame(void) {
     // Get the door
     Door* door = static_cast<Door*>(_lego);
 
@@ -252,10 +253,10 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorFrame(void) {
     doorGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 15*4));
 
     // Return the tile whithout plot
-    return doorGeometry.get();
+    return doorGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
+osg::Drawable *DoorNode::createDoor(void) {
     // Get the door
     Door* door = static_cast<Door*>(_lego);
 
@@ -376,10 +377,10 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoor(void) {
     tesslator.retessellatePolygons(*doorGeometry);
 
     // Return the door with four holes
-    return doorGeometry.get();
+    return doorGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> DoorNode::createDoorDecoration(void) {
+osg::Drawable *DoorNode::createDoorDecoration(void) {
     // Get integer sizes
     int width = 1;
     int length = 4;
@@ -443,7 +444,7 @@ osg::ref_ptr<osg::Drawable> DoorNode::createDoorDecoration(void) {
     decorationGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINE_LOOP, 4, 4));
 
     // Return the door decoration
-    return decorationGeometry.get();
+    return decorationGeometry.release();
 }
 
 void DoorNode::addDoorHandle(void) {

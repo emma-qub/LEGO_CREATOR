@@ -9,7 +9,7 @@ ReverseTileNode::ReverseTileNode() :
     LegoNode() {
 }
 
-ReverseTileNode::ReverseTileNode(osg::ref_ptr<ReverseTile> reverseTile) :
+ReverseTileNode::ReverseTileNode(ReverseTile *reverseTile) :
     LegoNode(reverseTile) {
 
     createGeode();
@@ -48,12 +48,13 @@ void ReverseTileNode::createGeode(void) {
         for (int j = 0; j < length; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 }
 
-osg::ref_ptr<osg::Drawable> ReverseTileNode::createReverseTile(void) const {
+osg::Drawable *ReverseTileNode::createReverseTile(void) const {
     // Get the tile
     ReverseTile* tile = static_cast<ReverseTile*>(_lego);
 
@@ -225,7 +226,7 @@ osg::ref_ptr<osg::Drawable> ReverseTileNode::createReverseTile(void) const {
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 18*3));
 
     // Return the tile whithout plot
-    return tileGeometry.get();
+    return tileGeometry.release();
 }
 
 ReverseTileNode* ReverseTileNode::cloning(void) const {

@@ -8,11 +8,11 @@ class BrickNode : public LegoNode {
 
 public:
     BrickNode();
-    BrickNode(osg::ref_ptr<Brick> brick);
+    BrickNode(Brick* brick);
     BrickNode(const BrickNode& brickNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createBrick(void) const;
+    osg::Drawable* createBrick(void) const;
 
     virtual BrickNode* cloning(void) const;
 };

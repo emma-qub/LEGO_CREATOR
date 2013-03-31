@@ -9,7 +9,7 @@ WheelNode::WheelNode() :
     LegoNode() {
 }
 
-WheelNode::WheelNode(osg::ref_ptr<Wheel> wheel) :
+WheelNode::WheelNode(Wheel *wheel) :
     LegoNode(wheel) {
 
     createGeode();
@@ -50,7 +50,8 @@ void WheelNode::createGeode(void) {
         for (int j = 0; j < 2; j++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 

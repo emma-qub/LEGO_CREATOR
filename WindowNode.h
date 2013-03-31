@@ -7,14 +7,14 @@
 class WindowNode : public LegoNode {
 public:
     WindowNode();
-    WindowNode(osg::ref_ptr<Window> window);
+    WindowNode(Window* window);
     WindowNode(const WindowNode& windowNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createWindow(void) const;
-    osg::ref_ptr<osg::Drawable> createBentWindow(void) const;
-    osg::ref_ptr<osg::Drawable> createLeftPannel(void) const;
-    osg::ref_ptr<osg::Drawable> createRightPannel(void) const;
+    osg::Drawable* createWindow(void) const;
+    osg::Drawable* createBentWindow(void) const;
+    osg::Drawable* createLeftPannel(void) const;
+    osg::Drawable* createRightPannel(void) const;
 
     virtual WindowNode* cloning(void) const;
 };

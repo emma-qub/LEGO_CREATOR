@@ -9,7 +9,7 @@ GridNode::GridNode() :
     LegoNode() {
 }
 
-GridNode::GridNode(osg::ref_ptr<Grid> grid) :
+GridNode::GridNode(Grid *grid) :
     LegoNode(grid) {
 
     createGeode();
@@ -31,7 +31,7 @@ void GridNode::createGeode(void) {
     geode->addDrawable(createGrid());
 }
 
-osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
+osg::Drawable *GridNode::createGrid(void) {
     // Get the grid
     Grid* grid = static_cast<Grid*>(_lego);
 
@@ -340,7 +340,7 @@ osg::ref_ptr<osg::Drawable> GridNode::createGrid(void) {
     gridGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 31*4));
 
     // Return the door decoration
-    return gridGeometry.get();
+    return gridGeometry.release();
 }
 
 GridNode* GridNode::cloning(void) const {

@@ -59,7 +59,8 @@ void TileNode::createGeode(void) {
             for (int j = 0; j < length; j++) {
                 double radiusX = xmin;
                 double radiusY = ymin + j*distPlot;
-                geode->addDrawable(createPlot(radiusX, radiusY, height));
+                geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+                geode->addDrawable(createPlotTop(radiusX, radiusY, height));
             }
         } else {
             geode->addDrawable(createTinyClassic());
@@ -71,20 +72,24 @@ void TileNode::createGeode(void) {
         for (int k = 0; k < length-1; k++) {
             double radiusX = -xmin;
             double radiusY = ymin + k*distPlot;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
         // Add back plots
         for (int k = 0; k < width-1; k++) {
             double radiusX = xmin + k*distPlot;
             double radiusY = -ymin;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
         // Add corner plot
-        geode->addDrawable(createPlot((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        geode->addDrawable(createPlotCylinder((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        geode->addDrawable(createPlotTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
         break;
     case Tile::cornerExt:
         geode->addDrawable(createCornerExt());
-        geode->addDrawable(createPlot((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        geode->addDrawable(createPlotCylinder((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
+        geode->addDrawable(createPlotTop((width-1)*Lego::length_unit/2, (length-1)*Lego::length_unit/2, height));
         break;
     case Tile::roof:
         geode->addDrawable(createRoof());
@@ -106,7 +111,7 @@ void TileNode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
+osg::Drawable* TileNode::createTinyClassic(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -238,10 +243,10 @@ osg::ref_ptr<osg::Drawable> TileNode::createTinyClassic(void) const {
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 12*3));
 
     // Return the tile whithout plot
-    return tileGeometry.get();
+    return tileGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
+osg::Drawable* TileNode::createClassic(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -413,10 +418,10 @@ osg::ref_ptr<osg::Drawable> TileNode::createClassic(void) const {
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 18*3));
 
     // Return the tile whithout plot
-    return tileGeometry.get();
+    return tileGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> TileNode::createCornerInt(void) const {
+osg::Drawable* TileNode::createCornerInt(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -596,10 +601,10 @@ osg::ref_ptr<osg::Drawable> TileNode::createCornerInt(void) const {
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 20*3));
 
     // Return the tile whithout plot
-    return tileGeometry.get();
+    return tileGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> TileNode::createCornerExt(void) const {
+osg::Drawable* TileNode::createCornerExt(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -792,10 +797,10 @@ osg::ref_ptr<osg::Drawable> TileNode::createCornerExt(void) const {
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 22*3));
 
     // Return the tile whithout plot
-    return tileGeometry.get();
+    return tileGeometry.release();
 }
 
-osg::ref_ptr<osg::Drawable> TileNode::createRoof(void) const {
+osg::Drawable* TileNode::createRoof(void) const {
     // Get the tile
     Tile* tile = static_cast<Tile*>(_lego);
 
@@ -959,7 +964,7 @@ osg::ref_ptr<osg::Drawable> TileNode::createRoof(void) const {
     tileGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 16*3));
 
     // Return the tile whithout plot
-    return tileGeometry.get();
+    return tileGeometry.release();
 }
 
 TileNode* TileNode::cloning(void) const {

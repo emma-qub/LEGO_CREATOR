@@ -57,16 +57,16 @@ void ClampNode::createGeode(void) {
     osg::ref_ptr<osg::Geode> cylinderGeode = new osg::Geode;
 
     // Create drawable cylinder
-    osg::ref_ptr<osg::Drawable> cylinderPart = makeCylinder(0, w, h, length*Lego::length_unit, Lego::height_unit/2);
+    osg::Drawable* cylinderPart = makeCylinder(0, w, h, length*Lego::length_unit, Lego::height_unit/2);
     // Add drawable to geode
-    cylinderGeode->addDrawable(cylinderPart.get());
+    cylinderGeode->addDrawable(cylinderPart);
 
     // Create top and bottom cylinder
-    osg::ref_ptr<osg::Drawable> topPart = makeDisk(0, w, h, Lego::height_unit/2, length*Lego::length_unit, true);
-    osg::ref_ptr<osg::Drawable> bottomPart = makeDisk(0, w, h, Lego::height_unit/2, length*Lego::length_unit, false);
+    osg::Drawable* topPart = makeDisk(0, w, h, Lego::height_unit/2, length*Lego::length_unit, true);
+    osg::Drawable* bottomPart = makeDisk(0, w, h, Lego::height_unit/2, length*Lego::length_unit, false);
     // Add drawables to geode
-    cylinderGeode->addDrawable(topPart.get());
-    cylinderGeode->addDrawable(bottomPart.get());
+    cylinderGeode->addDrawable(topPart);
+    cylinderGeode->addDrawable(bottomPart);
 
     // Create matrix transform to rotate cylinder
     osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
@@ -94,7 +94,7 @@ void ClampNode::createGeode(void) {
     }
 }
 
-osg::ref_ptr<osg::Drawable> ClampNode::createBrick(void) const {
+osg::Drawable *ClampNode::createBrick(void) const {
     // Get the brick
     Clamp* clamp = static_cast<Clamp*>(_lego);
     
@@ -338,7 +338,7 @@ osg::ref_ptr<osg::Drawable> ClampNode::createBrick(void) const {
     clampGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 2*4, 18*4));
 
     // Return the tile whithout plot
-    return clampGeometry.get();
+    return clampGeometry.release();
 }
 
 ClampNode* ClampNode::cloning(void) const {

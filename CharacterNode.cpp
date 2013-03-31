@@ -8,7 +8,7 @@ CharacterNode::CharacterNode() :
     LegoNode() {
 }
 
-CharacterNode::CharacterNode(osg::ref_ptr<Character> character) :
+CharacterNode::CharacterNode(Character *character) :
     LegoNode(character) {
 
     createGeode();

@@ -12,7 +12,7 @@ RoadNode::RoadNode() :
     LegoNode() {
 }
 
-RoadNode::RoadNode(osg::ref_ptr<Road> road) :
+RoadNode::RoadNode(Road *road) :
     LegoNode(road) {
 
     createGeode();
@@ -152,8 +152,8 @@ void RoadNode::createGeode(void) {
 
     // Set drawables to this (RoadNode)
     geode->removeDrawables(0, geode->getDrawableList().size());
-    geode->addDrawable(roadGeometry.get());
-    geode->addDrawable(downGeometry.get());
+    geode->addDrawable(roadGeometry.release());
+    geode->addDrawable(downGeometry.release());
 
     // Calculate plots according to road shape
     calculatePlots();
@@ -180,9 +180,11 @@ void RoadNode::calculatePlots(void) {
             // There are two regions to add plots: the four corners
             for (int j = 0; j < 32; j++) {
                 // left side
-                geode->addDrawable(createPlot(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
                 // Right side
-                geode->addDrawable(createPlot(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
             }
         }
         break;
@@ -190,8 +192,10 @@ void RoadNode::calculatePlots(void) {
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 32; j++) {
                 // Above the curve OR Under the curve
-                if (i*i+j*j >= 25*25 || i*i+j*j <= 6*6)
-                    geode->addDrawable(createPlot(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                if (i*i+j*j >= 25*25 || i*i+j*j <= 6*6) {
+                    geode->addDrawable(createPlotCylinder(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                    geode->addDrawable(createPlotTop(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                }
             }
         }
         break;
@@ -201,13 +205,16 @@ void RoadNode::calculatePlots(void) {
             // There are three regions to add plots: the four corners
             for (int j = 0; j < 32; j++) {
                 // left side
-                geode->addDrawable(createPlot(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
             }
             for (int j = 0; j < 7; j++) {
                 // Top right corner
-                geode->addDrawable(createPlot(19*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(19*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(19*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
                 // Bottom right corner
-                geode->addDrawable(createPlot(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
             }
         }
         break;
@@ -217,13 +224,17 @@ void RoadNode::calculatePlots(void) {
             // There are four regions to add plots: the four corners
             for (int j = 0; j < 7; j++) {
                 // Top left corner
-                geode->addDrawable(createPlot(-31*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(-31*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(-31*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
                 // Top right corner
-                geode->addDrawable(createPlot(19*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(19*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(19*distPlot/2+i*distPlot, 19*distPlot/2+j*distPlot, EPS));
                 // Bottom left corner
-                geode->addDrawable(createPlot(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
                 // Bottom right corner
-                geode->addDrawable(createPlot(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(19*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
             }
         }
         break;
@@ -231,7 +242,8 @@ void RoadNode::calculatePlots(void) {
         // No road
         for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 32; j++) {
-                geode->addDrawable(createPlot(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotCylinder(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
+                geode->addDrawable(createPlotTop(-31*distPlot/2+i*distPlot, -31*distPlot/2+j*distPlot, EPS));
             }
         }
     }

@@ -8,11 +8,11 @@ class GridNode : public LegoNode {
 
 public:
     GridNode();
-    GridNode(osg::ref_ptr<Grid> grid);
+    GridNode(Grid* grid);
     GridNode(const GridNode& gridNode);
 
     virtual void createGeode(void);
-    osg::ref_ptr<osg::Drawable> createGrid(void);
+    osg::Drawable* createGrid(void);
 
     virtual GridNode* cloning(void) const;
 };

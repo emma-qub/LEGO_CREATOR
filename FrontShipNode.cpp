@@ -9,7 +9,7 @@ FrontShipNode::FrontShipNode() {
     LegoNode();
 }
 
-FrontShipNode::FrontShipNode(osg::ref_ptr<FrontShip> frontShip) :
+FrontShipNode::FrontShipNode(FrontShip* frontShip) :
     LegoNode(frontShip) {
 
     createGeode();
@@ -46,7 +46,8 @@ void FrontShipNode::createGeode(void) {
         for (int i = 1; i < 3; i++) {
             double radiusX = xmin + i*distPlot;
             double radiusY = ymin + j*distPlot;
-            geode->addDrawable(createPlot(radiusX, radiusY, height));
+            geode->addDrawable(createPlotCylinder(radiusX, radiusY, height));
+            geode->addDrawable(createPlotTop(radiusX, radiusY, height));
         }
     }
 
@@ -56,7 +57,7 @@ void FrontShipNode::createGeode(void) {
 }
 
 
-osg::ref_ptr<osg::Drawable> FrontShipNode::createClassic(void) const {
+osg::Drawable* FrontShipNode::createClassic(void) const {
     // Get the frontShip
     FrontShip* frontShip = static_cast<FrontShip*>(_lego);
 
@@ -246,7 +247,7 @@ osg::ref_ptr<osg::Drawable> FrontShipNode::createClassic(void) const {
     frontShipGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 20*3));
 
     // Return the frontShip whithout plot
-    return frontShipGeometry.get();
+    return frontShipGeometry.release();
 }
 
 

@@ -12,7 +12,7 @@ ConeNode::ConeNode() :
     LegoNode() {
 }
 
-ConeNode::ConeNode(osg::ref_ptr<Cone> cone) :
+ConeNode::ConeNode(Cone *cone) :
     LegoNode(cone) {
 
     createGeode();
@@ -51,7 +51,8 @@ void ConeNode::createGeode(void) {
                                            50));
 
     // Add plot
-    geode->addDrawable(createPlot(0, 0, height));
+    geode->addDrawable(createPlotCylinder(0, 0, height));
+    geode->addDrawable(createPlotTop(0, 0, height));
 
     // Add bottom cylinder
     geode->addDrawable(createCylinder(0, 0, 0.5, false, (-height+0.5)*Lego::height_unit/2));
@@ -66,7 +67,7 @@ void ConeNode::createGeode(void) {
     geode->addDrawable(cache);
 }
 
-osg::ref_ptr<osg::Geometry> ConeNode::createTruncatedCone(double startRadius, double endRadius, double center, double length, int numberSegments) {
+osg::Geometry* ConeNode::createTruncatedCone(double startRadius, double endRadius, double center, double length, int numberSegments) {
     // Get the Cone
     Cone* cone = static_cast<Cone*>(_lego);
 
@@ -140,7 +141,7 @@ osg::ref_ptr<osg::Geometry> ConeNode::createTruncatedCone(double startRadius, do
     osgUtil::SmoothingVisitor::smooth(*coneGeometry);
 
     // Return cone geometry
-    return coneGeometry;
+    return coneGeometry.release();
 }
 
 ConeNode* ConeNode::cloning(void) const {

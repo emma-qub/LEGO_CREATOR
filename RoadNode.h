@@ -8,7 +8,7 @@ class RoadNode : public LegoNode {
 
 public:
     RoadNode();
-    RoadNode(osg::ref_ptr<Road> road);
+    RoadNode(Road* road);
     RoadNode(const RoadNode& roadNode);
 
     virtual void createGeode(void);
