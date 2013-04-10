@@ -2,6 +2,8 @@
 
 #include "World.h"
 
+#include <QDebug>
+
 
 // /////////////////////////////////////////////////////////////////
 // AddLegoCommand
@@ -13,6 +15,8 @@ AddLegoCommand::AddLegoCommand(World* world, osg::ref_ptr<LegoNode> legoNode, QU
 
     _world = world;
     _currLegoNode = legoNode->cloning();
+    qDebug() << "Preview piece adress:" << legoNode;
+    qDebug() << "Word piece adress:" << _currLegoNode;
     _currLego = legoNode->getLego()->cloning();
     _currLegoNode->setLego(_currLego);
 

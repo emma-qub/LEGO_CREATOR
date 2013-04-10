@@ -6,14 +6,24 @@
 #include <QDebug>
 #include <QDir>
 
-ViewerWidget::ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel) :
-    QWidget() {
+#include "PickHandler.h"
+
+ViewerWidget::ViewerWidget(bool isWorld, osgViewer::ViewerBase::ThreadingModel threadingModel) :
+    QWidget(),
+    _isWorld(isWorld) {
     setThreadingModel(threadingModel);
 
     // Init pointers
     _view = NULL;
     _camera = NULL;
     _widget = NULL;
+    _picker = NULL;
+
+    // If the viewer refers to the world, we create a real one
+    if (_isWorld) {
+        // Create the pick event handler
+        _picker = new PickHandler;
+    }
 
     // Update view
     connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -54,6 +64,8 @@ void ViewerWidget::initView(void) {
     // Init view
     _view = new osgViewer::View;
     addView(_view);
+
+    qDebug() << "Creating viewer:" << _view;
 }
 
 void ViewerWidget::initManipulators(void) {
@@ -85,6 +97,12 @@ void ViewerWidget::initManipulators(void) {
 
     // Add the stats information
     _view->addEventHandler(new osgViewer::StatsHandler);
+
+    // If the viewer refers to the world, we add picker handler
+    if (_isWorld) {
+        // Add the pick event handler
+        _view->addEventHandler(_picker.get());
+    }
 }
 
 void ViewerWidget::changeCamera(osg::Camera* camera) {
@@ -96,6 +114,13 @@ void ViewerWidget::changeCamera(osg::Camera* camera) {
 void ViewerWidget::changeScene(osg::Node* scene) {
     // Set scene
     _view->setSceneData(scene);
+
+    // If the viewer refers to the world, we add picker handler
+    if (_isWorld) {
+        // Add picker to scene
+        scene->asGroup()->addChild(_picker->getOrCreateSelectionBox());
+        qDebug() << "In viewer" << _view << "adding picker to scene" << scene;
+    }
 }
 
 void ViewerWidget::initWidget(void) {

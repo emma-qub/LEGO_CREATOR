@@ -24,9 +24,12 @@ World::World() {
 
     // Create scenes
     _scene = new osg::Group;
+    _scene->setName("Scene group");
     _decorScene = new osg::Group;
+    _decorScene->setName("Decor scene group");
     _scene->addChild(_decorScene.get());
     _constructionScene = new osg::Group;
+    _constructionScene->setName("Construction scene group");
     _scene->addChild(_constructionScene.get());
 
     // Create current matrix transform
@@ -147,7 +150,7 @@ void World::createLight(unsigned int num, const osg::Vec3& trans, const osg::Vec
     // Remove previous light
     removeLight();
 
-    // Create a ligth
+    // Create a light
     osg::ref_ptr<osg::Light> light = new osg::Light;
     // Assign a number
     light->setLightNum(num);
@@ -256,6 +259,8 @@ void World::initBrick(void) {
 
     // Get current LegoNode
     LegoNode* currLegoNode = static_cast<LegoNode*>(_currMatrixTransform->getChild(0));
+    currLegoNode->setName(currLegoNode->getLego()->whoiam().toStdString() + " from LegoNode");
+    _currMatrixTransform->setName(currLegoNode->getLego()->whoiam().toStdString() + " from matrix transform");
 
     // Get the Bounding Box
     BoundingBox box = currLegoNode->getLego()->getBoundingBox();
@@ -299,15 +304,15 @@ void World::deleteLego(const std::string& matrixName) {
         qDebug() << "Cannot find the right child within World::deleteLego";
 }
 
-std::string World::addBrick(LegoNode* legoNode, Lego* lego) {
+std::string World::addBrick(LegoNode* legoNode, Lego* /*lego*/) {
     // ClonelegoNode and Lego to create a new one in the scene
-    osg::ref_ptr<LegoNode> newLegoNode = legoNode->cloning();
-    osg::ref_ptr<Lego> newLego = lego->cloning();
-    newLegoNode->setLego(newLego.get());
+    //osg::ref_ptr<LegoNode> newLegoNode = legoNode->cloning();
+    //osg::ref_ptr<Lego> newLego = lego->cloning();
+    //newLegoNode->setLego(newLego.get());
 
     // Create a matrix transform parent
     _currMatrixTransform = new osg::MatrixTransform;
-    _currMatrixTransform->addChild(newLegoNode.get());
+    _currMatrixTransform->addChild(legoNode);
     // Because LEGO bricks don't move
     _currMatrixTransform->setDataVariance(osg::Object::STATIC);
     _constructionScene->addChild(_currMatrixTransform.get());

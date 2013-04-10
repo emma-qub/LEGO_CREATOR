@@ -61,7 +61,8 @@ SOURCES += \
     ClampNode.cpp \
     ClampDialog.cpp \
     Clamp.cpp \
-    SkyBox.cpp
+    SkyBox.cpp \
+    PickHandler.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -125,7 +126,8 @@ HEADERS += \
     ClampNode.h \
     ClampDialog.h \
     Clamp.h \
-    SkyBox.h
+    SkyBox.h \
+    PickHandler.h
 
 LIBS += \
     -L$OSG/lib \

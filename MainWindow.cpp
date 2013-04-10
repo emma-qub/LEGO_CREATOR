@@ -455,10 +455,12 @@ void MainWindow::createParamsDock(void) {
     QFrame* previewFrame = new QFrame(this);
     previewFrame->setFixedSize(250, 250);
     // Create osg viewer widget that displays bricks
-    _brickViewer = new ViewerWidget;
+    qDebug() << "Preview";
+    _brickViewer = new ViewerWidget(false);
     _brickViewer->initView();
     _brickViewer->initManipulators();
     _brickViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(.1, .1, .1, 1.), 0, 0, 100, 100));
+    qDebug() << "Add scene to preview:" << _scene;
     _brickViewer->changeScene(_scene.get());
     _brickViewer->initWidget();
     QVBoxLayout* previewLayout = new QVBoxLayout;
@@ -538,11 +540,13 @@ void MainWindow::createScene(void) {
     double b = static_cast<double>(color.blue());
 
     // Scene viewer
-    _sceneViewer = new ViewerWidget;
+    qDebug() << "Scene";
+    _sceneViewer = new ViewerWidget(true);
     _sceneViewer->initView();
     _sceneViewer->initManipulators();
     _sceneViewer->changeCamera(ViewerWidget::createCamera(osg::Vec4(r/255.0, g/255.0, b/255.0, 1.), 0.0, 0.0, 1440.0, 770.0));
     _sceneViewer->changeScene(_world.getScene().get());
+    qDebug() << "Add scene to word:" << _world.getScene().get();
     _sceneViewer->initWidget();
 
     // Layout
@@ -807,7 +811,7 @@ void MainWindow::createLego(void) {
     // The scene has changed
     _saved = false;
 
-    _sceneViewer->getCamera()->setViewMatrixAsLookAt(osg::Vec3(0.0f, -5.0f, 5.0f), osg::Vec3(), osg::Vec3(0.0f, 1.0f, 1.0f));
+    //_sceneViewer->getCamera()->setViewMatrixAsLookAt(osg::Vec3(0.0f, -5.0f, 5.0f), osg::Vec3(), osg::Vec3(0.0f, 1.0f, 1.0f));
 }
 
 void MainWindow::fitLego(void) {

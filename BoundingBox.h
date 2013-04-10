@@ -3,6 +3,8 @@
 
 #include <QVector>
 
+#include <osg/Vec3>
+
 class BoundingBox
 {
 public:
@@ -15,6 +17,10 @@ public:
     int getWidth(void) const { return _width; }
     int getLength(void) const { return _length; }
     int getHeight(void) const { return _height; }
+
+    osg::Vec3 center(void) { return osg::Vec3((_rightTopBackCorner.at(0) + _leftBottomFrontCorner.at(0)) / 2,
+                                              (_rightTopBackCorner.at(1) + _leftBottomFrontCorner.at(1)) / 2,
+                                              (_rightTopBackCorner.at(2) + _leftBottomFrontCorner.at(2)) / 2); }
 
 private:
     QVector<int> _leftBottomFrontCorner;

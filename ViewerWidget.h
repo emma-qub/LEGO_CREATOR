@@ -7,6 +7,8 @@
 
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/ViewerEventHandlers>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
@@ -14,21 +16,20 @@
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/AnimationPathManipulator>
 #include <osgGA/TerrainManipulator>
-#include <osgViewer/ViewerEventHandlers>
-#include <osgViewer/ViewerEventHandlers>
-
 #include <osgGA/TrackballManipulator>
 
 #include <osgDB/ReadFile>
 
 #include <osgQt/GraphicsWindowQt>
 
+class PickHandler;
+
 
 class ViewerWidget : public QWidget, public osgViewer::CompositeViewer {
     Q_OBJECT
 
 public:
-    ViewerWidget(osgViewer::ViewerBase::ThreadingModel threadingModel = osgViewer::CompositeViewer::SingleThreaded);
+    ViewerWidget(bool isWorld = false, osgViewer::ViewerBase::ThreadingModel threadingModel = osgViewer::CompositeViewer::SingleThreaded);
     virtual ~ViewerWidget();
 
     static osg::Camera* createCamera(const osg::Vec4 &color, int x, int y, int w, int h);
@@ -50,6 +51,8 @@ protected:
     osg::ref_ptr<osg::Camera> _camera;
     QWidget* _widget;
     osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> _keyswitchManipulator;
+    osg::ref_ptr<PickHandler> _picker;
+    bool _isWorld;
 };
 
 #endif // VIEWERWIDGET_H
