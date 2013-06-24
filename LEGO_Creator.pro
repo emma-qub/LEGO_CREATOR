@@ -62,7 +62,9 @@ SOURCES += \
     ClampDialog.cpp \
     Clamp.cpp \
     SkyBox.cpp \
-    PickHandler.cpp
+    PickHandler.cpp \
+    LDrawParser.cpp \
+    PhotoCallback.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -127,10 +129,11 @@ HEADERS += \
     ClampDialog.h \
     Clamp.h \
     SkyBox.h \
-    PickHandler.h
+    PickHandler.h \
+    LDrawParser.h \
+    PhotoCallback.h
 
 LIBS += \
-    -L$OSG/lib \
     -losgQt \
     -losg \
     -losgGA \
@@ -138,8 +141,7 @@ LIBS += \
     -losgViewer \
     -lOpenThreads \
     -losgUtil \
-    #-losgTerrain \
-    #-lX11 \
+    -losgText \
     -L
 
 QT += opengl

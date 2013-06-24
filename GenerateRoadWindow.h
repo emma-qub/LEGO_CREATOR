@@ -4,9 +4,9 @@
 #include <QtGui>
 #include <QDialog>
 
-class GenerateRoadWindow : public QDialog
-{
+class GenerateRoadWindow : public QDialog {
     Q_OBJECT
+
 public:
     GenerateRoadWindow(QWidget *parent = 0);
 

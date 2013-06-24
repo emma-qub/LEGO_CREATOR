@@ -87,7 +87,7 @@ void World::createGuideLines(void) {
             bgColor = settings.value("DefaultViewerColor").value<QColor>();
         }
 
-        // Calculate whether background color is dark
+        // Calculate whether background color is dark or light
         bool isViewerBgDark = (bgColor.black() > 127);
 
         for (int i = -width; i <= width; i+=2) {
